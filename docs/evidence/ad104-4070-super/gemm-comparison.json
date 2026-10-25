@@ -1,0 +1,72 @@
+{
+  "verification": "PASS",
+  "rows": [
+    {
+      "mode": "fp32_pedantic",
+      "stock_tflops": 26.023291601234142,
+      "after_tflops": 26.17586410223558,
+      "ratio": 1.0058629209301948,
+      "gain_percent": 0.5862920930194804,
+      "stock_runs": [
+        26.226693564639653,
+        26.023291601234142,
+        25.993053295159832
+      ],
+      "after_runs": [
+        26.17586410223558,
+        26.038437152304407,
+        26.18381200555436
+      ],
+      "output_sha256_unchanged": true
+    },
+    {
+      "mode": "fp16_fp32",
+      "stock_tflops": 78.62813014506091,
+      "after_tflops": 117.52865494830415,
+      "ratio": 1.4947405557206528,
+      "gain_percent": 49.47405557206528,
+      "stock_runs": [
+        78.62813014506091,
+        79.08535603090198,
+        78.55680256152998
+      ],
+      "after_runs": [
+        127.38964152554443,
+        114.13071973483272,
+        117.52865494830415
+      ],
+      "output_sha256_unchanged": true
+    },
+    {
+      "mode": "bf16_fp32",
+      "stock_tflops": 78.97309415201254,
+      "after_tflops": 112.99691198566704,
+      "ratio": 1.4308279699433233,
+      "gain_percent": 43.08279699433233,
+      "stock_runs": [
+        79.0632199224987,
+        76.85696568885109,
+        78.97309415201254
+      ],
+      "after_runs": [
+        112.99691198566704,
+        125.88419793606252,
+        110.038204716878
+      ],
+      "output_sha256_unchanged": true
+    }
+  ],
+  "fresh_processes": 3,
+  "software_config_identical": true,
+  "full256_and_sampled1024_exact": true,
+  "full_output_hashes_match_stock": true,
+  "power_limits": [
+    "220.00"
+  ],
+  "max_observed_temperature_c": 56,
+  "limitations": [
+    "Short matched GEMM microbenchmarks; GPU also drives the display.",
+    "Three processes, observed clock/thermal/background variation; not all CUDA operations or applications.",
+    "Full CPU reference covers 256 squared; larger output has 1024 sampled independent references and full output hashes."
+  ]
+}

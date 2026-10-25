@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-25T18:25:15.6801506Z",
+  "boot_utc": "2026-10-25T18:12:31.5000000Z",
+  "gpu_related_warning_error_count": 0,
+  "events": [],
+  "devices": [
+    {
+      "Name": "NVIDIA GeForce RTX 4070 SUPER",
+      "Status": "OK",
+      "ConfigManagerErrorCode": 0
+    }
+  ]
+}

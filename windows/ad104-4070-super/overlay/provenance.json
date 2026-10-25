@@ -1,0 +1,30 @@
+{
+  "upstream": "https://github.com/JustAResearcher/gpu-unlock-ada",
+  "base_commit": "4e7fefcc4923f9e083d5324dc75a7d2f906af77f",
+  "base_port": "windows/ad104-msi",
+  "gpu": "10de:2783",
+  "subsystem": "1458:413b",
+  "revision": "a1",
+  "vbios": "95.04.69.00.e7",
+  "motherboard": "MSI MAG Z790 TOMAHAWK WIFI",
+  "bios": "H.E0",
+  "capture_schema": 5,
+  "capture_sha256": "e5b098a19b910121848395533bbe29852564bdab8a47ab78033240a3772a1522",
+  "physical_prom_sha256": "46b0ff2e697582fccefde3cbcb62eaff423bdce76f853040445030a7c5cc81fb",
+  "pci_config4096_sha256": "dde102f154b36a67e139e888d49ef045251734639c28444a49635583d6a1e547",
+  "tested_efi": {
+    "date": "2026-10-25",
+    "version": "0.6.0-4070s-manual-trial",
+    "bytes": 98816,
+    "sha256": "b20394d76f7b7dc706e7d7ba893a4ca56b958db66232b7b22ed60a63d28acf84",
+    "result": "Manual unlock completed, Windows returned and matched GEMM checks passed."
+  },
+  "private_inputs": [
+    "local/boot_profile.h",
+    "physical PROM and loaded firmware-driver code",
+    "generated NVIDIA firmware assets",
+    "Windows Boot Manager image"
+  ],
+  "test_fixtures": "Frozen C fixtures retain reviewed PCI configuration, numbered protocol ownership edges and USB device-path structure. The private driver-code inputs are checked by length and SHA-256.",
+  "ownership_fixture_note": "The C test's relocation statement refers to the original capture review. The public runner verifies the three code files; it does not repeat that raw-capture review."
+}

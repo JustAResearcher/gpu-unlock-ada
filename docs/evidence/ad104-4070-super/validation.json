@@ -1,0 +1,109 @@
+{
+  "scope": "Public-source rebuild and host checks; no new physical unlock was run during publication.",
+  "compiler": "MinGW-w64 GCC 15.2.0 x86_64-ucrt-posix-seh; Visual Studio 2022 x64 linker",
+  "python": "3.13",
+  "sequential_below_normal": true,
+  "runner_exit_codes": {
+    "core": 0,
+    "ownership": 0,
+    "boot": 0
+  },
+  "source_verification": {
+    "generated_and_overlay_runner_hashes_matched": 3,
+    "c_test_and_fixture_hashes_matched": 14,
+    "frozen_files_changed": false
+  },
+  "archive": {
+    "archive": "AD104-TRANSACTION.a",
+    "unresolved": [
+      "GuLog"
+    ],
+    "max_reported_function_stack": 480,
+    "has_efi_entry": false,
+    "hardware_test": false
+  },
+  "core": {
+    "groups": 14,
+    "expected_outcomes_observed": 14,
+    "ordinary_passes": 13,
+    "oracle": {
+      "group": "rebar-oracle-transient-bme",
+      "expected_exit": 1,
+      "observed_exit": 1,
+      "assertion_observed": "!(written_command_low&4)"
+    }
+  },
+  "ownership": {
+    "groups": 7,
+    "group_checks": {
+      "fixtures": 24,
+      "capture": 1495,
+      "driver-pins": 28,
+      "pin-rejections": 117408,
+      "legacy": 757340,
+      "guards": 667878,
+      "handoff": 507595
+    },
+    "raw_capture_json_required": false
+  },
+  "boot": {
+    "boot-io": {
+      "cases": 110,
+      "checks": 6401,
+      "semantic_failures": 0
+    },
+    "app-flow": {
+      "cases": 53,
+      "checks": 1102,
+      "semantic_failures": 0
+    }
+  },
+  "efi_rebuild": {
+    "artifact": "AD104-EXPERIMENTAL.EFI",
+    "sha256": "b20394d76f7b7dc706e7d7ba893a4ca56b958db66232b7b22ed60a63d28acf84",
+    "bytes": 98816,
+    "matches_tested_efi": true,
+    "private_header_excluded": true,
+    "utc": "2026-10-25T19:12:28.5550373Z"
+  },
+  "efi_pe": {
+    "x64_efi_verified": true,
+    "imports_tls_clr": false,
+    "image_base": "0x180000000",
+    "max_function_stack": 2128,
+    "hardware_tested": false,
+    "gpu_write_capability": true
+  },
+  "collector": {
+    "version": "0.5.0-4070s-readonly-cold",
+    "build_id": "b642ba8241cc536807c6ed1e27637e81b925d17a57074bb8521cfa28af9bc013",
+    "source_sha256": {
+      "core.c": "2855fd1c523f8b18c3f4c070b19a5cfe529886d1e24a1b56a625114aefa29e47",
+      "core.h": "838ac4bd1a17f6bfff57688d3b18cf3031d008433ea279d6a742b887b8b50d8a",
+      "platform.c": "22a92872897fdcc777b7b2cf4caf096d008ebf75c84ae74da0cfc925bbe4488f",
+      "platform.h": "6ffbde85fc76df6d7f310128f8910af73e30c15c65eb66d478973dde49506486",
+      "probe.c": "b550b88c018e7e152d1c2d35bb026ebfcc1177b1519006e33a358d3011dfb2ec",
+      "runtime.c": "b433570f0c9476872441f36fa6b20ace465cb8cada763c900de2372e277be6df",
+      "sample.c": "c67f76f4cafd2d07054c5707a2cdccf9beafabfc2fc2b4ca0f04892bbe6ec934",
+      "sample.h": "f40a4e1f186f158e15674b0af1054ccd2db124612a3c41d9fa0805f9fe365326"
+    },
+    "build_exit_code": 0,
+    "host_application_checks": 127227,
+    "platform_checks": 179,
+    "python_tests": 28,
+    "hardware_capture_build_id_matches": true
+  },
+  "publication_tools": {
+    "test_methods": 26,
+    "result": "OK",
+    "skipped_subcases": 4,
+    "skip_reason": "Windows host cannot create symlinks; four source-symlink escape subcases skipped.",
+    "actual_capture_extracted": true,
+    "all_five_output_hashes_match_original_inputs": true
+  },
+  "caveat": [
+    "Host simulations only; no EFI boot or GPU operation.",
+    "Captured driver code loaded and hashed, never executed.",
+    "Capture metadata provenance remains the frozen C fixtures; public runner does not revalidate the private original JSON."
+  ]
+}

@@ -1,0 +1,605 @@
+{
+  "base_commit": "4e7fefcc4923f9e083d5324dc75a7d2f906af77f",
+  "files": {
+    "Build-Experimental.ps1": {
+      "source": "overlay",
+      "sha256": "8a9c5cd1643949815e18e7bae3442235c753120e1e8a2c1692a00a172a32b3d6"
+    },
+    "Build.ps1": {
+      "source": "base",
+      "sha256": "949cdc0fda2039fdce9eebda5c5c0e8f3a66f3143a2e06097addfa929fd9b579"
+    },
+    "CHANGES.md": {
+      "source": "base",
+      "sha256": "6dad1aa49a4af9bfaafaa37c1ba10aa7fdefd0bd98f18f3fa53335d1e90d5e86"
+    },
+    "LICENSE": {
+      "source": "base",
+      "sha256": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643"
+    },
+    "LICENSES/CMP40HX-MIT.txt": {
+      "source": "base",
+      "sha256": "1126322e2cc8d165adc4c792eeb195717de2bcc7b39be1ce77959d78e87ef685"
+    },
+    "LICENSES/EDK2-BSD-2-Clause-Patent.txt": {
+      "source": "base",
+      "sha256": "7aa278b6f1a2125d0a0c596fa537caca5a41e7b03f7d2dd0489905f65ffdb984"
+    },
+    "LICENSES/NVIDIA-Driver.txt": {
+      "source": "base",
+      "sha256": "c692fb14ad4f499c6aee1b9e144e6905148c420e6225b17cb2937366c1e507ad"
+    },
+    "LICENSES/NVIDIA-MIT.txt": {
+      "source": "base",
+      "sha256": "fdeba0dc20cc705443771b5ca293292e3437abb2bb3021b6a0c65f0203b1db91"
+    },
+    "README.md": {
+      "source": "overlay",
+      "sha256": "1fa691aac91763e3ef9a3c280b85c90248ca122a30398ccf57a3d3d1d586cbba"
+    },
+    "THIRD_PARTY_NOTICES.md": {
+      "source": "base",
+      "sha256": "ae1ebb02b22e510700a476ef24ce2e1cdcac034337ee7afb4fb78ed7b73a21d0"
+    },
+    "Test-Boot4070S.ps1": {
+      "source": "overlay",
+      "sha256": "c6550a5400759b13a345fdd42d4f323a6cc8d2668aaf9a3e14b7b94810639843"
+    },
+    "Test-Core4070S.ps1": {
+      "source": "overlay",
+      "sha256": "9b63948afd1de5ad01de4d0faec6b1fa480e40113362a1d792489ee3303e23be"
+    },
+    "Test-Ownership4070S.ps1": {
+      "source": "overlay",
+      "sha256": "a696974eeda02b1cb4c7ab4b65a3da22c20aef61d285d9efc91860ccc59f5e2d"
+    },
+    "UPSTREAM-README.md": {
+      "source": "overlay",
+      "sha256": "25ea9e2964ea59d43b226eb648bd0a8a4af5537325b4d111736f9e392534a60f"
+    },
+    "UPSTREAM-WINDOWS-NOTICES.md": {
+      "source": "base",
+      "sha256": "e5341b8c5b6cebe0b98b177b7798bbc5167ca620d533450f0b21ace79976d88e"
+    },
+    "app.c": {
+      "source": "overlay",
+      "sha256": "6ecf9e550fe5d6ddd98f40f76899b16c9ddfeb34195f3e9d0ba704bf798da0c8"
+    },
+    "benchmark.py": {
+      "source": "overlay",
+      "sha256": "a8e278f96d1eb99e14f7c0c3bdcaef46204b2487be3184eb04454ff04c1ac069"
+    },
+    "boot_io.c": {
+      "source": "overlay",
+      "sha256": "c000f09b5a71d2deb1dd65f6a3fd44bbfad98d9aabf85452009ddfc7ee8249f3"
+    },
+    "boot_io.h": {
+      "source": "base",
+      "sha256": "ae8bd6aef14cf4f16b3108262c4cf04721caf45e05f927540202c67b755257e4"
+    },
+    "boot_profile.example.h": {
+      "source": "overlay",
+      "sha256": "bbf5e921579614446fa1596aa9b2d4981f7e34752e67e38b90facb7be7053b34"
+    },
+    "boot_profile.h": {
+      "source": "overlay",
+      "sha256": "3ac75dcbc4873a1ec7a8ecdd23a013d9147586eec9d4b59ada3d81918bc4a3dd"
+    },
+    "checks.c": {
+      "source": "base",
+      "sha256": "d0063086eff3693b4e48f6b1bfdbaac1634d49c264084d0ed2f0a0cc442b02e4"
+    },
+    "checks.h": {
+      "source": "base",
+      "sha256": "7de0b23d1847cb614778b51b08581c7fc351ef787884e128d9a4f4ffe833eb26"
+    },
+    "compare.py": {
+      "source": "base",
+      "sha256": "836bff39b1f4b2688cc2318ec8839220be218223e5e9e501e095154267b23bd5"
+    },
+    "compat.c": {
+      "source": "base",
+      "sha256": "6fd7ee9e8e6942b019a79060bcd5faa8315fccd5fe6d0fc5f7d85bf9cf87f7f1"
+    },
+    "compat/compat.h": {
+      "source": "base",
+      "sha256": "5cc1f9ad60f1facc7092e4be34ba29b842195d2d8c7f94edc170c58732d4474f"
+    },
+    "compat/linux/aperture.h": {
+      "source": "base",
+      "sha256": "3ec7a52eea3bf555060abb3763607aee0a79846807fe071a6e8345e1a6e57d2d"
+    },
+    "compat/linux/delay.h": {
+      "source": "base",
+      "sha256": "3ec7a52eea3bf555060abb3763607aee0a79846807fe071a6e8345e1a6e57d2d"
+    },
+    "compat/linux/dma-mapping.h": {
+      "source": "base",
+      "sha256": "3ec7a52eea3bf555060abb3763607aee0a79846807fe071a6e8345e1a6e57d2d"
+    },
+    "compat/linux/errno.h": {
+      "source": "base",
+      "sha256": "3ec7a52eea3bf555060abb3763607aee0a79846807fe071a6e8345e1a6e57d2d"
+    },
+    "compat/linux/firmware.h": {
+      "source": "base",
+      "sha256": "3ec7a52eea3bf555060abb3763607aee0a79846807fe071a6e8345e1a6e57d2d"
+    },
+    "compat/linux/io.h": {
+      "source": "base",
+      "sha256": "3ec7a52eea3bf555060abb3763607aee0a79846807fe071a6e8345e1a6e57d2d"
+    },
+    "compat/linux/module.h": {
+      "source": "base",
+      "sha256": "3ec7a52eea3bf555060abb3763607aee0a79846807fe071a6e8345e1a6e57d2d"
+    },
+    "compat/linux/pci.h": {
+      "source": "base",
+      "sha256": "3ec7a52eea3bf555060abb3763607aee0a79846807fe071a6e8345e1a6e57d2d"
+    },
+    "compat/linux/printk.h": {
+      "source": "base",
+      "sha256": "3ec7a52eea3bf555060abb3763607aee0a79846807fe071a6e8345e1a6e57d2d"
+    },
+    "compat/linux/slab.h": {
+      "source": "base",
+      "sha256": "3ec7a52eea3bf555060abb3763607aee0a79846807fe071a6e8345e1a6e57d2d"
+    },
+    "compat/linux/string.h": {
+      "source": "base",
+      "sha256": "3ec7a52eea3bf555060abb3763607aee0a79846807fe071a6e8345e1a6e57d2d"
+    },
+    "compat/linux/timekeeping.h": {
+      "source": "base",
+      "sha256": "3ec7a52eea3bf555060abb3763607aee0a79846807fe071a6e8345e1a6e57d2d"
+    },
+    "compat/linux/types.h": {
+      "source": "base",
+      "sha256": "3ec7a52eea3bf555060abb3763607aee0a79846807fe071a6e8345e1a6e57d2d"
+    },
+    "diagnostic/Build.ps1": {
+      "source": "overlay",
+      "sha256": "e0c9956ac9f0265558646ca00ac07cd901f4c9033221c67dbbedabf0ca467f7d"
+    },
+    "diagnostic/LICENSE.txt": {
+      "source": "base",
+      "sha256": "c3799efb148145cb0232ad19082ac91cab23e3d22ed3198b6cd235dbd1d8e35a"
+    },
+    "diagnostic/README.md": {
+      "source": "overlay",
+      "sha256": "1fc20e158cb7b0af6d41765ba7d7b3df4ab1e8913eb1356b8364f7888d5ae80d"
+    },
+    "diagnostic/THIRD_PARTY.md": {
+      "source": "overlay",
+      "sha256": "32e242d71b0099d4f93c6e9ae406befd9959541688c0362198bf38a9b1fc0062"
+    },
+    "diagnostic/src/core.c": {
+      "source": "overlay",
+      "sha256": "2855fd1c523f8b18c3f4c070b19a5cfe529886d1e24a1b56a625114aefa29e47"
+    },
+    "diagnostic/src/core.h": {
+      "source": "overlay",
+      "sha256": "838ac4bd1a17f6bfff57688d3b18cf3031d008433ea279d6a742b887b8b50d8a"
+    },
+    "diagnostic/src/platform.c": {
+      "source": "base",
+      "sha256": "22a92872897fdcc777b7b2cf4caf096d008ebf75c84ae74da0cfc925bbe4488f"
+    },
+    "diagnostic/src/platform.h": {
+      "source": "base",
+      "sha256": "6ffbde85fc76df6d7f310128f8910af73e30c15c65eb66d478973dde49506486"
+    },
+    "diagnostic/src/probe.c": {
+      "source": "overlay",
+      "sha256": "b550b88c018e7e152d1c2d35bb026ebfcc1177b1519006e33a358d3011dfb2ec"
+    },
+    "diagnostic/src/runtime.c": {
+      "source": "base",
+      "sha256": "b433570f0c9476872441f36fa6b20ace465cb8cada763c900de2372e277be6df"
+    },
+    "diagnostic/src/sample.c": {
+      "source": "overlay",
+      "sha256": "c67f76f4cafd2d07054c5707a2cdccf9beafabfc2fc2b4ca0f04892bbe6ec934"
+    },
+    "diagnostic/src/sample.h": {
+      "source": "base",
+      "sha256": "f40a4e1f186f158e15674b0af1054ccd2db124612a3c41d9fa0805f9fe365326"
+    },
+    "diagnostic/tests/host_tests.c": {
+      "source": "overlay",
+      "sha256": "61d22fb02e40c811400b3253541853e7f9d8ac59036ad50cdcbfb35af1f3bd40"
+    },
+    "diagnostic/tests/platform_tests.c": {
+      "source": "base",
+      "sha256": "a18f046bde995f20e50e54dd2bb97a2b86f366ae1b1f257c4e9c4a45236a0726"
+    },
+    "diagnostic/tests/test_tools.py": {
+      "source": "overlay",
+      "sha256": "ffd564529d39c599bab2dda21e407e5b18dc4bacad52da5b1b9d83dd80284209"
+    },
+    "diagnostic/tools/analyze.py": {
+      "source": "overlay",
+      "sha256": "503057b23edeb13b8f1ed3fd70fe8406596cce00db4ea817638eceffb9458a19"
+    },
+    "diagnostic/tools/verify.py": {
+      "source": "overlay",
+      "sha256": "af49757ae6c89de89ebcd065c64fce661a82537b2f28b449f777e8cfbd08a612"
+    },
+    "format.c": {
+      "source": "base",
+      "sha256": "564fc2cb36cac9580983121dc8b48f33773e264507c4b90aed140ba9abb2a2b9"
+    },
+    "format.h": {
+      "source": "base",
+      "sha256": "03b8c257be5f78462d006d8563cea9a623d7b6d5fe50e793e021ca9077330417"
+    },
+    "msi_release.c": {
+      "source": "overlay",
+      "sha256": "534ffbd5d2d6b293c52deec943701fb0a3b2dee11216893b38753a79f8c31b88"
+    },
+    "msi_release.h": {
+      "source": "base",
+      "sha256": "3293b45f5190db3ebff16b961d0a40699d45185cb2d993d4c02c0b5662d30d86"
+    },
+    "port.c": {
+      "source": "overlay",
+      "sha256": "f444ec9045230a0662382f12b429a00786821fcb10344270aac007e92c2a7f42"
+    },
+    "port.h": {
+      "source": "overlay",
+      "sha256": "12f9951de63da477671f3ab9621477366ef06c161bf4ce8c07a5c23054ebb1bb"
+    },
+    "profile.c": {
+      "source": "overlay",
+      "sha256": "2800990c99b0dc5a0acf3f717c3ef249b0907e67610c75f1ba859d6d694cc7dd"
+    },
+    "profile.h": {
+      "source": "base",
+      "sha256": "675d35f6e87a4195df0affd5184377a39bfebbdd2b5f26566d36a428cac91d21"
+    },
+    "provenance.json": {
+      "source": "overlay",
+      "sha256": "ac6eb68d86c21050f8912cedb894a90d248a6a3daa68dcef4395fadf983bff29"
+    },
+    "run.py": {
+      "source": "overlay",
+      "sha256": "4469ed208fd667c644997ad80593f50a0825d73161312c82b73a361adf7d4984"
+    },
+    "runtime.c": {
+      "source": "base",
+      "sha256": "0f25ae89a31c5fc76ade8e39e07e0a47b634ae33969d40eef72673b517ea11b1"
+    },
+    "runtime.h": {
+      "source": "base",
+      "sha256": "da642d486d61f6600ced44bc5efad0bd95eba9e2a9a313f0a90f5aad81e6587e"
+    },
+    "sha256.c": {
+      "source": "base",
+      "sha256": "5b707487e2aef3e582d689e36e1650b7f017180991c841dcd0cc2d115cdda567"
+    },
+    "sha256.h": {
+      "source": "base",
+      "sha256": "d58d123865b2df9c425ebea850d4c802e8c8fc1e0b6a0ce88a457c1535e11830"
+    },
+    "tests/boot4070s_config.h": {
+      "source": "overlay",
+      "sha256": "9fd6b2aa5a7717063428bfdbccb6baa993fa88d6643ceb57bb3eba8f2d7b2c9e"
+    },
+    "tests/boot4070s_fixtures.h": {
+      "source": "overlay",
+      "sha256": "a95b0cbc38a88956dd23f64a7e61a1258df252dda42db644f69e5e902000db2d"
+    },
+    "tests/boot4070s_profile_traps.h": {
+      "source": "overlay",
+      "sha256": "2c72b6cc45ff8874437009f32bd3141fcd2af6fb93df52a811d27db5ab20295d"
+    },
+    "tests/cap4070s_graph.h": {
+      "source": "overlay",
+      "sha256": "0f534d78050b50f2e0df064fbda54346de66d71cb5759cbfe70f54fabd2dbb41"
+    },
+    "tests/cap4070s_usb_paths.h": {
+      "source": "overlay",
+      "sha256": "104a73ab94afbfc9f99d68be31aa072ad106592392e1a2e0441be5a8e45e3e2c"
+    },
+    "tests/cap4_graph.h": {
+      "source": "base",
+      "sha256": "9b36eb9b41a3b3e8d743604f3277ed0d54ae6106ead60d2ec359f4abd683e591"
+    },
+    "tests/cap4_usb_paths.h": {
+      "source": "base",
+      "sha256": "cd9cf70c905ce364ffe2a1ec1394f8e1b129be9626274904ac75bc2b5d7fe483"
+    },
+    "tests/captured_config.h": {
+      "source": "base",
+      "sha256": "d4a86dc3db567ec186a72cde96f665c4048b2b71e3f61b956df46b861deb2654"
+    },
+    "tests/captured_config4070s.h": {
+      "source": "overlay",
+      "sha256": "4a2c0dcad2089c8c3b8f78f44bff8fa415190cb456a13fbca10529c4c946d80d"
+    },
+    "tests/rebar_cases4070s.h": {
+      "source": "overlay",
+      "sha256": "0a5bb3b904d15b6f14ce647c09c8ceaa7ff4027360e419475fc1ce1585867025"
+    },
+    "tests/test_app_flow.c": {
+      "source": "overlay",
+      "sha256": "5b7a91dc107818c1edc242cf1d14ad978457b2304f3299200a5bc9a406169265"
+    },
+    "tests/test_boot_io.c": {
+      "source": "overlay",
+      "sha256": "4d0b77cd94145f9bcc1026b108d9d97fe84ad96865d29e3d043936b3b0eb0834"
+    },
+    "tests/test_efi_transaction.c": {
+      "source": "overlay",
+      "sha256": "7ff895d338ff6bc3da6491d8a70194b7c30ccd3e7d8619e8ca315f4ce172fa45"
+    },
+    "tests/test_guards.c": {
+      "source": "overlay",
+      "sha256": "98c315e65c1e0eb6a3aba22975650a244944507da361f93fca29419b97c73a9d"
+    },
+    "tests/test_msi_release.c": {
+      "source": "overlay",
+      "sha256": "1537e02070df3e544668ce191b4d65a2a1ec510e562fb310b1e60af69e2b2cb3"
+    },
+    "tests/test_prepare4070s.c": {
+      "source": "overlay",
+      "sha256": "9d9afd6e4317b863448844d1515e6089f2b1d59fce0a2c947a549b74a2d2e584"
+    },
+    "tests/test_rebar4070s.c": {
+      "source": "overlay",
+      "sha256": "caa4fd3cf5c9c64b2a405cf8764fa10c93b336cd0586f57325da2b0ede52189b"
+    },
+    "tools/extract_private_capture.py": {
+      "source": "overlay",
+      "sha256": "ef111a007fc4098e2f4c055f2a3d40ffd62b4ce922e74ab5c33f743320c88b5a"
+    },
+    "tools/fwsec_inspect.c": {
+      "source": "base",
+      "sha256": "f0ad4c10d8919c8074a3190e81195f0da214d56c932a9f822376bef1921d2482"
+    },
+    "tools/pe_format.py": {
+      "source": "base",
+      "sha256": "44e33002bf0334b7f89404c0a782f245ac2915d4ce8b848f72c5354e3c6f5e7c"
+    },
+    "tools/verify_archive.py": {
+      "source": "base",
+      "sha256": "389ad2f2d9f77c621c0393746268283ae0053476c851be28a73acee52740fdaf"
+    },
+    "tools/verify_experimental.py": {
+      "source": "base",
+      "sha256": "1f679007d9cf592aa79d0f7245750cb2d84d604ad919a434369a8c438db5a550"
+    },
+    "vendor/aperture_compat.h": {
+      "source": "base",
+      "sha256": "bfe14a3242d43c4115a6540c86b0424ba1d7f0b2750ef535556074d5de16f142"
+    },
+    "vendor/arch_610.h": {
+      "source": "base",
+      "sha256": "0083606528ad11277b52f2ae7ad2e3b9f501fcf17e2120e6f205804eab0fba5a"
+    },
+    "vendor/diagnostic.h": {
+      "source": "base",
+      "sha256": "fce58df506620383e26f2523eeee354f5b73a8b48e385829b4900a924a77f521"
+    },
+    "vendor/edk2/Include/Base.h": {
+      "source": "base",
+      "sha256": "a90f4bf7b02910711506fa1882a709ca10a6798bd5614c1690b5b10b843f9cfa"
+    },
+    "vendor/edk2/Include/Guid/FileInfo.h": {
+      "source": "base",
+      "sha256": "9d435781257c79d5400ed9720570f3099b90f5b1758fcce7a11d73887c674132"
+    },
+    "vendor/edk2/Include/Guid/HiiFormMapMethodGuid.h": {
+      "source": "base",
+      "sha256": "06fe59e6d8d100f4a65449b4c9bcde3bae2a33d30269e835e1aa82e00cd125f6"
+    },
+    "vendor/edk2/Include/Guid/PcAnsi.h": {
+      "source": "base",
+      "sha256": "f6fdc08a546da7f436dbcb9482049c4bff42e271b071cfd6f8587f2f8989d489"
+    },
+    "vendor/edk2/Include/Guid/WinCertificate.h": {
+      "source": "base",
+      "sha256": "ad38747eeea5a9d62905818bef6acdbd856a18dd50708e58c2e867e50e9da8e4"
+    },
+    "vendor/edk2/Include/IndustryStandard/Acpi10.h": {
+      "source": "base",
+      "sha256": "55b8450e1f393b7d5eb0cbc3fd39d7f0db5da60052ec59eacc43cd63d5f42fc5"
+    },
+    "vendor/edk2/Include/IndustryStandard/Acpi20.h": {
+      "source": "base",
+      "sha256": "8754c2b2acd7fd77f27506448ddc5427d196c92146249ffef71dee9dd364ee85"
+    },
+    "vendor/edk2/Include/IndustryStandard/Acpi30.h": {
+      "source": "base",
+      "sha256": "ca86c3d192585f64d07232ab0dec59f1aac2e5d36740a21e0a206a59176c660d"
+    },
+    "vendor/edk2/Include/IndustryStandard/Acpi40.h": {
+      "source": "base",
+      "sha256": "3ef9f3294fbe713c7ed715ae69e0eff0b997792a4fdcc2ade0f33ae588b70b7b"
+    },
+    "vendor/edk2/Include/IndustryStandard/Acpi50.h": {
+      "source": "base",
+      "sha256": "7fac6ae73f7061b008fa9707c873771b69f09fb9ff73d6026ea32fbd7f6faa63"
+    },
+    "vendor/edk2/Include/IndustryStandard/Acpi51.h": {
+      "source": "base",
+      "sha256": "e58505211fa3863eaa93b9e4e1cb82128318bc2a392ecdf49ab1086506ad7726"
+    },
+    "vendor/edk2/Include/IndustryStandard/Acpi60.h": {
+      "source": "base",
+      "sha256": "e9f7637646ea289e738fe4dad248819362bf8135e89137e627756432186097c9"
+    },
+    "vendor/edk2/Include/IndustryStandard/AcpiAml.h": {
+      "source": "base",
+      "sha256": "2cc788ed002c96dfe959cd77bb180ebfa5eda0eb7686b448483386d4a0e3b56f"
+    },
+    "vendor/edk2/Include/IndustryStandard/Bluetooth.h": {
+      "source": "base",
+      "sha256": "316c2e28022b0954828ad5feaf5136183c5a6b8f6c3788798d50ed921f71e554"
+    },
+    "vendor/edk2/Include/IndustryStandard/Pci.h": {
+      "source": "base",
+      "sha256": "42db0b91fd83f018f9b2c3d562453fa64cebc4143d150c7cd7b3f3442893377e"
+    },
+    "vendor/edk2/Include/IndustryStandard/Pci22.h": {
+      "source": "base",
+      "sha256": "9bba08b54f4474a5d3548e80f180e6bd293773a8647703317b6fd7f48adc84d4"
+    },
+    "vendor/edk2/Include/IndustryStandard/Pci23.h": {
+      "source": "base",
+      "sha256": "10c1b5f66216ffe3b4edfb1c5b1f4220f79acb9d863b79e5af80d2c62ea59755"
+    },
+    "vendor/edk2/Include/IndustryStandard/Pci30.h": {
+      "source": "base",
+      "sha256": "2492bfd6416a8883a6bd1d91c8f50f4067ddd75ab0ab9f4d72cdb82a69d12843"
+    },
+    "vendor/edk2/Include/IndustryStandard/PciCodeId.h": {
+      "source": "base",
+      "sha256": "a4c3fabef1175e3ad4c60b484a8fffb4be04ad68b978f4d181649efa0cb4a95c"
+    },
+    "vendor/edk2/Include/IndustryStandard/PciExpress21.h": {
+      "source": "base",
+      "sha256": "3b9ac56743725fcb32487ccd8d41436b7e5f6a51f8bb6cd249f572f5a9275e39"
+    },
+    "vendor/edk2/Include/IndustryStandard/PciExpress30.h": {
+      "source": "base",
+      "sha256": "8ab2ae067f8f63c5a2071788ff8ae255c015121d02846f05eea7e493dd1b8f33"
+    },
+    "vendor/edk2/Include/IndustryStandard/PciExpress31.h": {
+      "source": "base",
+      "sha256": "d466626b867c960bc19e75420195d210fc1d492c89121558d87d0e7233e84522"
+    },
+    "vendor/edk2/Include/IndustryStandard/PciExpress40.h": {
+      "source": "base",
+      "sha256": "672757e0550c45e7b32b2eaf157ab4057d5eab0514e268be8866d28b73d13ec6"
+    },
+    "vendor/edk2/Include/IndustryStandard/PciExpress50.h": {
+      "source": "base",
+      "sha256": "35f86a4d76e9083a8621cddf778c96a48d3bf96d8a71943fd4bed3fc3142cb8d"
+    },
+    "vendor/edk2/Include/IndustryStandard/PciExpress60.h": {
+      "source": "base",
+      "sha256": "aaf608c8122e8e0bb1fea9a74ce826fbdbc2aaa8467a28b70651b0e49c9aabbb"
+    },
+    "vendor/edk2/Include/IndustryStandard/PciExpress70.h": {
+      "source": "base",
+      "sha256": "2edce280ca147fccfbaeea0e4bc619f24366444efb26a155a65bdf3927645930"
+    },
+    "vendor/edk2/Include/Protocol/DevicePath.h": {
+      "source": "base",
+      "sha256": "0a3b384fc24ee7901f79094e07dc659133509cec2243fd47dbf543005ff61301"
+    },
+    "vendor/edk2/Include/Protocol/DriverBinding.h": {
+      "source": "base",
+      "sha256": "e2c791c00ecb3a674d5aaa08800b76f43c37d1de05aa4d50ff28086209d3de16"
+    },
+    "vendor/edk2/Include/Protocol/GraphicsOutput.h": {
+      "source": "base",
+      "sha256": "1f63d49ac45dbc1c00464cff900c61952610d648e551e478428ef2ff601f4092"
+    },
+    "vendor/edk2/Include/Protocol/LoadedImage.h": {
+      "source": "base",
+      "sha256": "c8e3e7d2b93b6cec475aea128ec6eec0f0328654037627197ac1cab43febc02b"
+    },
+    "vendor/edk2/Include/Protocol/PciIo.h": {
+      "source": "base",
+      "sha256": "11ef99b00e6b5013842996447a6ec410d4020332075cd9d211a2734318d71197"
+    },
+    "vendor/edk2/Include/Protocol/SimpleFileSystem.h": {
+      "source": "base",
+      "sha256": "60c300b0db855ed6b18062059a024af873b37208ee8f33e2bb1a6b5a6900dcfb"
+    },
+    "vendor/edk2/Include/Protocol/SimpleTextIn.h": {
+      "source": "base",
+      "sha256": "a4070de5d42c98529642a72d372f1b33f0a4ce9700cbdeb6c521cdfaba2dc012"
+    },
+    "vendor/edk2/Include/Protocol/SimpleTextInEx.h": {
+      "source": "base",
+      "sha256": "2709e544277f4b0ffa0696bcadd5079cfccb8188eaf3fb938e97bf13a2ad561b"
+    },
+    "vendor/edk2/Include/Protocol/SimpleTextOut.h": {
+      "source": "base",
+      "sha256": "b27a98bdc4b77f9e47097ef10fb78af564a51b0b91215e064d294abac8d862db"
+    },
+    "vendor/edk2/Include/Uefi.h": {
+      "source": "base",
+      "sha256": "1ec56991b282c4540aedee24b83dde7ff252eacfceec2d5d717192c8ce759683"
+    },
+    "vendor/edk2/Include/Uefi/UefiBaseType.h": {
+      "source": "base",
+      "sha256": "3849c0033d272b7eb54042e84063145a89e3394a1e3da912db7dc27c8214e180"
+    },
+    "vendor/edk2/Include/Uefi/UefiGpt.h": {
+      "source": "base",
+      "sha256": "cc924f8228df2b1e04b4e2d4b0c7d4eca76b02ffb836f559b8ef7e67d1bc2aa1"
+    },
+    "vendor/edk2/Include/Uefi/UefiInternalFormRepresentation.h": {
+      "source": "base",
+      "sha256": "918e64229ba7eb445cf9299732f90fba27e8d209be967148bc0d3cf18f492a25"
+    },
+    "vendor/edk2/Include/Uefi/UefiMultiPhase.h": {
+      "source": "base",
+      "sha256": "d4ca140abf49811bcad80bf9274d65278fe46b7d9ee51cb5c7cb7f590e938550"
+    },
+    "vendor/edk2/Include/Uefi/UefiPxe.h": {
+      "source": "base",
+      "sha256": "f00f7b419e747c3700fab786533bca1e9b032db97b94d2c0a03d6608b9489ceb"
+    },
+    "vendor/edk2/Include/Uefi/UefiSpec.h": {
+      "source": "base",
+      "sha256": "b9ae7c3067e372690edef10299288007773496b810982bc5fcf81873dd651325"
+    },
+    "vendor/edk2/Include/X64/ProcessorBind.h": {
+      "source": "base",
+      "sha256": "20b43822b0737cbd0f692ad8200cba4cfc47c192431827a98056c8a0068efb19"
+    },
+    "vendor/edk2/License.txt": {
+      "source": "base",
+      "sha256": "50ce20c9cfdb0e19ee34fe0a51fc0afe961f743697b068359ab2f862b494df80"
+    },
+    "vendor/edk2/headers.json": {
+      "source": "base",
+      "sha256": "17071d270bccf14d691e7ac644096265130d4f4f7823bcb1ef6134c0c1aa5b40"
+    },
+    "vendor/gfw_eval.c": {
+      "source": "base",
+      "sha256": "5a36666290df66edc703611086a36adb148cdb953babf4529d114c9ef098e1b6"
+    },
+    "vendor/gfw_eval.h": {
+      "source": "base",
+      "sha256": "530ef704290d566bd4300a2036c07808d56214a814925349e0a1db926ede35ad"
+    },
+    "vendor/layout_610.c": {
+      "source": "base",
+      "sha256": "bde52cb4c22a16bb345fef9caaa1c6f15c19c674d6985fde98e9d4c518aca375"
+    },
+    "vendor/layout_610.h": {
+      "source": "base",
+      "sha256": "afe45505f455f7af90a9d1920b416301bfb7e4ff1778f4f7e10186084618bb5e"
+    },
+    "vendor/prep_610.c": {
+      "source": "base",
+      "sha256": "35e1c844f6fa40c387a1cda9ddfc29f67f256748df28d0a718d920ba4a8f61fa"
+    },
+    "vendor/prep_610.h": {
+      "source": "base",
+      "sha256": "47a7aa339b12fc67b99047b5c1666cd66bcba1bf7621cb5c0b9df9094cda2fa4"
+    },
+    "vendor/unlock_610.c": {
+      "source": "overlay",
+      "sha256": "e57bdc3f3ec2e13ff3bbf26edf3a872e2b57762d737857977b4794ba7c7e267d"
+    },
+    "vendor/unlock_610.h": {
+      "source": "base",
+      "sha256": "a734c6062aebbdcb331b61c2429764eb55b2350b0da2b4845669e966b0ee0370"
+    },
+    "vendor/vbios_610.c": {
+      "source": "base",
+      "sha256": "602a488ea200bbee67e90c600fda89cb6092d17709b314dbdf75b215f4a45253"
+    },
+    "vendor/vbios_610.h": {
+      "source": "base",
+      "sha256": "17990fa3a2464dbc1446ef5f349fe1486b39d9edf859ab1d8896857f65b3b7e0"
+    }
+  }
+}
