@@ -88,6 +88,17 @@ permission, selector and post-FLR gate, the NVIDIA 595.99.02 driver loaded, and
 the RM getter changed FMLA32, IMLA2 and IMLA4 from half to full rate. No
 same-card stock throughput run has been made yet. See the
 [2805 report](docs/ada-2805-report.md).
+
+RTX 4070 SUPER `10de:2783` is an **experimental AD104 target validated on one
+card** (Linux only). It uses the same AD102-family payload and requires both
+`gpu_unlock.ad104_experimental=1` and a single exact PCI address; `targets=all`
+never selects it. On the tested card, one boot after a full power-off and one
+ordinary warm reboot each reached `gpu_unlock: unlocked`, and the RM getter
+changed FMLA32, IMLA2 and IMLA4 from half to full rate. Matched stock/unlocked
+runs with the same binaries, driver and 242 W cap measured the FP16/BF16 tensor
+instruction rate at **76.7 → 153.6 TF/s** and large cuBLAS GEMMs at +37–92%
+depending on size; INT8 was unchanged and a quantized (IQ2_XS) llama.cpp
+workload showed no difference. See the [2783 report](docs/ada-2783-report.md).
 Other Ada IDs, professional RTX A-series and data-centre parts are not accepted.
 Shared firmware across Ada chips does not establish support for untested cards.
 
@@ -148,13 +159,14 @@ gpu_unlock.targets=0000:03:00.0,0000:04:00.0
 gpu_unlock.targets=all
 gpu_unlock.targets=0000:01:00.0 gpu_unlock.ad103_experimental=1
 gpu_unlock.targets=0000:01:00.0 gpu_unlock.ad106_experimental=1
+gpu_unlock.targets=0000:01:00.0 gpu_unlock.ad104_experimental=1
 ```
 
 These PCI addresses are examples. Use the full PCI names printed by `lspci -D`.
 `all` selects every accepted unbound card, including legacy GA102/GA104 targets;
 an explicit address is useful when selecting one RTX 4090. Do not mix `all` with
-addresses. RTX 4070 Ti SUPER `10de:2705` and RTX 4060 Ti 16GB `10de:2805` each
-require their own experimental flag and a single exact PCI address; `all` never
+addresses. RTX 4070 Ti SUPER `10de:2705`, RTX 4060 Ti 16GB `10de:2805` and RTX 4070 SUPER
+`10de:2783` each require their own experimental flag and a single exact PCI address; `all` never
 selects them. Invalid entries
 are logged and ignored.
 

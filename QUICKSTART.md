@@ -17,7 +17,8 @@ lspci -Dnn | grep -i nvidia
 
 Find the line for your GPU. The full address is the first field, such as
 `0000:01:00.0`. Confirm the device ID is `10de:2705` for the experimental
-RTX 4070 Ti SUPER path, `10de:2805` for the experimental RTX 4060 Ti 16GB path
+RTX 4070 Ti SUPER path, `10de:2783` for the experimental RTX 4070 SUPER path,
+`10de:2805` for the experimental RTX 4060 Ti 16GB path
 or `10de:2684` for the RTX 4090 path. Keep this address
 for step 3. On a multi-GPU host, identify the exact intended card; do not use
 `targets=all` for an Ada test.
@@ -65,6 +66,12 @@ For an RTX 4060 Ti 16GB `10de:2805`, use its own experimental flag instead:
 
 ```text
 gpu_unlock.targets=0000:01:00.0 gpu_unlock.ad106_experimental=1
+```
+
+For an RTX 4070 SUPER `10de:2783` ([2783 report](docs/ada-2783-report.md)):
+
+```text
+gpu_unlock.targets=0000:01:00.0 gpu_unlock.ad104_experimental=1
 ```
 
 For an RTX 4090 `10de:2684`, only the first option is needed:
