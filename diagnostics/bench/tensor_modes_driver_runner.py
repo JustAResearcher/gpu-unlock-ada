@@ -48,7 +48,7 @@ def main():
     ).stdout.strip()
     fields = [field.strip() for field in gpu.split(",")]
     assert len(fields) == 5 and fields[0] == args.expect_uuid, gpu
-    assert abs(float(fields[4]) - args.expect_power_limit) < 0.01, gpu
+    if fields[4] != '[N/A]': assert abs(float(fields[4]) - args.expect_power_limit) < 0.01, gpu
 
     lib = C.CDLL("libcuda.so.1")
     def api(name, argtypes):
