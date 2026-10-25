@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "validation_created_utc": "2026-10-25T17:34:18.195524+00:00",
+  "integration_upstream_base": "4e7fefcc4923f9e083d5324dc75a7d2f906af77f",
+  "tested_source_commit": "f9178cc23953d392aabe87a595101ef71e783443",
+  "snapshot_source_commit": "12bee6a04ebc1926f457a9a82b55dc9624689110",
+  "scope": "Local reproduction and automated validation of the pinned source snapshot. Physical hardware evidence is separately recorded in windows/HARDWARE-RESULT-2026-10-25.md.",
+  "all_passed": true,
+  "compiler": "zig 0.14.1",
+  "reproducibility": {
+    "expected_efi_sha256": "21999ec27045a9f441cf25dcac396de69d79fca2b11a92abb1baa36231c63da5",
+    "actual_efi_sha256": "21999ec27045a9f441cf25dcac396de69d79fca2b11a92abb1baa36231c63da5",
+    "efi_bytes": 918528,
+    "byte_identical": true,
+    "all_compiled_c_header_inc_ptx_bytes_unchanged": true,
+    "generated_header_sha256": {
+      "board_profile.h": "9bc36ea23ab30dc0a733ab77e3b5231117981b93e3df69dc24a27931e51c7fce",
+      "rehearsal_profile.h": "44b6136b6d3642c76a4d4a752cd0ef85db5c0f9ada2fbf36fc613cb0d289aeb0"
+    }
+  },
+  "checks": [
+    {
+      "name": "build",
+      "exit_code": 0,
+      "output_sha256": "a460c3b7fbca67cad99aa97859582c12533cdea9d74a9e51ef5ba9e4d215664d"
+    },
+    {
+      "name": "host-tests",
+      "exit_code": 0,
+      "output_sha256": "bf216a69dc6410d13e7a3161be6e897204ad1b3a328c007653a616f9caa9e121"
+    },
+    {
+      "name": "usb-tests",
+      "exit_code": 0,
+      "output_sha256": "4a4127d49088396f72119c93cb5162b7e80a8790919f28b6e4520fb7d480863f"
+    },
+    {
+      "name": "vm-tests",
+      "exit_code": 0,
+      "output_sha256": "245cda7fa93a02d2283ea09099957c59c509505122f252480be20f49c3cd8763"
+    }
+  ],
+  "host_unittest_methods_passed": 214,
+  "host_runtime_seconds": 96.179,
+  "staged_usb_assertions_passed": 530,
+  "real_transaction_verified": true,
+  "real_asset_io_verified": true,
+  "vm_cases": [
+    {
+      "name": "usb_absent_target",
+      "passed": true,
+      "returned_to_firmware": true,
+      "gpu_present": false
+    },
+    {
+      "name": "missing_report_directory",
+      "passed": true,
+      "returned_to_firmware": true,
+      "gpu_present": false
+    },
+    {
+      "name": "non_usb",
+      "passed": true,
+      "returned_to_firmware": true,
+      "gpu_present": false
+    }
+  ],
+  "qemu_version": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1.18)",
+  "ovmf_code_sha256": "1dbb7f9b7e7285b950929bbbc1494c186bfb061cde60cf531ff9756ef87dab7a",
+  "source_inventory_files_verified": 219,
+  "public_benchmark_runner_sha256": "806e1bd36f5f7f8268a1d7ef214fd679dd00741cf872c6e1e11501ed2a5a9d2b",
+  "ptx_sha256": "1255faacf28a3c8b5a63e49f9522cda7d01848c96546ba0486b63e9621982e7e",
+  "original_hardware_benchmark_runner_sha256": "eda57810b19d3ec7c287bdd8c656d59e9cea9542231b83d1664fb43771980048",
+  "benchmark_interface_change": "Full GPU UUID is explicitly required; historical measurements retain their original runner hashes. PTX/workload is unchanged.",
+  "limitations": [
+    "No actual GPU unlock, physical driver restoration after unlock, or Windows handoff tested.",
+    "Host transaction uses exact firmware files with simulated GPU registers and real shared core/adapters.",
+    "Host EFI ownership and storage services are synthetic; they do not establish silicon support.",
+    "VM checks EFI loading, storage/target refusal and firmware return only; no GPU or assets attached.",
+    "Secure Boot and BitLocker enforcement are not tested; no Windows kernel driver is installed."
+  ],
+  "source_only_exclusions": [
+    "private captures",
+    "raw user reports",
+    "GPU UUID",
+    "BitLocker keys",
+    "generated profile headers",
+    "ROM dumps",
+    "firmware binaries",
+    "EFI binaries",
+    "Windows native driver"
+  ]
+}

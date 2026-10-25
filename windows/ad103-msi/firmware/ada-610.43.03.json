@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "target": "AD102 Booter archive shared by AD102/AD103/AD104/AD106/AD107",
+  "status": "four-PLM payload verified on one cold RTX 4070 Ti SUPER 10de:2705 canary with stock NVIDIA 580.178.04",
+  "source_repository": "https://github.com/NVIDIA/open-gpu-kernel-modules",
+  "source_revision": "452cec62d827034798072827d3866d1881662b77",
+  "source_license": "GPL-2.0 OR MIT; preserve NVIDIA notices",
+  "source_assets": {
+    "g_bindata_kgspGetBinArchiveBooterLoadUcode_AD102.c": "0504f640bc36d03c3b617b1d80cf6eee1c8022cdfffb52ed22405aaa316a1460",
+    "g_bindata_kgspGetBinArchiveGspRmBoot_AD102.c": "da110719ed6b680f26f3f7158f6731d1ff20fa859857238e23ac4935bd4cd91c"
+  },
+  "derived_assets": {
+    "booter_load_ad102.bin": "6ee05b20e1dc244c08c052f36ef28469b8d09f4955d1fe33e48a179e11a7fd49",
+    "gsp_boot_ad102.bin": "45d6335a8185d6ff13e8d1484cea73f68d3d13aa1c19dc080ed1c3482dd5bac0",
+    "gsp_boot_desc_ad102.bin": "83f8f3f1f5f9496e0ea8fc7103c2beb64d0b6de2f5ffe725f13514de5a95fa42"
+  },
+  "shared_gsp": {
+    "file": "gsp_ga10x.bin",
+    "sha256": "572373620a37418f24dc16b5031c39338778c3257e48e8408de9a57291b24f3a",
+    "fwimage_offset": 64,
+    "fwimage_size": 84226048,
+    "ada_signature_section": ".fwsignature_ad10x",
+    "ada_signature_offset": 84267118,
+    "ada_signature_size": 4096
+  },
+  "booter_geometry": {
+    "image_size": 56832,
+    "os_code_offset": 0,
+    "os_code_size": 256,
+    "os_data_offset": 32256,
+    "os_data_size": 24576,
+    "application_count": 1,
+    "app_code_offset": 256,
+    "app_code_size": 32000,
+    "app_data_offset": 256,
+    "app_data_size": 0,
+    "signature_patch_offset": 32272,
+    "ucode_id": 3,
+    "engine_id": 1,
+    "signature_count": 2,
+    "signature_total_bytes": 768
+  },
+  "debug_image_sha256": "8f1edc1cc980208eae1a25334d5f32e972b8cce3ad997c1d93a232be825b7441",
+  "production_image_sha256": "83e06ccd394eb73ab9e599a6db23be01e0df307d3ec4cfd64fa9499837a402da",
+  "payload": {
+    "filename": "v67-ad102-610.43.03-four-plm.bin",
+    "sha256": "44c36b2d6b3424e53e18f3e55db85c833655de071ce66ce42749588a4a7dc8cb",
+    "source": "TOTORONG/AD103_win_unlocker source/firmware-tools/ad102_payload.py",
+    "source_revision": "51df9c17ec89eb8486df52cc9079dde4bd1f9974",
+    "external_hardware_evidence": ["RTX 4080 AD103 10de:2704", "RTX 4090 AD102 10de:2684"],
+    "target_10de_2705_hardware_verified": true,
+    "target_10de_2705_evidence": "docs/ada-2705-report.md"
+  }
+}

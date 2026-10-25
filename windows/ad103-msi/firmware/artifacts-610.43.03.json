@@ -1,0 +1,374 @@
+{
+  "version": 1,
+  "target": "GA102 reference and RTX 4090 AD102 four-PLM speed-select unlock, NVIDIA firmware 610.43.03",
+  "source_artifacts": [
+    {
+      "name": "NVIDIA open kernel modules source archive",
+      "url": "https://download.nvidia.com/XFree86/NVIDIA-kernel-module-source/NVIDIA-kernel-module-source-610.43.03.tar.xz",
+      "checksum_url": "https://download.nvidia.com/XFree86/NVIDIA-kernel-module-source/NVIDIA-kernel-module-source-610.43.03.tar.xz.sha256sum",
+      "revision": "610.43.03 release source (NVIDIA tag 610.43.03)",
+      "sha256": "7e118923c7a23edc36114d63273a46e3e04e9af98695a42203e7ac2dfe9fc1dc",
+      "license": "GPL-2.0 OR MIT",
+      "filename": "NVIDIA-kernel-module-source-610.43.03.tar.xz"
+    },
+    {
+      "name": "GA102 CMP90 reference and rejoin15 patch set",
+      "url": "https://github.com/WildFlash1st/cmp90hx-unlock",
+      "revision": "76940ae583281daa2b883518a2e89b56c11d3a46",
+      "license": "GPL-2.0-only (repository LICENSE; previous MIT label was incorrect)",
+      "files": [
+        {
+          "path": "driver/patches/cmp90-rejoin15/0014-6104303-cmp90hx-stockflow-rejoin14-multigpu-state.patch",
+          "sha256": "c51805dc332c3b6be2e6dd34964a47ce6b1ea0ce73017e0351c216d319094bb1"
+        },
+        {
+          "path": "driver/patches/cmp90-rejoin15/0015-6104303-cmp90hx-stockflow-rejoin15-serialized-start.patch",
+          "sha256": "3dd3883479d10a822d54292db87a1552f15d6b144b8c42bfc88a519674836cb4"
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643"
+        }
+      ]
+    },
+    {
+      "name": "nvidia-utils binary package used for exact firmware extraction",
+      "version": "610.43.03-1",
+      "architecture": "x86_64_v3",
+      "license": "custom (package metadata)",
+      "sha256": "e17e7c92eeffa178b0fe1f40eb17a47095f8fc3ce4a77bf115cf5bd5a4df86e9",
+      "firmware": [
+        {
+          "path": "usr/lib/firmware/nvidia/610.43.03/gsp_ga10x.bin",
+          "size": 84277400,
+          "sha256": "572373620a37418f24dc16b5031c39338778c3257e48e8408de9a57291b24f3a"
+        }
+      ],
+      "filename": "nvidia-utils-610.43.03-1-x86_64_v3.pkg.tar.zst",
+      "url": "https://archive.cachyos.org/archive/cachyos-v3/nvidia-utils-610.43.03-1-x86_64_v3.pkg.tar.zst",
+      "notice": {
+        "path": "usr/share/licenses/nvidia-utils/LICENSE",
+        "sha256": "c692fb14ad4f499c6aee1b9e144e6905148c420e6225b17cb2937366c1e507ad"
+      }
+    }
+  ],
+  "generated_payload": {
+    "name": "rejoin15 GA102 610.43.03 V67 signature image",
+    "size": 64000,
+    "size_hex": "0x0000fa00",
+    "fill_dword_le": "0x0000019c",
+    "stack_map": {
+      "active_canary_dmem": "0x0000ff4c",
+      "initial_return_slot_dmem": "0x0000ff50",
+      "active_canary_payload_offset": "0x0000f94c",
+      "initial_return_slot_payload_offset": "0x0000f950"
+    },
+    "overrides": [
+      {
+        "offset": "0x00001100",
+        "value": "0x00000007"
+      },
+      {
+        "offset": "0x0000f948",
+        "value": "0xffffffff",
+        "role": "write value"
+      },
+      {
+        "offset": "0x0000f950",
+        "value": "0x00000d44"
+      },
+      {
+        "offset": "0x0000f960",
+        "value": "0x00823804",
+        "role": "FEAT_OVR_PLM address"
+      },
+      {
+        "offset": "0x0000f968",
+        "value": "0x00001fce"
+      },
+      {
+        "offset": "0x0000f974",
+        "value": "0x00000000"
+      },
+      {
+        "offset": "0x0000f97c",
+        "value": "0x00001101"
+      },
+      {
+        "offset": "0x0000f980",
+        "value": "0x000084c8"
+      },
+      {
+        "offset": "0x0000f984",
+        "value": "0x00008e18"
+      },
+      {
+        "offset": "0x0000f98c",
+        "value": "0x000084c8"
+      },
+      {
+        "offset": "0x0000f990",
+        "value": "0x00000000"
+      },
+      {
+        "offset": "0x0000f998",
+        "value": "0x00001fce"
+      },
+      {
+        "offset": "0x0000f9a4",
+        "value": "0x0000ffbc"
+      },
+      {
+        "offset": "0x0000f9ac",
+        "value": "0x00005789"
+      },
+      {
+        "offset": "0x0000f9bc",
+        "value": "0x00000d44"
+      },
+      {
+        "offset": "0x0000f9cc",
+        "value": "0x00000003"
+      },
+      {
+        "offset": "0x0000f9d4",
+        "value": "0x00001fce"
+      },
+      {
+        "offset": "0x0000f9e8",
+        "value": "0x00000d52"
+      },
+      {
+        "offset": "0x0000f9ec",
+        "value": "0x000081ee",
+        "role": "terminator"
+      }
+    ],
+    "write_value_offset": "0x0000f948",
+    "write_value": "0xffffffff",
+    "write_address_offset": "0x0000f960",
+    "write_address": "0x00823804",
+    "terminator_offset": "0x0000f9ec",
+    "terminator": "0x000081ee",
+    "sha256": "2a0aa1f86d0b6afff5214d641d87d46dc98ef06ed908ff05d0ddbad5ffb7e197",
+    "generator": "firmware/generate_v67.py",
+    "reference": "rejoin15 patch 0014, _kgspCmp90FillV67Signature",
+    "filename": "v67-ga102-610.43.03.bin",
+    "dmem_base": "0x00000600"
+  },
+  "derived_assets": {
+    "booter_load_ga102.bin": "056cbc064a888f80717726c54d7f64fcd68044d123870c95a74f37f4975dcaa4",
+    "gsp_boot_ga102.bin": "3df651acb174fd5f5561a1996965b192f50c5d763168446ed0d4ead19d895768",
+    "gsp_boot_desc_ga102.bin": "cc5a3fc1f4c47f2fe107b1b68f0176d8a448e6dec84b575e5560ccef5262bf15",
+    "booter_load_ad102.bin": "6ee05b20e1dc244c08c052f36ef28469b8d09f4955d1fe33e48a179e11a7fd49",
+    "gsp_boot_ad102.bin": "45d6335a8185d6ff13e8d1484cea73f68d3d13aa1c19dc080ed1c3482dd5bac0",
+    "gsp_boot_desc_ad102.bin": "83f8f3f1f5f9496e0ea8fc7103c2beb64d0b6de2f5ffe725f13514de5a95fa42"
+  },
+  "limitation": "Hashes pin the build inputs and deterministic payloads. The RTX 4090 report separately records the measured hardware result; success on other Ada models and other firmware revisions is not established.",
+  "ada102": {
+    "meaning": "Pinned AD102 boot assets and geometry used by the RTX 4090 path.",
+    "booter_geometry": {
+      "image_size": 56832,
+      "os_code_off": 0,
+      "os_code_size": 256,
+      "os_data_off": 32256,
+      "os_data_size": 24576,
+      "num_apps": 1,
+      "app_code_off": 256,
+      "app_code_size": 32000,
+      "app_data_off": 256,
+      "app_data_size": 0,
+      "patch_loc": 32272,
+      "ucode_id": 3,
+      "engine_id": 1,
+      "num_sigs": 2,
+      "sig_bytes": 768
+    },
+    "gsp_boot_descriptor": {
+      "version": 5,
+      "manifest_offset": 0,
+      "data_offset": 2048,
+      "code_offset": 18432,
+      "image_size": 36864,
+      "note": "code_offset/data_offset/manifest_offset are descriptor words 12/10/8, the fields gpu_unlock_boot_desc_parse() returns"
+    },
+    "v67": "v67-ad102-610.43.03-four-plm.bin",
+    "limitation": "Runtime execution, register acceptance, FLR and stock-driver persistence were measured on one RTX 4090 with NVIDIA 615.78.08 and one RTX 4070 Ti SUPER 10de:2705 with NVIDIA 580.178.04; see rtx4090-register-report.md and docs/ada-2705-report.md. Independent cold-boot reproduction and other board/driver combinations remain unverified."
+  },
+  "generated_ad102_payload": {
+    "name": "AD102 610.43.03 four-PLM V67 signature image",
+    "filename": "v67-ad102-610.43.03-four-plm.bin",
+    "size": 64000,
+    "size_hex": "0x0000fa00",
+    "fill_dword_le": "0x0000019c",
+    "dmem_base": "0x00000600",
+    "stack_map": {
+      "active_canary_dmem": "0x0000ff4c",
+      "active_canary_payload_offset": "0x0000f94c",
+      "initial_return_slot_dmem": "0x0000ff50",
+      "initial_return_slot_payload_offset": "0x0000f950",
+      "initial_return_gadget": "0x000021b2",
+      "reference_canary_dmem": "0x00005f50"
+    },
+    "ordered_writes": [
+      {
+        "name": "WPR_CFG",
+        "address": "0x001fa7cc",
+        "value": "0xfffff0ff",
+        "address_offset": "0x0000f960",
+        "value_offset": "0x0000f948"
+      },
+      {
+        "name": "FBPA",
+        "address": "0x009a0148",
+        "value": "0xffffffff",
+        "address_offset": "0x0000f984",
+        "value_offset": "0x0000f974"
+      },
+      {
+        "name": "WPR",
+        "address": "0x001fa7c4",
+        "value": "0xffffffff",
+        "address_offset": "0x0000f9a8",
+        "value_offset": "0x0000f998"
+      },
+      {
+        "name": "FEAT_OVR_PLM",
+        "address": "0x00823804",
+        "value": "0xffffffff",
+        "address_offset": "0x0000f9cc",
+        "value_offset": "0x0000f9bc"
+      }
+    ],
+    "mailbox0_marker": "0x67b00001",
+    "mailbox0_marker_offset": "0x0000f9e0",
+    "cleanup_entry": "0x0000771e",
+    "cleanup_entry_offset": "0x0000f9fc",
+    "overrides": [
+      {
+        "offset": "0x00001100",
+        "value": "0x00000007"
+      },
+      {
+        "offset": "0x0000f948",
+        "value": "0xfffff0ff"
+      },
+      {
+        "offset": "0x0000f950",
+        "value": "0x000021b2"
+      },
+      {
+        "offset": "0x0000f960",
+        "value": "0x001fa7cc"
+      },
+      {
+        "offset": "0x0000f968",
+        "value": "0x000033fc"
+      },
+      {
+        "offset": "0x0000f974",
+        "value": "0xffffffff"
+      },
+      {
+        "offset": "0x0000f97c",
+        "value": "0x0000256f"
+      },
+      {
+        "offset": "0x0000f980",
+        "value": "0x00007a02"
+      },
+      {
+        "offset": "0x0000f984",
+        "value": "0x009a0148"
+      },
+      {
+        "offset": "0x0000f98c",
+        "value": "0x000033fc"
+      },
+      {
+        "offset": "0x0000f998",
+        "value": "0xffffffff"
+      },
+      {
+        "offset": "0x0000f9a0",
+        "value": "0x0000256f"
+      },
+      {
+        "offset": "0x0000f9a4",
+        "value": "0x00007a02"
+      },
+      {
+        "offset": "0x0000f9a8",
+        "value": "0x001fa7c4"
+      },
+      {
+        "offset": "0x0000f9b0",
+        "value": "0x000033fc"
+      },
+      {
+        "offset": "0x0000f9bc",
+        "value": "0xffffffff"
+      },
+      {
+        "offset": "0x0000f9c4",
+        "value": "0x0000256f"
+      },
+      {
+        "offset": "0x0000f9c8",
+        "value": "0x00007a02"
+      },
+      {
+        "offset": "0x0000f9cc",
+        "value": "0x00823804"
+      },
+      {
+        "offset": "0x0000f9d4",
+        "value": "0x000033fc"
+      },
+      {
+        "offset": "0x0000f9e0",
+        "value": "0x67b00001"
+      },
+      {
+        "offset": "0x0000f9e8",
+        "value": "0x0000256f"
+      },
+      {
+        "offset": "0x0000f9ec",
+        "value": "0x00007a02"
+      },
+      {
+        "offset": "0x0000f9f8",
+        "value": "0x000031b5"
+      },
+      {
+        "offset": "0x0000f9fc",
+        "value": "0x0000771e"
+      }
+    ],
+    "sha256": "44c36b2d6b3424e53e18f3e55db85c833655de071ce66ce42749588a4a7dc8cb",
+    "generator": "firmware/generate_v67.py:build_ad102_payload",
+    "provenance": {
+      "name": "TOTORONG/AD103_win_unlocker",
+      "url": "https://huggingface.co/TOTORONG/AD103_win_unlocker",
+      "revision": "51df9c17ec89eb8486df52cc9079dde4bd1f9974",
+      "license": "GPL-2.0-only (generator SPDX and repository LICENSE)",
+      "files": [
+        {
+          "path": "source/firmware-tools/ad102_payload.py",
+          "sha256": "4ad4fa566e367bc8547f56293d2b4aa8522b09d39712309ee9b32d2ee48ad70d"
+        },
+        {
+          "path": "USB/RTX4080-EXPERIMENT/ASSETS/v67-ad102-610.43.03-four-plm.bin",
+          "sha256": "44c36b2d6b3424e53e18f3e55db85c833655de071ce66ce42749588a4a7dc8cb"
+        },
+        {
+          "path": "LICENSE",
+          "sha256": "189b1af95d661151e054cea10c91b3d754e4de4d3fecfb074c1fb29476f7167b"
+        }
+      ],
+      "adaptation": "Deterministic payload constants only; upstream interpreter, narrative and disassembly are not copied."
+    },
+    "limitation": "The chain is derived from public debug-booter analysis. Payload-byte reproduction alone does not establish hardware behavior; the RTX 4090 report records one measured production-booter success. A mailbox marker alone does not prove BAR writes were accepted."
+  }
+}
