@@ -38,3 +38,7 @@
 /docs/evidence/ad104-windows/** -text whitespace=cr-at-eol,-blank-at-eof
 /windows/ad104-msi/benchmark.py -text
 /windows/ad104-msi/vendor/edk2/** -text whitespace=cr-at-eol,-blank-at-eof
+
+# Preserve the tested AD103 reference's vendored header and launcher bytes.
+/windows/ad103-msi/windows/deps/edk2/** -text -whitespace
+/windows/ad103-msi/windows/**/*.cmd -text

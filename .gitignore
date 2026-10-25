@@ -34,3 +34,9 @@ Module.symvers
 *.exe
 *.obj
 *.a
+
+# Pinned MSI AD103 Windows source snapshot: captures and generated outputs stay local.
+/windows/ad103-msi/windows/build/
+/windows/ad103-msi/windows/.cache/
+/windows/ad103-msi/local/
+!/windows/ad103-msi/windows/**/*.cmd

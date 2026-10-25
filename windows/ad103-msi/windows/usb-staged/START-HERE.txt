@@ -1,0 +1,163 @@
+GPU Unlock for this MSI RTX 4070 Ti SUPER: 0.6.4-unlock-test
+
+Your latest 0.6.3 report (REPORT10) stopped during preflight: six unused
+USB child relationships disappeared and six new ones appeared. There was
+no GPU write, graphics-driver release or unlock attempt in that run.
+The report did not record the new child paths, so USB re-enumeration at
+the same paths is a hypothesis that this build must check during the boot.
+
+This candidate permits a one-to-one replacement only when a fresh child
+handle has the exact frozen path, host and driver of a previously unused
+USB leaf. New paths, reused original handles, active use, descendants,
+source-volume overlap and host changes still stop the attempt. GPU,
+keyboard, storage and other ownership checks remain in force.
+
+Every graph difference is checked. Diagnostics print at most 64 graph
+entries plus counts of any omitted entries. The payload, one-reset
+procedure and graphics restoration path are unchanged. This 0.6.4 build
+has not been tested on your hardware. Successful Windows handoff and
+unlock persistence still need verification. Continue only if ordinary
+Windows boots normally with the USB removed after recovery.
+
+1. RECORD THE STOCK BASELINE AND PREPARE THE USB
+
+Extract this entire ZIP to a writable folder on your Windows drive.
+Keep this same folder for all three benchmark steps so their results can
+be compared. The Windows benchmarks use your installed 64-bit Python 3.9+
+and NVIDIA driver. They install nothing and do not change GPU or system settings.
+Close GPU-heavy apps for both runs and keep the driver and power limit the same.
+
+Before the unlock attempt, remove the USB, save your work and fully shut
+the PC down (not Restart). For example, in Windows run:
+
+  shutdown /s /t 0
+
+After the PC is fully off, power it on WITHOUT the USB. In this ordinary
+Windows boot, double-click Benchmark-Stock.cmd and keep its result. A warm
+restart is not a valid way to establish the stock baseline.
+
+Connect the same FAT32 USB containing the released 0.6.3 test. Keep all its
+GPU-UNLOCK-ADA/RUNxx reports. Double-click Update-USB.cmd and enter its letter.
+
+No Python installation or download is needed for this update. The updater
+checks the existing five firmware files, NVIDIA-LICENSE and NOTICE.md in
+GPU-UNLOCK-ADA/ASSETS against all seven exact sizes and SHA-256 hashes, then
+reuses them in place. It does not rewrite, replace or delete those assets.
+If any file is missing, different, linked or unexpected, the update stops.
+No NVIDIA binary firmware is distributed in this ZIP.
+
+Only the exact released 0.6.3 EFI is accepted. An already updated USB or
+unknown bootloader is refused. The updater never formats a disk, changes
+boot/security settings, installs a driver or restarts Windows. It stages
+and verifies the new EFI before replacing the boot image, keeps the previous
+EFI in EFI/BOOT/BOOTX64-0.6.3-<unique-id>.bak, and preserves all existing
+assets, RUNxx reports and backups, including your earlier rehearsal backup.
+
+Do not boot the USB unless the updater finishes with "USB ready". If it
+fails, retain its complete error and all staged files/backups. Do not
+manually substitute files or erase reports to force the update through.
+
+2. BEFORE BOOTING
+
+Only after the updater says "USB ready", save your work and make sure your
+BitLocker recovery key is available away from this PC. Never upload the key.
+
+If BitLocker protection is currently on, open PowerShell as Administrator:
+
+  Suspend-BitLocker -MountPoint $env:SystemDrive -RebootCount 0
+  Get-BitLockerVolume -MountPoint $env:SystemDrive | Select-Object MountPoint,VolumeStatus,ProtectionStatus
+
+Expect VolumeStatus FullyEncrypted and ProtectionStatus Off. Suspension does
+not decrypt the drive. RebootCount 0 keeps protection suspended until you
+manually resume it, so keep this temporary test brief and complete step 5.
+If protection is already suspended for this test, do not suspend it again.
+
+If Secure Boot is currently on, enter your firmware settings the same way
+you did for the working rehearsal and temporarily disable ONLY Secure Boot.
+Keep UEFI mode, TPM, enrolled Secure Boot keys and Memory Integrity settings
+unchanged. Do not clear the TPM or flash the VBIOS. This unsigned EFI cannot
+run while Secure Boot is enabled. If Secure Boot is already off for this
+test, do not change it again.
+
+Return to Windows, save your work, then perform a full shutdown:
+
+  shutdown /s /t 0
+
+Once the PC is fully off, power it on and select the same USB in its one-time
+boot menu. The tool checks this captured board, firmware ownership and cold
+GPU state. The updater itself never changes these security settings.
+
+3. AT THE UNLOCK SCREEN
+
+Read the displayed checks. Press U once only when the actual-unlock prompt
+appears. R was for the earlier rehearsal; U arms this payload. Esc or the
+displayed timeout cancels before release. There is no automatic retry.
+
+After U the program releases the firmware graphics drivers, maps DMA buffers,
+runs the FWSEC/SEC2 payload, writes GPU selectors and performs ONE PCIe
+function-level reset. It then verifies containment and cleanup, restores
+firmware graphics and starts the existing Windows loader only after its
+checks pass. It does not flash the GPU or replace the NVIDIA driver.
+
+GPU ownership, PCI control, DMA cleanup and final hardware checks still
+apply. Unexplained USB changes also stop the attempt. Preserve the report
+if it refuses to continue; do not change connected devices during the test.
+
+The screen can go black. If Windows has not appeared after two minutes,
+power the PC fully OFF, remove the USB, and use the recovery procedure that
+worked for the previous rehearsal. Restore your normal security settings.
+Do not keep retrying the unlock after a failed or incomplete run.
+
+4. SEND THE RESULT
+
+If Windows boots, first save the evidence BEFORE restarting, shutting down
+or restoring security settings: the unlock is temporary and a reboot may
+lose it. Do not run the USB test again. Copy the newest
+GPU-UNLOCK-ADA/RUNxx/REPORT.TXT from the USB. In this same Windows session,
+double-click Benchmark-Unlocked.cmd, then Compare-Benchmarks.cmd from the
+SAME extracted folder used for Benchmark-Stock.cmd. Do not restart between
+the unlock boot and this measurement. Results are saved under
+benchmark-results: stock-*.json, unlocked-*.json, and comparison-*.json with
+a matching comparison .txt. The comparison launcher prints the newest stock
+and unlocked files it selects. Check that these are the two intended runs;
+the comparison is meaningful only with the matching stock baseline.
+
+Then open PowerShell in this extracted package folder and run:
+
+  powershell -NoProfile -ExecutionPolicy Bypass -File .\Collect-WindowsResult.ps1
+
+This performs standard read-only Windows and nvidia-smi queries and saves a
+timestamped Windows-Result-*.txt beside the script. Send the USB report,
+Windows result and benchmark result/comparison files, and say
+whether Windows booted normally. Never send your BitLocker recovery key.
+A successful boot or nvidia-smi query does not establish an unlock or speed
+gain; the report and matched benchmark results must be checked together.
+If a benchmark or comparison fails, retain its exact output. Do not install
+another GPU utility or change clocks, power limits or driver settings to
+force it to run.
+
+If it black-screens, recover first and send the newest report, even if it
+ends early. A missing final success line must not be interpreted as success.
+Keep the old reports, all 0.6.x backups and the original rehearsal EFI backup.
+
+5. RESTORE YOUR NORMAL SECURITY SETTINGS
+
+After saving the reports and benchmark results and completing this test, remove
+the USB. Re-enable Secure Boot in firmware first, then boot Windows. In an
+Administrator PowerShell window run:
+
+  Confirm-SecureBootUEFI
+
+Expect True. Then resume BitLocker only if you suspended it for this test:
+
+  Resume-BitLocker -MountPoint $env:SystemDrive
+  Get-BitLockerVolume -MountPoint $env:SystemDrive | Select-Object MountPoint,VolumeStatus,ProtectionStatus
+
+Expect FullyEncrypted and ProtectionStatus On. If a command fails or the
+status differs, retain its error and resolve it before leaving protection
+suspended. The package does not automate any security-setting changes.
+
+Microsoft references:
+https://learn.microsoft.com/en-us/powershell/module/bitlocker/suspend-bitlocker
+https://learn.microsoft.com/en-us/powershell/module/bitlocker/resume-bitlocker
+https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/disabling-secure-boot

@@ -1,0 +1,47 @@
+GPU Unlock Windows USB rehearsal 0.5.2
+
+THIS IS AN ACTIVE FIRMWARE TEST. IT DOES NOT UNLOCK THE GPU.
+
+It tests releasing the boot-display drivers, restoring the display, and
+starting the existing Windows Boot Manager. After you press R, driver callbacks
+can change hardware state, blank the display, or hang the computer. This is not
+the read-only diagnostic. This 0.5.2 build has not been tested on physical GPU
+hardware by the authors; VALIDATION.json identifies the checks actually run.
+
+The 0.5.1 report showed that NVIDIA's graphics interface had returned but its
+framebuffer was not yet initialized. 0.5.2 accepts only that exact intermediate
+state long enough for the existing graphics-console driver to initialize it.
+The full original display state must then be verified before Windows can start.
+This tests a restoration-order fix; it may progress further but can still leave
+a black screen or hang. It has not been proven on physical hardware. Do not
+repeat the older builds.
+
+For this exact captured MSI Z690 / RTX 4070 Ti SUPER configuration only.
+Keep the current GPU, monitor and cable arrangement. Changed firmware, driver
+identities or output paths must cause refusal; do not bypass those checks.
+
+1. Extract the whole ZIP into a new Windows folder.
+2. Connect the same USB containing diagnostic 0.4.2 or rehearsal 0.5.0/0.5.1.
+   Run Update-USB.cmd.
+   It checks the USB identity and old EFI checksum, preserves every report,
+   and retains the old EFI as a .bak file. It does not format a drive.
+3. Read README.md, including the security preparation and recovery procedure,
+   before booting. Keep it available on your phone. Save the matching BitLocker
+   recovery key somewhere accessible off this PC; do not send the key to chat.
+4. Follow README.md to suspend BitLocker, perform a full shutdown/power-off,
+   temporarily disable Secure Boot, and use MSI F11 to boot the UEFI USB once.
+5. Check that the screen says firmware rehearsal. Press R only when ready to
+   run the release/restoration test. Escape or the 120-second timeout cancels
+   before the first driver release. Do not press U; this build cannot run the unlock.
+6. If successful, it should restore the display and start Windows. If it stops
+   after releasing a driver, or remains frozen for two minutes, power off,
+   remove the USB, and follow the recovery steps in README.md. Do not retry.
+7. Restore Secure Boot before resuming BitLocker, then verify both and perform
+   one normal Windows restart with the USB disconnected.
+8. Reconnect the USB and upload REPORT.TXT from its newest GPU-UNLOCK-ADA\RUNxx
+   directory. Also say whether Windows started and the display/keyboard worked.
+   A failed or partial report is useful; do not repeat the test to complete it.
+
+No Windows filter driver is installed. No VBIOS flash, persistent boot entry,
+GPU unlock payload, GPU reset routine, or automatic security-setting change is
+included. A successful rehearsal does not establish that unlocking will work.

@@ -1,0 +1,46 @@
+gpu-unlock-ada: Windows / RTX 4070 Ti SUPER test 0.1
+
+THIS PACKAGE IS THE READ-ONLY FIRST TEST. IT DOES NOT UNLOCK THE GPU.
+The full experimental port is in source/windows. Its GPU behavior is untested.
+No pull request has been opened. Hardware testing comes first.
+
+1. Extract the ZIP in Windows. Use an existing FAT32 USB with no existing
+   EFI\BOOT\BOOTX64.EFI or GPU-UNLOCK-ADA directory. Do not use your Windows disk.
+   Double-click Prepare-USB.cmd and enter the USB drive letter. It only copies
+   the diagnostic; it does not format. Or manually copy the contents of USB\
+   to the root of that FAT32 USB, without replacing an existing bootloader.
+
+2. This is an UNSIGNED x64 UEFI application. Secure Boot normally blocks it.
+   Before changing Secure Boot, have your BitLocker/device-encryption recovery
+   key available: changing firmware security settings can trigger recovery.
+   Do not clear the TPM, erase Secure Boot keys, or change CSM/legacy boot mode.
+   If you cannot comfortably boot an unsigned EFI, stop here and report that.
+
+3. With your display on the RTX 4070 Ti SUPER, shut down, power off completely,
+   then use your motherboard's ONE-TIME UEFI boot menu to select the USB.
+   Do not make it the permanent default boot device. No unlock keypress exists
+   in this diagnostic. If rejected, press Enter/Esc or wait 60 seconds.
+
+4. Boot Windows normally. Send the newest file from the USB:
+      GPU-UNLOCK-ADA\RUN00\REPORT.TXT
+   Later runs use RUN01, RUN02, etc. Send it even if the diagnostic fails.
+   A failure is useful evidence, not a reason to bypass a check.
+
+The first version expects exactly one RTX 4070 Ti SUPER and one physical UEFI
+display on it. A second active GPU/display may fail the display check. Please
+report that configuration; do not change hardware solely to satisfy this test.
+
+Diagnostic GPU register writes, firmware execution, GPU reset, and firmware
+driver detach are compiled out. It writes only its report on the USB. It does
+not flash the VBIOS, install a driver, modify your Windows partition, or set a
+persistent boot entry. The report includes PCI configuration, board identifiers,
+register samples, ROM hashes and firmware-driver metadata, not recovery keys
+or a ROM dump. Review it before sharing.
+
+Next: review the report and prepare a separate profile-matched unlock build.
+That later experiment can hang or black-screen and is not certified safe for
+the GPU. No permanent-damage guarantee is possible. It must be tested through
+Windows startup, CUDA numerical correctness and a before/after benchmark before
+calling the Windows port working or creating the requested PR.
+
+See source/windows/README.md and VALIDATION.txt for implementation and test limits.

@@ -1,0 +1,359 @@
+// SPDX-License-Identifier: GPL-2.0-only
+// Register-resident instruction throughput probes; all inputs are exactly one.
+// Eight independent accumulator chains prevent a single dependency chain from
+// dominating the tensor instruction issue rate. Every lane stores its result.
+.version 7.8
+.target sm_89
+.address_size 64
+
+.visible .entry bench_fp16_fp32(
+    .param .u32 iterations,
+    .param .u64 output,
+    .param .b32 input_bits
+)
+{
+    .reg .pred %p;
+    .reg .b32 %i, %n, %thread_idx, %bid, %bdim, %idx, %a, %grid, %cells;
+    .reg .b64 %out, %offset, %address, %stride;
+    .reg .f32 %f<32>, %sum, %one;
+    ld.param.u32 %n, [iterations];
+    ld.param.u64 %out, [output];
+    mov.u32 %i, 0;
+    mov.f32 %f0, 0f00000000;
+    mov.f32 %f1, 0f3f800000;
+    mov.f32 %f2, 0f40000000;
+    mov.f32 %f3, 0f40400000;
+    mov.f32 %f4, 0f40800000;
+    mov.f32 %f5, 0f40a00000;
+    mov.f32 %f6, 0f40c00000;
+    mov.f32 %f7, 0f40e00000;
+    mov.f32 %f8, 0f41000000;
+    mov.f32 %f9, 0f41100000;
+    mov.f32 %f10, 0f41200000;
+    mov.f32 %f11, 0f41300000;
+    mov.f32 %f12, 0f41400000;
+    mov.f32 %f13, 0f41500000;
+    mov.f32 %f14, 0f41600000;
+    mov.f32 %f15, 0f41700000;
+    mov.f32 %f16, 0f41800000;
+    mov.f32 %f17, 0f41880000;
+    mov.f32 %f18, 0f41900000;
+    mov.f32 %f19, 0f41980000;
+    mov.f32 %f20, 0f41a00000;
+    mov.f32 %f21, 0f41a80000;
+    mov.f32 %f22, 0f41b00000;
+    mov.f32 %f23, 0f41b80000;
+    mov.f32 %f24, 0f41c00000;
+    mov.f32 %f25, 0f41c80000;
+    mov.f32 %f26, 0f41d00000;
+    mov.f32 %f27, 0f41d80000;
+    mov.f32 %f28, 0f41e00000;
+    mov.f32 %f29, 0f41e80000;
+    mov.f32 %f30, 0f41f00000;
+    mov.f32 %f31, 0f41f80000;
+    ld.param.b32 %a, [input_bits];
+    setp.eq.u32 %p, %n, 0;
+    @%p bra DONE;
+LOOP:
+    mma.sync.aligned.m16n8k16.row.col.f32.f16.f16.f32
+        {%f0, %f1, %f2, %f3}, {%a, %a, %a, %a}, {%a, %a}, {%f0, %f1, %f2, %f3};
+    mma.sync.aligned.m16n8k16.row.col.f32.f16.f16.f32
+        {%f4, %f5, %f6, %f7}, {%a, %a, %a, %a}, {%a, %a}, {%f4, %f5, %f6, %f7};
+    mma.sync.aligned.m16n8k16.row.col.f32.f16.f16.f32
+        {%f8, %f9, %f10, %f11}, {%a, %a, %a, %a}, {%a, %a}, {%f8, %f9, %f10, %f11};
+    mma.sync.aligned.m16n8k16.row.col.f32.f16.f16.f32
+        {%f12, %f13, %f14, %f15}, {%a, %a, %a, %a}, {%a, %a}, {%f12, %f13, %f14, %f15};
+    mma.sync.aligned.m16n8k16.row.col.f32.f16.f16.f32
+        {%f16, %f17, %f18, %f19}, {%a, %a, %a, %a}, {%a, %a}, {%f16, %f17, %f18, %f19};
+    mma.sync.aligned.m16n8k16.row.col.f32.f16.f16.f32
+        {%f20, %f21, %f22, %f23}, {%a, %a, %a, %a}, {%a, %a}, {%f20, %f21, %f22, %f23};
+    mma.sync.aligned.m16n8k16.row.col.f32.f16.f16.f32
+        {%f24, %f25, %f26, %f27}, {%a, %a, %a, %a}, {%a, %a}, {%f24, %f25, %f26, %f27};
+    mma.sync.aligned.m16n8k16.row.col.f32.f16.f16.f32
+        {%f28, %f29, %f30, %f31}, {%a, %a, %a, %a}, {%a, %a}, {%f28, %f29, %f30, %f31};
+    add.u32 %i, %i, 1;
+    setp.lt.u32 %p, %i, %n;
+    @%p bra LOOP;
+DONE:
+    mov.u32 %thread_idx, %tid.x;
+    mov.u32 %bid, %ctaid.x;
+    mov.u32 %bdim, %ntid.x;
+    mad.lo.u32 %idx, %bid, %bdim, %thread_idx;
+    mul.wide.u32 %offset, %idx, 4;
+    add.u64 %address, %out, %offset;
+    mov.u32 %grid, %nctaid.x;
+    mul.lo.u32 %cells, %grid, %bdim;
+    mul.wide.u32 %stride, %cells, 4;
+    st.global.f32 [%address], %f0;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f1;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f2;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f3;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f4;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f5;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f6;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f7;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f8;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f9;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f10;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f11;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f12;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f13;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f14;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f15;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f16;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f17;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f18;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f19;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f20;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f21;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f22;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f23;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f24;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f25;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f26;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f27;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f28;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f29;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f30;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f31;
+    ret;
+}
+
+.visible .entry bench_bf16_fp32(
+    .param .u32 iterations,
+    .param .u64 output,
+    .param .b32 input_bits
+)
+{
+    .reg .pred %p;
+    .reg .b32 %i, %n, %thread_idx, %bid, %bdim, %idx, %a, %grid, %cells;
+    .reg .b64 %out, %offset, %address, %stride;
+    .reg .f32 %f<32>, %sum, %one;
+    ld.param.u32 %n, [iterations];
+    ld.param.u64 %out, [output];
+    mov.u32 %i, 0;
+    mov.f32 %f0, 0f00000000;
+    mov.f32 %f1, 0f3f800000;
+    mov.f32 %f2, 0f40000000;
+    mov.f32 %f3, 0f40400000;
+    mov.f32 %f4, 0f40800000;
+    mov.f32 %f5, 0f40a00000;
+    mov.f32 %f6, 0f40c00000;
+    mov.f32 %f7, 0f40e00000;
+    mov.f32 %f8, 0f41000000;
+    mov.f32 %f9, 0f41100000;
+    mov.f32 %f10, 0f41200000;
+    mov.f32 %f11, 0f41300000;
+    mov.f32 %f12, 0f41400000;
+    mov.f32 %f13, 0f41500000;
+    mov.f32 %f14, 0f41600000;
+    mov.f32 %f15, 0f41700000;
+    mov.f32 %f16, 0f41800000;
+    mov.f32 %f17, 0f41880000;
+    mov.f32 %f18, 0f41900000;
+    mov.f32 %f19, 0f41980000;
+    mov.f32 %f20, 0f41a00000;
+    mov.f32 %f21, 0f41a80000;
+    mov.f32 %f22, 0f41b00000;
+    mov.f32 %f23, 0f41b80000;
+    mov.f32 %f24, 0f41c00000;
+    mov.f32 %f25, 0f41c80000;
+    mov.f32 %f26, 0f41d00000;
+    mov.f32 %f27, 0f41d80000;
+    mov.f32 %f28, 0f41e00000;
+    mov.f32 %f29, 0f41e80000;
+    mov.f32 %f30, 0f41f00000;
+    mov.f32 %f31, 0f41f80000;
+    ld.param.b32 %a, [input_bits];
+    setp.eq.u32 %p, %n, 0;
+    @%p bra DONE;
+LOOP:
+    mma.sync.aligned.m16n8k16.row.col.f32.bf16.bf16.f32
+        {%f0, %f1, %f2, %f3}, {%a, %a, %a, %a}, {%a, %a}, {%f0, %f1, %f2, %f3};
+    mma.sync.aligned.m16n8k16.row.col.f32.bf16.bf16.f32
+        {%f4, %f5, %f6, %f7}, {%a, %a, %a, %a}, {%a, %a}, {%f4, %f5, %f6, %f7};
+    mma.sync.aligned.m16n8k16.row.col.f32.bf16.bf16.f32
+        {%f8, %f9, %f10, %f11}, {%a, %a, %a, %a}, {%a, %a}, {%f8, %f9, %f10, %f11};
+    mma.sync.aligned.m16n8k16.row.col.f32.bf16.bf16.f32
+        {%f12, %f13, %f14, %f15}, {%a, %a, %a, %a}, {%a, %a}, {%f12, %f13, %f14, %f15};
+    mma.sync.aligned.m16n8k16.row.col.f32.bf16.bf16.f32
+        {%f16, %f17, %f18, %f19}, {%a, %a, %a, %a}, {%a, %a}, {%f16, %f17, %f18, %f19};
+    mma.sync.aligned.m16n8k16.row.col.f32.bf16.bf16.f32
+        {%f20, %f21, %f22, %f23}, {%a, %a, %a, %a}, {%a, %a}, {%f20, %f21, %f22, %f23};
+    mma.sync.aligned.m16n8k16.row.col.f32.bf16.bf16.f32
+        {%f24, %f25, %f26, %f27}, {%a, %a, %a, %a}, {%a, %a}, {%f24, %f25, %f26, %f27};
+    mma.sync.aligned.m16n8k16.row.col.f32.bf16.bf16.f32
+        {%f28, %f29, %f30, %f31}, {%a, %a, %a, %a}, {%a, %a}, {%f28, %f29, %f30, %f31};
+    add.u32 %i, %i, 1;
+    setp.lt.u32 %p, %i, %n;
+    @%p bra LOOP;
+DONE:
+    mov.u32 %thread_idx, %tid.x;
+    mov.u32 %bid, %ctaid.x;
+    mov.u32 %bdim, %ntid.x;
+    mad.lo.u32 %idx, %bid, %bdim, %thread_idx;
+    mul.wide.u32 %offset, %idx, 4;
+    add.u64 %address, %out, %offset;
+    mov.u32 %grid, %nctaid.x;
+    mul.lo.u32 %cells, %grid, %bdim;
+    mul.wide.u32 %stride, %cells, 4;
+    st.global.f32 [%address], %f0;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f1;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f2;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f3;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f4;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f5;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f6;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f7;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f8;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f9;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f10;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f11;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f12;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f13;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f14;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f15;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f16;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f17;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f18;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f19;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f20;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f21;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f22;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f23;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f24;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f25;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f26;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f27;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f28;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f29;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f30;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f31;
+    ret;
+}
+
+.visible .entry bench_scalar_fp32(
+    .param .u32 iterations,
+    .param .u64 output,
+    .param .b32 input_bits
+)
+{
+    .reg .pred %p;
+    .reg .b32 %i, %n, %thread_idx, %bid, %bdim, %idx, %a, %grid, %cells;
+    .reg .b64 %out, %offset, %address, %stride;
+    .reg .f32 %f<32>, %sum, %one;
+    ld.param.u32 %n, [iterations];
+    ld.param.u64 %out, [output];
+    mov.u32 %i, 0;
+    mov.f32 %f0, 0f00000000;
+    mov.f32 %f1, 0f3f800000;
+    mov.f32 %f2, 0f40000000;
+    mov.f32 %f3, 0f40400000;
+    mov.f32 %f4, 0f40800000;
+    mov.f32 %f5, 0f40a00000;
+    mov.f32 %f6, 0f40c00000;
+    mov.f32 %f7, 0f40e00000;
+    ld.param.f32 %one, [input_bits];
+    setp.eq.u32 %p, %n, 0;
+    @%p bra DONE;
+LOOP:
+    fma.rn.f32 %f0, %one, %one, %f0;
+    fma.rn.f32 %f1, %one, %one, %f1;
+    fma.rn.f32 %f2, %one, %one, %f2;
+    fma.rn.f32 %f3, %one, %one, %f3;
+    fma.rn.f32 %f4, %one, %one, %f4;
+    fma.rn.f32 %f5, %one, %one, %f5;
+    fma.rn.f32 %f6, %one, %one, %f6;
+    fma.rn.f32 %f7, %one, %one, %f7;
+    add.u32 %i, %i, 1;
+    setp.lt.u32 %p, %i, %n;
+    @%p bra LOOP;
+DONE:
+    mov.u32 %thread_idx, %tid.x;
+    mov.u32 %bid, %ctaid.x;
+    mov.u32 %bdim, %ntid.x;
+    mad.lo.u32 %idx, %bid, %bdim, %thread_idx;
+    mul.wide.u32 %offset, %idx, 4;
+    add.u64 %address, %out, %offset;
+    mov.u32 %grid, %nctaid.x;
+    mul.lo.u32 %cells, %grid, %bdim;
+    mul.wide.u32 %stride, %cells, 4;
+    st.global.f32 [%address], %f0;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f1;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f2;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f3;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f4;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f5;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f6;
+    add.u64 %address, %address, %stride;
+    st.global.f32 [%address], %f7;
+    ret;
+}
