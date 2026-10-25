@@ -1,0 +1,1 @@
+{"gpu": "GPU-UUID-OMITTED, NVIDIA GeForce RTX 4060 Ti, 00000000:53:00.0, 615.78.08, 165.00, 210, 405", "command": "0x20801230", "rates": {"imla0": 0, "fmla16": 0, "dp": 0, "fmla32": 3, "ffma": 0, "imla1": 3, "imla2": 3, "imla3": 0, "imla4": 3}, "meaning": "0=full; 1=half; 2=quarter; higher values are further reductions", "hardware_changes": false}

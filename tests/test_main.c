@@ -18,6 +18,7 @@
 #define RTX_4090 0x2684 /* AD102 */
 #define RTX_4070TI_SUPER GU_AD103_RTX_4070_TI_SUPER
 #define RTX_4060TI_16GB GU_AD106_RTX_4060_TI_16GB
+#define RTX_4060TI_16GB_2803 GU_AD106_RTX_4060_TI_16GB_2803
 
 static struct pci_dev devices[MAX_DEVICES];
 static unsigned int device_count;
@@ -354,6 +355,22 @@ int main(void)
 	run();
 	assert(fake.loads == 1 && fake.started == 1 && fake.unlocks[0]);
 	puts("ad106: gated exact-card dispatch PASS");
+
+	/* The 2803 variant of the experimental AD106 target follows the same
+	 * gating: refused under targets=all, dispatched on an exact card. */
+	reset("all");
+	ad106_experimental = true;
+	add("0000:01:00.0", RTX_4060TI_16GB_2803, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	assert(logged("experimental AD106 requires a single exact PCI target"));
+	reset("0000:01:00.0");
+	ad106_experimental = true;
+	add("0000:01:00.0", RTX_4060TI_16GB_2803, false);
+	fake.expected_concurrent = 1;
+	run();
+	assert(fake.loads == 1 && fake.started == 1 && fake.unlocks[0]);
+	puts("ad106 2803: gated exact-card dispatch PASS");
 
 	/* No opt-in on the command line: the module does nothing. */
 	for (int empty = 0; empty < 2; empty++) {

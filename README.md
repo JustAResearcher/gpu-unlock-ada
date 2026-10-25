@@ -91,6 +91,19 @@ same-card stock throughput run has been made yet. See the
 Other Ada IDs, professional RTX A-series and data-centre parts are not accepted.
 Shared firmware across Ada chips does not establish support for untested cards.
 
+RTX 4060 Ti 16GB `10de:2803` is an additional **experimental AD106 target
+validated on one card**, admitted under the same `gpu_unlock.ad106_experimental=1`
+flag and the same single exact PCI address requirement; `targets=all` never
+selects it. On the tested card, one cold boot passed every marker, permission,
+selector and post-FLR gate, the NVIDIA 615.78.08 driver loaded, and a matched
+same-card benchmark measured FP16/FP32 and TF32/FP32 tensor issue rate at
+exactly twice the stock rate (46.63 → 93.28 TF/s and 23.31 → 46.45 TF/s) with
+unsigned INT4/INT32 unchanged; one ordinary warm reboot re-ran the
+transaction. On driver 615.78.08 the RM getter reports `3` (not `0`) for the
+flipped FMLA32, IMLA2 and IMLA4 fields; the module's post-FLR readout and the
+matched benchmark are the rate evidence. See the
+[2803 report](docs/ada-2803-report.md).
+
 The RTX 4090 path runs the signed firmware, checks the payload's completion marker and
 required permissions, writes SS0 `0x88888888` and SS1 `0x8`, then performs FLR
 before the unmodified NVIDIA driver binds. It requires the expected
@@ -153,7 +166,7 @@ gpu_unlock.targets=0000:01:00.0 gpu_unlock.ad106_experimental=1
 These PCI addresses are examples. Use the full PCI names printed by `lspci -D`.
 `all` selects every accepted unbound card, including legacy GA102/GA104 targets;
 an explicit address is useful when selecting one RTX 4090. Do not mix `all` with
-addresses. RTX 4070 Ti SUPER `10de:2705` and RTX 4060 Ti 16GB `10de:2805` each
+addresses. RTX 4070 Ti SUPER `10de:2705` and RTX 4060 Ti 16GB `10de:2805`/`10de:2803` each
 require their own experimental flag and a single exact PCI address; `all` never
 selects them. Invalid entries
 are logged and ignored.
