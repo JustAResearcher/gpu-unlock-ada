@@ -10,11 +10,14 @@
 
 static char *targets;
 module_param(targets, charp, 0444);
-MODULE_PARM_DESC(targets, "\"all\" or comma-separated PCI addresses of supported RTX 4090/GA10x cards; AD103 and AD106 require an exact single address");
+MODULE_PARM_DESC(targets, "\"all\" or comma-separated PCI addresses of supported RTX 4090/GA10x cards; AD103, AD103M and AD106 require an exact single address");
 
 static bool ad103_experimental;
 module_param(ad103_experimental, bool, 0444);
 MODULE_PARM_DESC(ad103_experimental, "permit only the exact 10de:2705 AD103 canary with a single explicit PCI address");
+static bool ad103m_experimental;
+module_param(ad103m_experimental, bool, 0444);
+MODULE_PARM_DESC(ad103m_experimental, "permit only the exact 10de:2757 AD103M mobile variant with a single explicit PCI address; experimental canary");
 static bool ad106_experimental;
 module_param(ad106_experimental, bool, 0444);
 MODULE_PARM_DESC(ad106_experimental, "permit only the exact 10de:2805 AD106 target with a single explicit PCI address; untested on silicon");
@@ -54,6 +57,8 @@ static bool supported(const struct pci_dev *pdev)
 
 	if (pdev->device == GU_AD103_RTX_4070_TI_SUPER)
 		return ad103_experimental;
+	if (pdev->device == GU_AD103M_RTX_4090_MOBILE)
+		return ad103m_experimental;
 	if (pdev->device == GU_AD102_RTX_4090_D)
 		return rtx4090d_experimental;
 	if (pdev->device == GU_AD106_RTX_4060_TI_16GB)
@@ -142,6 +147,11 @@ static int __init gpu_unlock_init(void)
 			pci_err(pdev, "gpu_unlock: experimental AD103 requires a single exact PCI target\n");
 			continue;
 		}
+		if (pdev->device == GU_AD103M_RTX_4090_MOBILE &&
+		    (all || strcasecmp(targets, pci_name(pdev)))) {
+			pci_err(pdev, "gpu_unlock: experimental AD103M mobile requires a single exact PCI target\n");
+			continue;
+		}
 		if (pdev->device == GU_AD106_RTX_4060_TI_16GB &&
 		    (all || strcasecmp(targets, pci_name(pdev)))) {
 			pci_err(pdev, "gpu_unlock: experimental AD106 requires a single exact PCI target\n");
@@ -172,5 +182,5 @@ static void __exit gpu_unlock_exit(void)
 module_init(gpu_unlock_init);
 module_exit(gpu_unlock_exit);
 MODULE_LICENSE("GPL");
-MODULE_DESCRIPTION("RTX 4090, experimental RTX 4070 Ti SUPER and supported GA10x pre-driver tensor unlock");
+MODULE_DESCRIPTION("RTX 4090, experimental RTX 4070 Ti SUPER, AD103M mobile and supported GA10x pre-driver tensor unlock");
 MODULE_VERSION("1.1.1");
