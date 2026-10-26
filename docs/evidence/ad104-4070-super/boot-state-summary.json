@@ -1,0 +1,13 @@
+{
+  "source_utc": "2026-10-25T18:16:34.0046733Z",
+  "bootsequence_present": false,
+  "windows_boot_manager_first": true,
+  "windows_image_bytes": 3086680,
+  "windows_image_sha256": "2d60a2203865122dad22772136b3d905167d9dcf926d602bb5f48b3b6668abec",
+  "deployed_efi": {
+    "name": "UNLOCK.EFI",
+    "bytes": 98816,
+    "sha256": "b20394d76f7b7dc706e7d7ba893a4ca56b958db66232b7b22ed60a63d28acf84"
+  },
+  "source": "Selected boot-entry order and executable hashes from the private post-run readiness report; local identifiers, paths and recorded security settings omitted."
+}

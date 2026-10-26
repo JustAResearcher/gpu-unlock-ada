@@ -91,6 +91,20 @@ profile; it does **not** add AD104 admission to the Linux module. See the
 binaries or automatic boot installer are distributed. Contribution by **Latence.app**;
 original upstream credits and licences are retained.
 
+## Experimental RTX 4070 SUPER Windows contribution
+
+A [4070 SUPER Windows UEFI adaptation](windows/ad104-4070-super/README.md)
+completed a manual unlock on `10de:2783`, subsystem `1458:413b`, with NVIDIA
+617.42. Matched cuBLAS GEMM throughput at the same 220 W limit increased
+**49.5% for FP16/FP32** and **43.1% for BF16/FP32**; complete output hashes
+matched. The [report](docs/ad104-4070-super-windows.md) includes the physical
+transaction, all six matrix runs and reproduction steps using the existing
+internal ESP, chosen for convenience; USB boot has not been tested. The
+[workflow includes rollback steps](windows/ad104-4070-super/README.md#8-rollback-and-remove-the-experimental-setup)
+for the persistent boot entry and trial files. The separate profile covers the
+tested MSI Z790 system and leaves the original 4070 Ti port and Linux target
+admission unchanged.
+
 ## Supported targets
 
 The module selects the AD102 firmware and payload automatically for RTX 4090

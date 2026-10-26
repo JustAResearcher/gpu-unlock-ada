@@ -36,3 +36,7 @@ Module.symvers
 *.exe
 *.obj
 *.a
+
+# 4070 SUPER: assemble sources and keep captures/assets under the ignored build/.
+/windows/ad104-4070-super/local/
+/windows/ad104-4070-super/overlay/local/

@@ -1,0 +1,176 @@
+{
+  "date": "2026-10-25",
+  "scope": "One successful Windows RTX 4070 SUPER manual unlock and six matched cuBLAS GEMM runs.",
+  "files": [
+    {
+      "file": "gemm/stock-run1.json",
+      "original_filename": "stock-run1.json",
+      "original_bytes": 7939,
+      "original_sha256": "e6ac0f7a91992cebb1b9a1aa063cd9e5df116bfe7d53c8efd0679779eb2d783b",
+      "published_bytes": 7939,
+      "published_sha256": "e6ac0f7a91992cebb1b9a1aa063cd9e5df116bfe7d53c8efd0679779eb2d783b",
+      "changes": []
+    },
+    {
+      "file": "gemm/stock-run1.execution.json",
+      "original_filename": "stock-run1.execution.json",
+      "original_bytes": 6605,
+      "original_sha256": "c4f65a317a0bca2292e9993958a1ff5f05b6fe9e1e026f33e6e80d96917bec84",
+      "published_bytes": 6097,
+      "published_sha256": "94bb8658bf47491ecb12606e0599f0188bb9de4f27abbc24e69f435b234bdf73",
+      "changes": [
+        "command[0], command[1], command[3]: local absolute paths replaced by interpreter/file labels; JSON reformatted"
+      ]
+    },
+    {
+      "file": "gemm/stock-run2.json",
+      "original_filename": "stock-run2.json",
+      "original_bytes": 7946,
+      "original_sha256": "e253602682bdf0915016f6de7ee638061573592e7e6490b016a3fc3103396a27",
+      "published_bytes": 7946,
+      "published_sha256": "e253602682bdf0915016f6de7ee638061573592e7e6490b016a3fc3103396a27",
+      "changes": []
+    },
+    {
+      "file": "gemm/stock-run2.execution.json",
+      "original_filename": "stock-run2.execution.json",
+      "original_bytes": 6602,
+      "original_sha256": "311c8c150d2d03141438ad6feaebfe148be44652527a73606ff83a870d829f75",
+      "published_bytes": 6094,
+      "published_sha256": "fe77f9eec5906b6a9613120624724c3c9aa55736ef8677696cf0d606b6b4b8c2",
+      "changes": [
+        "command[0], command[1], command[3]: local absolute paths replaced by interpreter/file labels; JSON reformatted"
+      ]
+    },
+    {
+      "file": "gemm/stock-run3.json",
+      "original_filename": "stock-run3.json",
+      "original_bytes": 7945,
+      "original_sha256": "06606d9b8e72a784d84db565d4140491588c697ba7b8222ae1e42075c695bdcc",
+      "published_bytes": 7945,
+      "published_sha256": "06606d9b8e72a784d84db565d4140491588c697ba7b8222ae1e42075c695bdcc",
+      "changes": []
+    },
+    {
+      "file": "gemm/stock-run3.execution.json",
+      "original_filename": "stock-run3.execution.json",
+      "original_bytes": 6605,
+      "original_sha256": "7ae314ec7406854f0027c81c7dbbaa5f7afc27b82f5ae966a91c8c3d95bf83f8",
+      "published_bytes": 6097,
+      "published_sha256": "f63ce6f621feee554b22a4b46b5b4aed8aa645d6fe7f4162a8fc35dbef96c150",
+      "changes": [
+        "command[0], command[1], command[3]: local absolute paths replaced by interpreter/file labels; JSON reformatted"
+      ]
+    },
+    {
+      "file": "gemm/after-trial1-run1.json",
+      "original_filename": "after-trial1-run1.json",
+      "original_bytes": 7952,
+      "original_sha256": "387c4d3c19f6e621b4c996d39dd45f0ccccfaac002dd3b415a76b6779cae2cb2",
+      "published_bytes": 7952,
+      "published_sha256": "387c4d3c19f6e621b4c996d39dd45f0ccccfaac002dd3b415a76b6779cae2cb2",
+      "changes": []
+    },
+    {
+      "file": "gemm/after-trial1-run1.execution.json",
+      "original_filename": "after-trial1-run1.execution.json",
+      "original_bytes": 9021,
+      "original_sha256": "b3366bfdc0c5acd90f12634668ff5c440f0e6ff8da1c7d0e835eba8a69bea1b9",
+      "published_bytes": 8435,
+      "published_sha256": "bf4214641f0545a64d1dd05fdc28b84c782c85589b0fc1cfe14bf8d7f6327479",
+      "changes": [
+        "command[0], command[1], command[3]: local absolute paths replaced by interpreter/file labels; JSON reformatted"
+      ]
+    },
+    {
+      "file": "gemm/after-trial1-run2.json",
+      "original_filename": "after-trial1-run2.json",
+      "original_bytes": 7945,
+      "original_sha256": "dfffdbac90d27a011f96d5d810a3af781c8bce0125a2a62956f2258a99606642",
+      "published_bytes": 7945,
+      "published_sha256": "dfffdbac90d27a011f96d5d810a3af781c8bce0125a2a62956f2258a99606642",
+      "changes": []
+    },
+    {
+      "file": "gemm/after-trial1-run2.execution.json",
+      "original_filename": "after-trial1-run2.execution.json",
+      "original_bytes": 6614,
+      "original_sha256": "59c68c8e3eb484b4a12ed9e5ec9c7250acdd7df913bc7e1385cfde9a4a943c30",
+      "published_bytes": 6106,
+      "published_sha256": "0964dc1d8f45c728c9dd21c49ac99808d76256b39b604d465d6d178e0089d307",
+      "changes": [
+        "command[0], command[1], command[3]: local absolute paths replaced by interpreter/file labels; JSON reformatted"
+      ]
+    },
+    {
+      "file": "gemm/after-trial1-run3.json",
+      "original_filename": "after-trial1-run3.json",
+      "original_bytes": 7947,
+      "original_sha256": "69b22e2685fc8d1341d0005bb424c2e718efeb8dd3e2061f89b987519ab2d6b7",
+      "published_bytes": 7947,
+      "published_sha256": "69b22e2685fc8d1341d0005bb424c2e718efeb8dd3e2061f89b987519ab2d6b7",
+      "changes": []
+    },
+    {
+      "file": "gemm/after-trial1-run3.execution.json",
+      "original_filename": "after-trial1-run3.execution.json",
+      "original_bytes": 6619,
+      "original_sha256": "58b60dbefdd4068507a8055e78ebb9778fcf5b4701417826f6f241136dd6702c",
+      "published_bytes": 6111,
+      "published_sha256": "d9df906801ea37d3c0a4fbe3f4a6e516b907dfdc2f5f715e790d29b4ff5c9049",
+      "changes": [
+        "command[0], command[1], command[3]: local absolute paths replaced by interpreter/file labels; JSON reformatted"
+      ]
+    },
+    {
+      "file": "RUN0001.sanitized.txt",
+      "original_filename": "RUN0001.TXT",
+      "original_bytes": 10140,
+      "original_sha256": "b4b118dc1a6ce31821bcfaa3fdbdcef78fadcb92ea8241fc372289d2f513ac9b",
+      "published_bytes": 10159,
+      "published_sha256": "ffb29e593732a9a9c09bdbecdb477c837a483aa0c6d1ab2b37b08840377e6d18",
+      "changes": [
+        "Six UEFI handle addresses, four host DMA source addresses and one DMA mailbox address replaced by labels; all other bytes retained"
+      ]
+    },
+    {
+      "file": "gemm-comparison.json",
+      "original_filename": "gemm-comparison.json",
+      "original_bytes": 2053,
+      "original_sha256": "963b5f866fe3ec41a1290e5da31710bf25081b46024f21b7d2daf809d043b482",
+      "published_bytes": 2053,
+      "published_sha256": "963b5f866fe3ec41a1290e5da31710bf25081b46024f21b7d2daf809d043b482",
+      "changes": []
+    },
+    {
+      "file": "windows-driver-health.json",
+      "original_filename": "driver-events-after-benchmarks.json",
+      "original_bytes": 294,
+      "original_sha256": "632d0f1dcbdd4e48c450f28680fdf8be55a619847227214cccaa6775ab9d6b0c",
+      "published_bytes": 294,
+      "published_sha256": "632d0f1dcbdd4e48c450f28680fdf8be55a619847227214cccaa6775ab9d6b0c",
+      "changes": []
+    },
+    {
+      "file": "boot-state-summary.json",
+      "original_filename": "boot-readiness.json",
+      "original_bytes": 7659,
+      "original_sha256": "f49f797e905b16f17ef5d4ab5d7e9ed7cfc4e61c5b54cf57cff94a7b60363af6",
+      "published_bytes": 574,
+      "published_sha256": "9472ebc5a153163c715d4fd23d2d0ea75f8345a54c87fc578b1f54984f87502e",
+      "changes": [
+        "Selected fields; summarized firmware order and absent one-time sequence; omitted local partition/boot identifiers, paths and recorded security settings"
+      ]
+    }
+  ],
+  "private_capture": {
+    "schema": 5,
+    "bytes": 2813971,
+    "sha256": "e5b098a19b910121848395533bbe29852564bdab8a47ab78033240a3772a1522"
+  },
+  "tested_efi": {
+    "bytes": 98816,
+    "sha256": "b20394d76f7b7dc706e7d7ba893a4ca56b958db66232b7b22ed60a63d28acf84"
+  },
+  "publication": "Source, matrix measurements, telemetry and sanitized logs only; proprietary binary inputs remain local."
+}

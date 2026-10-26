@@ -40,5 +40,9 @@
 /windows/ad104-msi/benchmark.py -text
 /windows/ad104-msi/vendor/edk2/** -text whitespace=cr-at-eol,-blank-at-eof
 
+# The 4070 SUPER overlay is hash-pinned, including original line endings.
+/windows/ad104-4070-super/overlay/** -text whitespace=cr-at-eol,-blank-at-eof
+/docs/evidence/ad104-4070-super/** -text whitespace=cr-at-eol,-blank-at-eof
+
 # Preserve exact native RTX 4070 evidence bytes across platforms.
 /docs/evidence/ada2786/* -text
