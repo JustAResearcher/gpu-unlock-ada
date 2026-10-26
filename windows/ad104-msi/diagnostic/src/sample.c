@@ -32,7 +32,7 @@ static void FailureCount(TEXT *t,const CHAR8 *reason,UINTN attempts) {
 }
 static void Failure(TEXT *t,const CHAR8 *reason) {FailureCount(t,reason,0);}
 static const CHAR8 *CaptureGuard(EFI_PCI_IO_PROTOCOL *pci,EFI_BOOT_SERVICES *bs,UINT32 words[16]) {
-    EFI_STATUS status;UINT8 *config=(UINT8 *)words;UINTN segment=0,bus=0,device=0,function=0;
+    EFI_STATUS status;UINT8 *config=(UINT8 *)words;UINTN segment=0,bus=0,device=0,function=0;UINT32 bar0;
     UINT64 supports=0,length=0;VOID *resource=NULL;BOOLEAN ok;
     if(!pci||!pci->Pci.Read||!pci->Mem.Read||!pci->GetLocation||!pci->GetBarAttributes||!bs||!bs->FreePool) return "missing_protocol";
     status=pci->Pci.Read(pci,EfiPciIoWidthUint32,0,16,words);
@@ -41,9 +41,13 @@ static const CHAR8 *CaptureGuard(EFI_PCI_IO_PROTOCOL *pci,EFI_BOOT_SERVICES *bs,
     if((Read16(config+4)&6)!=2) return "memory_decode_or_bus_master_state";
     status=pci->GetLocation(pci,&segment,&bus,&device,&function);
     if(EFI_ERROR(status)||segment!=0||bus!=1||device!=0||function!=0) return "unexpected_pci_location";
-    if(Read32(config+16)!=0x80000000u) return "bar0_relocated_or_invalid";
+    /* BAR0 base is firmware-assigned: a literal address match rejects boards whose
+       firmware relocates it (ours sits at 0xdd000000). Accept any nonzero 32-bit
+       memory BAR and let the resource descriptor below be the authority. */
+    bar0=Read32(config+16);
+    if(!bar0||bar0==0xffffffffu||(bar0&1u)) return "bar0_relocated_or_invalid";
     status=pci->GetBarAttributes(pci,0,&supports,&resource);
-    ok=(BOOLEAN)(!EFI_ERROR(status)&&ResourceMatches(resource,Read32(config+16),0x80000000,&length)&&length==0x01000000);
+    ok=(BOOLEAN)(!EFI_ERROR(status)&&ResourceMatches(resource,bar0,bar0,&length)&&length==0x01000000);
     if(resource) bs->FreePool(resource);
     if(!ok) return "bar0_descriptor_mismatch";
     return NULL;
