@@ -91,6 +91,12 @@ profile; it does **not** add AD104 admission to the Linux module. See the
 binaries or automatic boot installer are distributed. Contribution by **Latence.app**;
 original upstream credits and licences are retained.
 
+A separate [RTX 4070 Laptop / AD106M Windows report](docs/ad106m-windows-secure-boot.md)
+records one ASUS laptop's Secure Boot ON/OFF and automatic-startup validation,
+including FP8, an unsuccessful initial attempt, and the limits of the measurements.
+It contributes a [reusable GEMM/privacy workflow](windows/validation/README.md),
+not a portable laptop EFI or additional Linux target admission.
+
 ## Supported targets
 
 The module selects the AD102 firmware and payload automatically for RTX 4090
