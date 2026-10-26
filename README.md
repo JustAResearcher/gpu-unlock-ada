@@ -245,6 +245,10 @@ validation.
 
 Inspect the kernel log after boot:
 
+The module logs a fixed stage sequence and a distinct message for every refusal, so the last line
+printed localises the failure. [Reading a boot log](docs/boot-log-diagnosis.md) lists the stages of a
+successful run, the refusal strings and what each one means.
+
 ```sh
 journalctl -k -b | grep gpu_unlock
 lspci -nnk -s 0000:03:00.0  # replace the example address
