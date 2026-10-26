@@ -65,9 +65,11 @@ def gpu_identity():
     return [line.strip() for line in result.stdout.splitlines() if line.strip()]
 
 
-def read_rates(expected_uuid, ioctl=None):
+def read_rates(expected_uuid, ioctl=None, gpu_minor=0):
     identity = gpu_identity()
-    if len(identity) != 1 or identity[0].split(",", 1)[0].strip() != expected_uuid:
+    matches = [line for line in identity
+               if line.split(",", 1)[0].strip() == expected_uuid]
+    if len(matches) != 1:
         raise RuntimeError("expected one GPU with the exact supplied UUID")
     if ioctl is None:
         import fcntl
@@ -77,7 +79,7 @@ def read_rates(expected_uuid, ioctl=None):
         open_flags = os.O_RDWR | getattr(os, "O_CLOEXEC", 0)
         ctl = os.open("/dev/nvidiactl", open_flags)
         descriptors.append(ctl)
-        descriptors.append(os.open("/dev/nvidia0", open_flags))
+        descriptors.append(os.open(f"/dev/nvidia{gpu_minor}", open_flags))
 
         def allocate(root, parent, cls, params=None):
             request = Alloc(root=root, parent=parent, cls=cls,
@@ -110,7 +112,19 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--expect-uuid", required=True)
     args = parser.parse_args()
-    print(json.dumps(read_rates(args.expect_uuid)))
+    # The nvidia-smi index does not always equal the /dev/nvidiaN minor, and
+    # the minor assignment need not follow PCI ascending order. Probe minors
+    # until the RM device allocation succeeds; on hosts where other cards
+    # fail the allocation, the first success is the requested GPU.
+    err = None
+    for minor in range(16):
+        try:
+            print(json.dumps(read_rates(args.expect_uuid, gpu_minor=minor)))
+            break
+        except (RuntimeError, OSError) as exc:
+            err = exc
+    else:
+        raise err
 
 
 if __name__ == "__main__":
