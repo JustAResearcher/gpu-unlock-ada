@@ -1,0 +1,174 @@
+{
+  "target": {
+    "gpu": "NVIDIA GeForce RTX 4080",
+    "pci_id": "10de:2704",
+    "vram_note": "modified 32 GiB configuration; driver reported 32760 MiB"
+  },
+  "software": {
+    "guest_os": "Ubuntu 24.04",
+    "kernel": "6.8.0-147-generic",
+    "nvidia_driver": "580.178.04",
+    "torch": "2.11.0+cu130",
+    "model": "Qwen 27B EXL3 6.0 bpw",
+    "runtime": "ExLlamaV3 1.6.2"
+  },
+  "application_prefill": {
+    "measurement": "native server prompt timings",
+    "boot_pairs": 1,
+    "warmups_per_size": 1,
+    "measured_repeats_per_size": 3,
+    "same_prompt_sha256_before_after": true,
+    "cached_tokens_zero_for_all_requests": true,
+    "requests_per_state": 12,
+    "power_limit_w": 320,
+    "clocks_locked": false,
+    "samples": [
+      {
+        "prompt_tokens": 4089,
+        "before_tokens_per_s": [
+          1785.58952,
+          1785.58952,
+          1793.42105
+        ],
+        "after_tokens_per_s": [
+          2140.8377,
+          2152.10526,
+          2129.6875
+        ],
+        "median_tokens_per_s_before": 1785.58952,
+        "median_tokens_per_s_after": 2140.8377,
+        "change_percent": 19.89529,
+        "median_prompt_seconds_before": 2.29,
+        "median_prompt_seconds_after": 1.91,
+        "target_prompt_tokens": 4096
+      },
+      {
+        "prompt_tokens": 16377,
+        "before_tokens_per_s": [
+          1649.24471,
+          1629.55224,
+          1623.09217
+        ],
+        "after_tokens_per_s": [
+          2002.07824,
+          2029.36803,
+          1999.6337
+        ],
+        "median_tokens_per_s_before": 1629.55224,
+        "median_tokens_per_s_after": 2002.07824,
+        "change_percent": 22.86064,
+        "median_prompt_seconds_before": 10.05,
+        "median_prompt_seconds_after": 8.18,
+        "target_prompt_tokens": 16384
+      },
+      {
+        "prompt_tokens": 65529,
+        "before_tokens_per_s": [
+          1286.64834,
+          1284.37868,
+          1282.87001
+        ],
+        "after_tokens_per_s": [
+          1628.45427,
+          1631.69821,
+          1630.48022
+        ],
+        "median_tokens_per_s_before": 1284.37868,
+        "median_tokens_per_s_after": 1630.48022,
+        "change_percent": 26.947,
+        "median_prompt_seconds_before": 51.02,
+        "median_prompt_seconds_after": 40.19,
+        "target_prompt_tokens": 65536
+      }
+    ],
+    "max_output_tokens": 1,
+    "temperature": 0,
+    "seed": 42,
+    "max_sequence_tokens": 98304,
+    "total_cache_tokens": 196608,
+    "kv_cache_bits": [
+      8,
+      8
+    ],
+    "prefill_chunk_tokens": 2048,
+    "cold_model_load_excluded": true
+  },
+  "cuda_numerics": {
+    "shape": "2048x2048",
+    "accumulation": "FP32",
+    "fp16": {
+      "full_output_sha256_before": "5811c59d3a1dce77e5445e13e72fd5443cb1215329728f74d2a65fc5e5699672",
+      "full_output_sha256_after": "5811c59d3a1dce77e5445e13e72fd5443cb1215329728f74d2a65fc5e5699672",
+      "relative_frobenius_error_fp64": 0.000358759615892496,
+      "median_ms_before": 0.219289588928223,
+      "median_ms_after": 0.115443205833435
+    },
+    "bf16": {
+      "full_output_sha256_before": "635f99fe0eda972b01c1b7da047451e8dc599f491dfffa389e9000ad4743392d",
+      "full_output_sha256_after": "635f99fe0eda972b01c1b7da047451e8dc599f491dfffa389e9000ad4743392d",
+      "relative_frobenius_error_fp64": 0.00286997216258041,
+      "median_ms_before": 0.219340801239014,
+      "median_ms_after": 0.115455996990204
+    },
+    "seed": 4080,
+    "inputs": "CPU torch.randn float32 matrices scaled by 0.05, then cast to the input dtype",
+    "reference": "FP64 CUDA matmul of the original float32 matrices, including input rounding in the error",
+    "hash_representation": "Complete output converted to float32 CPU NumPy bytes before SHA-256",
+    "timing": "Median of five CUDA-event windows, each containing twenty matmuls; one untimed matmul first",
+    "allow_tf32": false,
+    "allow_reduced_precision_reduction": false
+  },
+  "health": {
+    "gpu_unlock_success": true,
+    "post_load_and_benchmark_xid_errors": false,
+    "service_ready": true,
+    "nodes_ready": 6,
+    "deployment_and_configuration_preserved": true
+  },
+  "limitations": [
+    "One RTX 4080 with modified 32 GiB VRAM configuration",
+    "One stock/unlocked boot pair; repeatability across separate boots was not tested",
+    "Application performance results apply only to this workload and setup",
+    "Decode throughput, answer quality, and long-duration stability were not measured",
+    "Clock frequencies were not locked; one boot pair does not establish causal isolation across all operating conditions"
+  ],
+  "mechanism": {
+    "rm_selector_before": {
+      "imla0": 0,
+      "fmla16": 0,
+      "dp": 0,
+      "fmla32": 1,
+      "ffma": 0,
+      "imla1": 0,
+      "imla2": 1,
+      "imla3": 0,
+      "imla4": 1
+    },
+    "rm_selector_after": {
+      "imla0": 0,
+      "fmla16": 0,
+      "dp": 0,
+      "fmla32": 0,
+      "ffma": 0,
+      "imla1": 0,
+      "imla2": 0,
+      "imla3": 0,
+      "imla4": 0
+    },
+    "entry_wpr2_hi": "0x0",
+    "payload_marker": "0x67b00001",
+    "required_permissions": true,
+    "sec2_halted": true,
+    "full_rate_readout_before_and_after_flr": true,
+    "post_flr_ss0": "0x88888888",
+    "post_flr_ss1": "0x00000008"
+  },
+  "provenance": {
+    "upstream_base": "4e7fefcc4923f9e083d5324dc75a7d2f906af77f",
+    "tested_local_commit": "0059fb58a413c29186cac956ad8486135de9e9a0",
+    "tested_local_package": "1.1.1+rtx4080.1",
+    "upstream_package_version": "1.1.1",
+    "runtime_difference": "Only MODULE_VERSION is restored to the upstream package version; transaction code and payload are unchanged.",
+    "boot_method": "One VM stop/start with WPR2 disabled at entry; no host AC cycle or subsequent warm-reboot test"
+  }
+}

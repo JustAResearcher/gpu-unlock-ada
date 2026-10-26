@@ -1,0 +1,15 @@
+{
+  "benchmark-binary.sha256": "e36436681b6461ae33b412265872bf6db8b41f8761b3ec4f6f75f88dd2c1f074",
+  "cold-boot-unlock.log": "56965432af1c583f71e2abf68e3692ad0523ba13673dba0750a60d18d4277e55",
+  "cold-boot-validation.json": "201a77509e12eb023fde7982dafe231fcf3c69c62262b7df2a2fff022a5cbcc9",
+  "comparison.md": "5b23867613d379492ba9ce1fff226f6c4d88a755ad07898cce5aac7921012f84",
+  "cuda-baseline.log": "dd57420e60a375a0a5caa6ddfa59432c1a2108d82633f65bace30ff285131be8",
+  "rm-rates.json": "b095c576ca45ef5eeb9042d5d7602c7866d74f3f3f0291e38b3d415fe89c01fc",
+  "software-validation.json": "626d6cfa1297e6e6d2e77bb7ca924c721ef2ce2600435c21751fd86c68913e07",
+  "stock-registers.log": "e72936eb601286f2dbaf8d784fddef3e19a77aa2cfd2d1d88a6a45a10485699c",
+  "unlocked-cuda-benchmark.log": "da0274e43a0f4414cb7b6879248ec439fe2b72aa2623d02ea7d872cd1b3d073c",
+  "unlocked-gpu-identity.csv": "b1e5f040f86b7763b8b61cc53f76d9043a585c59c66aea3e9270985c712e2616",
+  "unlocked-rm-rates.json": "6e8029ebd6f425bb6c36b17b1d87de7e250bd15790b606d2db618e9dec8e33b1",
+  "vbios-analysis.json": "03335b9286266e0800f7bb4a1fec81abe9d4ddbf2501548eb63d86646bbbd123",
+  "vbios-parser.log": "a937f96b0009ad2b50aa5c861b44d7f6f3aeda8411ecd7944b076f094d0444b7"
+}

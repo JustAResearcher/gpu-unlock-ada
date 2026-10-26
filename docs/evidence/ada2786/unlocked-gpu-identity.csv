@@ -1,0 +1,2 @@
+name, pci.bus_id, driver_version, vbios_version, power.limit [W], clocks.current.graphics [MHz], clocks.current.memory [MHz], temperature.gpu
+NVIDIA GeForce RTX 4070, 00000000:01:00.0, 615.78.08, 95.04.3E.08.BE, 216.00 W, 2100 MHz, 10501 MHz, 34

@@ -1,0 +1,83 @@
+pci 0000:01:00.0: [10de:28a0] type 00 class 0x030000 PCIe Legacy Endpoint
+pci 0000:01:00.0: BAR 0 [mem 0x5b000000-0x5bffffff]
+pci 0000:01:00.0: BAR 1 [mem 0x6000000000-0x61ffffffff 64bit pref]
+pci 0000:01:00.0: BAR 3 [mem 0x6200000000-0x6201ffffff 64bit pref]
+pci 0000:01:00.0: BAR 5 [io  0x5000-0x507f]
+pci 0000:01:00.0: ROM [mem 0x5c000000-0x5c07ffff pref]
+pci 0000:01:00.0: PME# supported from D0 D3hot
+pci 0000:01:00.0: 16.000 Gb/s available PCIe bandwidth, limited by 2.5 GT/s PCIe x8 link at 0000:00:01.0 (capable of 126.024 Gb/s with 16.0 GT/s PCIe x8 link)
+pci 0000:01:00.1: D0 power state depends on 0000:01:00.0
+pci 0000:01:00.0: Adding to iommu group 15
+[drm] Initialized nvidia-drm 0.0.0 for 0000:01:00.0 on minor 2
+nvidia 0000:01:00.0: [drm] fb0: nvidia-drmdrmfb frame buffer device
+pci 0000:01:00.0: asset request: gpu-unlock/610.43.03/gsp_ga10x.bin
+pci 0000:01:00.0: asset result: gpu-unlock/610.43.03/gsp_ga10x.bin error=0 bytes=84277400
+pci 0000:01:00.0: asset cache cleanup: gpu-unlock/610.43.03/gsp_ga10x.bin devres_released=1
+pci 0000:01:00.0: driver probe resources: phase=entry empty=1
+pci 0000:01:00.0: asset request: gpu-unlock/610.43.03/v67-ad102-610.43.03-four-plm.bin
+pci 0000:01:00.0: asset result: gpu-unlock/610.43.03/v67-ad102-610.43.03-four-plm.bin error=0 bytes=64000
+pci 0000:01:00.0: asset cache cleanup: gpu-unlock/610.43.03/v67-ad102-610.43.03-four-plm.bin devres_released=1
+pci 0000:01:00.0: asset request: gpu-unlock/610.43.03/gsp_boot_ad102.bin
+pci 0000:01:00.0: asset result: gpu-unlock/610.43.03/gsp_boot_ad102.bin error=0 bytes=36864
+pci 0000:01:00.0: asset cache cleanup: gpu-unlock/610.43.03/gsp_boot_ad102.bin devres_released=1
+pci 0000:01:00.0: asset request: gpu-unlock/610.43.03/gsp_boot_desc_ad102.bin
+pci 0000:01:00.0: asset result: gpu-unlock/610.43.03/gsp_boot_desc_ad102.bin error=0 bytes=84
+pci 0000:01:00.0: asset cache cleanup: gpu-unlock/610.43.03/gsp_boot_desc_ad102.bin devres_released=1
+pci 0000:01:00.0: asset geometry: image=84226048 signature=4096 boot=36864 code=0x4800 data=0x800 manifest=0x0 parse=0
+pci 0000:01:00.0: asset request: gpu-unlock/610.43.03/booter_load_ad102.bin
+pci 0000:01:00.0: asset result: gpu-unlock/610.43.03/booter_load_ad102.bin error=0 bytes=57672
+pci 0000:01:00.0: asset cache cleanup: gpu-unlock/610.43.03/booter_load_ad102.bin devres_released=1
+pci 0000:01:00.0: claim: power=0 pm_cap=0x60 flags=0x0
+pci 0000:01:00.0: claim: command=0x3 capability=0x112c8de1 BAR_mask=0x4b
+pci 0000:01:00.0: layout inputs: fb_mb=0x1ffc vga=0x1 mmu_plm=0x45cb8f mmu_lo=0x1ffffff0 mmu_hi=0x0 image=84226048 boot=36864
+pci 0000:01:00.0: layout mmu: lo=0x1ffffff000 hi=0x0 hi_exclusive=0x0 constrain=0
+pci 0000:01:00.0: mmu lock ignored: high address is not the FB top
+pci 0000:01:00.0: layout decoded: fb=0x1ffc00000 vga=0x1ffb00000 mmu_valid=0 mmu_low=0x1ffffff000 frts=0x100000 heap=0x5800000 result=0
+pci 0000:01:00.0: layout ranges: nonwpr=0x1f4f00000 wpr=0x1f5000000 heap=0x1f5100000 gsp=0x1fa9a0000 boot=0x1ff9f7000 frts=0x1ffa00000 end=0x1ffb00000 scrub_floor=0x1efc00000
+pci 0000:01:00.0: DMA masks: streaming=0x7fffffffffff coherent=0x7fffffffffff requested=0xffffffff
+pci 0000:01:00.0: Booter signature: fuse_raw=0x1 version=1 signatures=2 size=768
+pci 0000:01:00.0: entry: plm=0xffffff8f ss0=0x21025116 ss1=0x7 wpr2_hi=0x0
+pci 0000:01:00.0: AD102 permission before-firmware: WPR_CFG[0x1fa7cc]=0x4cb8f before=0x4cb8f expected=0xfffff0ff required=1 valid=1 pci=0x28a010de chip=0x197000a1
+pci 0000:01:00.0: AD102 permission before-firmware: FBPA[0x9a0148]=0xffffff0f before=0xffffff0f expected=0xffffffff required=0 valid=1 pci=0x28a010de chip=0x197000a1
+pci 0000:01:00.0: AD102 permission before-firmware: WPR[0x1fa7c4]=0x4cb8f before=0x4cb8f expected=0xffffffff required=1 valid=1 pci=0x28a010de chip=0x197000a1
+pci 0000:01:00.0: AD102 permission before-firmware: FEAT[0x823804]=0xffffff8f before=0xffffff8f expected=0xffffffff required=1 valid=1 pci=0x28a010de chip=0x197000a1
+pci 0000:01:00.0: AD102 before-firmware: readout1=0x410080 fields=0 0 2 0 0 2 0 2 0 valid=1 full=0
+pci 0000:01:00.0: poll timeout tolerated: reg=0x1100f4 last=0x47b7 mask=0x80000000 expected=0x80000000 budget_us=1000
+pci 0000:01:00.0: poll timeout tolerated: reg=0x8400f4 last=0x47b7 mask=0x80000000 expected=0x80000000 budget_us=1000
+pci 0000:01:00.0: AD102 permission after-payload: WPR_CFG[0x1fa7cc]=0xfffff0ff before=0x4cb8f expected=0xfffff0ff required=1 valid=1 pci=0x28a010de chip=0x197000a1
+pci 0000:01:00.0: AD102 permission after-payload: FBPA[0x9a0148]=0xffffff0f before=0xffffff0f expected=0xffffffff required=0 valid=1 pci=0x28a010de chip=0x197000a1
+pci 0000:01:00.0: AD102 permission after-payload: WPR[0x1fa7c4]=0xffffffff before=0x4cb8f expected=0xffffffff required=1 valid=1 pci=0x28a010de chip=0x197000a1
+pci 0000:01:00.0: AD102 permission after-payload: FEAT[0x823804]=0xffffffff before=0xffffff8f expected=0xffffffff required=1 valid=1 pci=0x28a010de chip=0x197000a1
+pci 0000:01:00.0: AD102 after-payload: readout1=0x410080 fields=0 0 2 0 0 2 0 2 0 valid=1 full=0
+pci 0000:01:00.0: AD102 payload result: boot=0 halt=0 marker=0x67b00001 expected=0x67b00001 marker_ok=1 required_permissions=1 cpuctl=0x10 halted=1 debug=0xda550000 ss0=0x21025116 ss1=0x7
+pci 0000:01:00.0: selector read: SS0=0x21025116 expected_unlock=0x88888888
+pci 0000:01:00.0: selector write: SS0=0x88888888
+pci 0000:01:00.0: selector result: SS0=0x88888888 expected=0x88888888 matched=1
+pci 0000:01:00.0: selector read: SS1=0x7 expected_unlock=0x8
+pci 0000:01:00.0: selector write: SS1=0x8
+pci 0000:01:00.0: selector result: SS1=0x8 expected=0x8 matched=1
+pci 0000:01:00.0: AD102 selectors-applied: readout1=0x0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+pci 0000:01:00.0: pre-FLR selectors: ss0=0x88888888 expected=0x88888888 ss1=0x8 expected=0x8
+pci 0000:01:00.0: AD102 pre-FLR: readout1=0x0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+pci 0000:01:00.0: PCIe FLR begin: BME=0 DMA retained, chip=0x197000a1
+pci 0000:01:00.0: PCIe FLR returned: result=0
+pci 0000:01:00.0: post-FLR BAR ready: chip=0x197000a1
+pci 0000:01:00.0: post-FLR GFW result: error=0 pci=0x28a010de plm=0x8b8f boot=0x3ff cpuctl=0x10 budget_us=2050000
+pci 0000:01:00.0: engine reset assert: phase=post-FLR base=0x840000 before=0x0 write=0x1
+pci 0000:01:00.0: engine reset propagation: phase=post-FLR base=0x840000 first=0x1 tenth=0x1
+pci 0000:01:00.0: engine reset asserted: phase=post-FLR base=0x840000 error=0 last=0x1
+pci 0000:01:00.0: engine reset release: phase=post-FLR base=0x840000 before=0x1 write=0x0
+pci 0000:01:00.0: engine reset released: phase=post-FLR base=0x840000 engine=0x0 hwcfg2=0x67b7
+pci 0000:01:00.0: post-FLR SEC2 reset released, GSP halted, BME=0 pending=0 WPR2=1ffffe00:00000000 SS0=88888888 SS1=00000008
+pci 0000:01:00.0: AD102 permission post-FLR: WPR_CFG[0x1fa7cc]=0x4cb8f before=0x4cb8f expected=0xfffff0ff required=1 valid=1 pci=0x28a010de chip=0x197000a1
+pci 0000:01:00.0: AD102 permission post-FLR: FBPA[0x9a0148]=0xffffff0f before=0xffffff0f expected=0xffffffff required=0 valid=1 pci=0x28a010de chip=0x197000a1
+pci 0000:01:00.0: AD102 permission post-FLR: WPR[0x1fa7c4]=0x4cb8f before=0x4cb8f expected=0xffffffff required=1 valid=1 pci=0x28a010de chip=0x197000a1
+pci 0000:01:00.0: AD102 permission post-FLR: FEAT[0x823804]=0xffffffff before=0xffffff8f expected=0xffffffff required=1 valid=1 pci=0x28a010de chip=0x197000a1
+pci 0000:01:00.0: AD102 post-FLR: readout1=0x0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+pci 0000:01:00.0: driver probe resources: phase=handoff empty=1
+pci 0000:01:00.0: restore streaming mask: actual=0x7fffffffffff expected=0x7fffffffffff
+pci 0000:01:00.0: restore coherent mask: actual=0x7fffffffffff expected=0x7fffffffffff
+pci 0000:01:00.0: restore PCI command: actual=0x3 original=0x3 mask=0x6
+pci 0000:01:00.0: gpu_unlock: unlocked
+[drm] Initialized nvidia-drm 0.0.0 for 0000:01:00.0 on minor 0
+nvidia 0000:01:00.0: [drm] fb0: nvidia-drmdrmfb frame buffer device

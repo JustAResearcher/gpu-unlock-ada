@@ -102,8 +102,8 @@ int main()
 	cuda_check(cudaDeviceGetPCIBusId(bus_id, sizeof(bus_id), 0), "PCI bus ID");
 	std::printf("GPU: %s, sm_%d%d, PCI %s\n", prop.name, prop.major,
 		    prop.minor, bus_id);
-	if (prop.major != 8 || prop.minor != 9) {
-		std::fprintf(stderr, "Expected an Ada sm_89 device\n");
+	if (prop.major != 8 || (prop.minor != 6 && prop.minor != 9)) {
+		std::fprintf(stderr, "Expected an Ampere sm_86 or Ada sm_89 device\n");
 		return 3;
 	}
 	blas_check(cublasCreate(&handle), "cublasCreate");

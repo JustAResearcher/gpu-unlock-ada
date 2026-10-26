@@ -1,0 +1,15 @@
+torch 2.14.1+cu130 cuda 13.0 gpu NVIDIA GeForce RTX 4060
+gemm       fp16 n=4096:   29.97 TFLOPS
+gemm fp16-acc16 n=4096:   46.75 TFLOPS
+gemm       bf16 n=4096:   31.46 TFLOPS
+gemm       tf32 n=4096:   15.86 TFLOPS
+gemm       fp32 n=4096:    7.85 TFLOPS
+gemm       int8 n=4096:   28.10 TFLOPS
+gemm        fp8 n=4096:   63.97 TFLOPS
+gemm       fp16 n=8192:   31.38 TFLOPS
+gemm fp16-acc16 n=8192:   49.47 TFLOPS
+gemm       bf16 n=8192:   31.59 TFLOPS
+gemm       tf32 n=8192:   15.89 TFLOPS
+gemm       fp32 n=8192:    7.79 TFLOPS
+gemm       int8 n=8192:   26.62 TFLOPS
+gemm        fp8 n=8192:   63.49 TFLOPS

@@ -1,0 +1,52 @@
+{
+  "mma_ratios": {
+    "f16/f16": 0.9396,
+    "f16/f32": 2.0135,
+    "bf16/f32": 1.9828,
+    "s8/s32": 0.9752,
+    "dp4a": 1.0,
+    "ffma": 1.0
+  },
+  "tensor_mode_ratios": {
+    "f16_f32": 1.9609,
+    "tf32": 1.9524,
+    "u4_s32": 0.9642
+  },
+  "gemm_ratios": [
+    {
+      "mode": "FP16/FP32",
+      "n": 1024,
+      "median_ratio": 1.1830
+    },
+    {
+      "mode": "BF16/FP32",
+      "n": 1024,
+      "median_ratio": 1.2203
+    },
+    {
+      "mode": "FP16/FP32",
+      "n": 4096,
+      "median_ratio": 1.2658
+    },
+    {
+      "mode": "BF16/FP32",
+      "n": 4096,
+      "median_ratio": 0.9729
+    },
+    {
+      "mode": "FP16/FP32",
+      "n": 8192,
+      "median_ratio": 1.0770
+    },
+    {
+      "mode": "BF16/FP32",
+      "n": 8192,
+      "median_ratio": 1.1003
+    }
+  ],
+  "bar0_register_changes": {
+    "PLM_0x00823804": ["0xffffff8f", "0xffffffff"],
+    "SS0_0x0082381c": ["0x47131055", "0x88888888"],
+    "SS1_0x00823820": ["0x00000001", "0x00000008"]
+  }
+}

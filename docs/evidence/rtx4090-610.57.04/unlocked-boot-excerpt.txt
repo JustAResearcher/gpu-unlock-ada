@@ -1,0 +1,17 @@
+Oct 25 07:03:27 <host> kernel: Command line: cryptdevice=UUID=<root-uuid>:omarchy_root root=/dev/mapper/omarchy_root zswap.enabled=0 rootflags=subvol=@ rw rootfstype=btrfs  resume=/dev/mapper/omarchy_root resume_offset=1947555 initramfs_async=0 gpu_unlock.targets=0000:01:00.0
+Oct 25 07:03:27 <host> kernel: Kernel command line: cryptdevice=UUID=<root-uuid>:omarchy_root root=/dev/mapper/omarchy_root zswap.enabled=0 rootflags=subvol=@ rw rootfstype=btrfs  resume=/dev/mapper/omarchy_root resume_offset=1947555 initramfs_async=0 gpu_unlock.targets=0000:01:00.0
+Oct 25 07:03:27 <host> kernel: gpu_unlock: loading out-of-tree module taints kernel.
+Oct 25 07:03:27 <host> kernel: gpu_unlock: module verification failed: signature and/or required key missing - tainting kernel
+Oct 25 07:03:27 <host> kernel: gpu_unlock: ROM chain: pos=0x0 data=0x52494350 bytes=64512 type=0x0 last=0
+Oct 25 07:03:27 <host> kernel: gpu_unlock: ROM chain: pos=0xfc00 data=0x52494350 bytes=85504 type=0x3 last=0
+Oct 25 07:03:27 <host> kernel: gpu_unlock: ROM chain: pos=0x24a00 data=0x5344504e bytes=24576 type=0xe0 last=0
+Oct 25 07:03:27 <host> kernel: gpu_unlock: ROM chain: pos=0x2aa00 data=0x5344504e bytes=439296 type=0xe0 last=128
+Oct 25 07:03:27 <host> kernel: gpu_unlock: ROM expansion: base=0xfc00 ext=0x24a00 adjust=0x14e00
+Oct 25 07:03:27 <host> kernel: gpu_unlock: ROM BIT: offset=0x1b0 size=12 stride=6 tokens=19 adjust=0x14e00
+Oct 25 07:03:27 <host> kernel: gpu_unlock: ROM ucode table: offset=0x95be8 version=1 header=6 stride=6 entries=16
+Oct 25 07:03:27 <host> kernel: gpu_unlock: FWSEC descriptor: offset=0x43e3c ROM_bytes=1048576 header=0x32c0301
+Oct 25 07:03:27 <host> kernel: gpu_unlock: FWSEC geometry: image_off=0x44168 size=0x10000 imem=0xf200 va=0x0 pa=0x0 dmem=0xd80 pa=0x0 pkc=0xb24 interface=0x1c engine=0x400 ucode=9 signatures=2 versions=0x3 bytes=768
+Oct 25 07:03:27 <host> kernel: gpu_unlock: FWSEC interface: offset=0x1c version=1 header=4 stride=8 entries=2 FRTS=0x5ff200000
+Oct 25 07:03:27 <host> kernel: gpu_unlock: FWSEC mapper: version=3 size=64 cmd_offset=0xd40 cmd_size=64
+Oct 25 07:03:27 <host> kernel: gpu_unlock: FWSEC signature selection: versions=0x3 fuse_version=1 sig_bytes=384
+Oct 25 07:03:27 <host> kernel: pci 0000:01:00.0: gpu_unlock: unlocked

@@ -1,0 +1,150 @@
+{
+  "gemm": [
+    {
+      "mode": "fp16_acc_fp16_out_fp16",
+      "stock_median_ms": 4.329325561523437,
+      "unlocked_median_ms": 4.337479553222656,
+      "stock_TFLOPS": 253.96834036872366,
+      "unlocked_TFLOPS": 253.49090740014807,
+      "throughput_ratio": 0.9981201083257762,
+      "output_sha256": "c3912dbc3a834beb083cfb149ce2f91b1e88cbc33386407781c13b55fc52900a",
+      "all_five_outputs_finite_and_equal_stock": true
+    },
+    {
+      "mode": "fp16_acc_fp32_out_fp16",
+      "stock_median_ms": 6.762373046875,
+      "unlocked_median_ms": 6.092696533203125,
+      "stock_TFLOPS": 162.59257218649034,
+      "unlocked_TFLOPS": 180.46387536028348,
+      "throughput_ratio": 1.1099146346814364,
+      "output_sha256": "95a722847fdfd56bbc74a1d3a3fe2fa029bc939bf491c92d38c4517a35b46cf2",
+      "all_five_outputs_finite_and_equal_stock": true
+    },
+    {
+      "mode": "bf16_acc_fp32_out_bf16",
+      "stock_median_ms": 7.406755981445312,
+      "unlocked_median_ms": 7.31989990234375,
+      "stock_TFLOPS": 148.44712456173662,
+      "unlocked_TFLOPS": 150.20856056022689,
+      "throughput_ratio": 1.0118657468353838,
+      "output_sha256": "c1e1dcda79c5b117a3216d8c7933fa1caecad6b2ef6796307fb51dc295621c92",
+      "all_five_outputs_finite_and_equal_stock": true
+    },
+    {
+      "mode": "tf32_acc_fp32_out_fp32",
+      "stock_median_ms": 12.404591064453125,
+      "unlocked_median_ms": 7.1640472412109375,
+      "stock_TFLOPS": 88.63747479163463,
+      "unlocked_TFLOPS": 153.47632291578103,
+      "throughput_ratio": 1.7315060393650308,
+      "output_sha256": "b7fa30724b40ecdbe5c3c5fcf322bcf9b7c19431ccb8c4d4ec3586f753574b4f",
+      "all_five_outputs_finite_and_equal_stock": true
+    },
+    {
+      "mode": "fp32_pedantic_out_fp32",
+      "stock_median_ms": 18.6697314453125,
+      "unlocked_median_ms": 18.49379150390625,
+      "stock_TFLOPS": 58.89273935175215,
+      "unlocked_TFLOPS": 59.45301305812611,
+      "throughput_ratio": 1.0095134597667053,
+      "output_sha256": "ec5568095f0bb226cc3b9e48f01b2afff0fd64e6026c7df773f33215e902d720",
+      "all_five_outputs_finite_and_equal_stock": true
+    },
+    {
+      "mode": "fp16_acc_fp32_out_fp32",
+      "stock_median_ms": 6.822322387695312,
+      "unlocked_median_ms": 6.167080688476562,
+      "stock_TFLOPS": 161.16383326579094,
+      "unlocked_TFLOPS": 178.28721291590713,
+      "throughput_ratio": 1.1062482773158935,
+      "output_sha256": "1209d7f55eb2569a65762e324a7d06e70272cf3d31f9ac4352ff057081b5b81e",
+      "all_five_outputs_finite_and_equal_stock": true
+    }
+  ],
+  "h3": {
+    "stock_generation_s": 309.6,
+    "unlocked_generation_s": 267.3,
+    "time_reduction_percent": 13.66279069767442,
+    "forward_hashes_equal": true,
+    "final_avi_sha256": "08bb421ffad761573729a44c798b3f4cf61ff5118e716454b70901a1b869463a",
+    "final_wav_sha256": "f760620f4d98a542fbb15c339a65572191cd2c4617dd69f221861d61882380fb",
+    "profile": {
+      "stock_forward_range_s": 50.077327996,
+      "unlocked_forward_range_s": 43.23015937,
+      "kernel_saved_s": 6.951492553999998,
+      "families": {
+        "BF16 GEMM": {
+          "stock_s": 18.54982846,
+          "unlocked_s": 16.413508612,
+          "saved_s": 2.1363198479999994,
+          "share_net_kernel_saving_pct": 30.731815238307743,
+          "throughput_change_pct": 13.015619624667728
+        },
+        "FlexAttention": {
+          "stock_s": 13.32299249,
+          "unlocked_s": 8.541615151,
+          "saved_s": 4.7813773390000005,
+          "share_net_kernel_saving_pct": 68.78202489404553,
+          "throughput_change_pct": 55.977438159810156
+        },
+        "Other GPU kernels": {
+          "stock_s": 12.293735559,
+          "unlocked_s": 12.315055122,
+          "saved_s": -0.021319563000000485,
+          "share_net_kernel_saving_pct": -0.3066904385552837,
+          "throughput_change_pct": -0.17311788529402738
+        },
+        "SGEMM FP32 (kernel name)": {
+          "stock_s": 2.484240969,
+          "unlocked_s": 2.429126039,
+          "saved_s": 0.05511493000000023,
+          "share_net_kernel_saving_pct": 0.792850306202029,
+          "throughput_change_pct": 2.2689201430935
+        }
+      }
+    },
+    "same_kernel_names_counts": true,
+    "profile_kernel_count": 70629,
+    "three_take_warm_medians_s": {
+      "stock": [
+        49.512,
+        49.539,
+        49.581
+      ],
+      "unlocked": [
+        42.544,
+        42.607,
+        42.651
+      ]
+    },
+    "repeats_limit": "Three sequential takes per state within one boot, not independent boot repetitions."
+  },
+  "llm": {
+    "recipe_equal": true,
+    "input_tokens_equal": true,
+    "all_request_and_output_hashes_equal": true,
+    "raw_responses_and_requests_rehashed": true,
+    "complete_side_labels_and_sample_matrix_valid": true,
+    "timing_counts_and_runtime_cache_equal": true,
+    "vbr_budget_mib": 6106,
+    "cases": {
+      "prefill4096": {
+        "stock_median_tokens_s": 2869.5650955517535,
+        "unlocked_median_tokens_s": 2911.127457774082,
+        "throughput_change_pct": 1.448385411669384
+      },
+      "decode128": {
+        "stock_median_tokens_s": 46.41894182945028,
+        "unlocked_median_tokens_s": 46.522785261000095,
+        "throughput_change_pct": 0.22370917443863547
+      }
+    },
+    "limit": "Three requests per case in each of one stock/unlocked boot, not independent boot-level statistics. Token equality is not logits equality."
+  },
+  "conclusions": {
+    "new_driver_evidence": "595.91.07",
+    "H3": "Observed 13.66% generation-time reduction, identical outputs in the measured BF16 path.",
+    "attention": "55.98% observed throughput increase in one matched profile, 68.78% of net kernel-time saving.",
+    "LLM": "No meaningful benefit demonstrated in this serving case."
+  }
+}

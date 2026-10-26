@@ -1,0 +1,88 @@
+{
+  "date": "2026-10-25",
+  "gpu": "NVIDIA GeForce RTX 4060 Ti 16GB",
+  "device_id": "10de:2803",
+  "SMs": 34,
+  "driver": "615.78.08",
+  "cuda_toolkit": "13.4.92",
+  "power_limit_W": 165,
+  "clock_and_power_settings_changed": false,
+  "stock": {
+    "kernel": "6.18.58-1-lts",
+    "started_utc": "2026-10-25T14:19:31.193402+00:00",
+    "finished_utc": "2026-10-25T14:19:41.640078+00:00",
+    "gpu_unlock_kernel_options": [],
+    "RM_rates_unchanged_before_and_after_workloads": true,
+    "kernel_gpu_errors_after_workloads": []
+  },
+  "unlocked": {
+    "kernel": "6.18.58-1-lts",
+    "started_utc": "2026-10-25T14:14:10.258083+00:00",
+    "finished_utc": "2026-10-25T14:14:18.006121+00:00",
+    "gpu_unlock_kernel_options": [
+      "gpu_unlock.targets=<target>",
+      "gpu_unlock.ad106_experimental=1"
+    ],
+    "RM_rates_unchanged_before_and_after_workloads": true,
+    "kernel_gpu_errors_after_workloads": [],
+    "observed_firmware_transactions": 1,
+    "boot_type": "Owner reports a reboot; an AC-cold start was not independently confirmed."
+  },
+  "benchmark_commands": [
+    [
+      "bin/validate_gemm"
+    ],
+    [
+      "bin/mma_bench",
+      "20000",
+      "5"
+    ],
+    [
+      "python3",
+      "diagnostics/bench/tensor_modes_driver_runner.py",
+      "bin/tensor_modes_issue_sm89.cubin",
+      "--sha256",
+      "33aa6db385aa9eb8a1f73bb2f74891aea84794326b7c40992bc642f93a3c614d",
+      "--expect-uuid",
+      "GPU-UUID-OMITTED",
+      "--expect-power-limit",
+      "165",
+      "--iters",
+      "20000",
+      "--reps",
+      "3"
+    ]
+  ],
+  "benchmark_binary_sha256": {
+    "bin/mma_bench": "2d4ada998ce3212680a83ceba0c477959206a22d80edaf6855ac7c016bea511b",
+    "bin/validate_gemm": "9a012d3ddf2c83fd75deadd1e3860e22f5875402b37d213b02e46e9277e1378c",
+    "bin/tensor_modes_issue_sm89.cubin": "33aa6db385aa9eb8a1f73bb2f74891aea84794326b7c40992bc642f93a3c614d"
+  },
+  "tested_unlock_source_sha256": {
+    "kernel/gpu_unlock/arch_610.h": "3113c2411a6f2897bb45ed868433af0acc7e3d8d9cfa5edb1ad9eddde94db2d3",
+    "kernel/gpu_unlock/main.c": "e90eca97b05400c40a78f49a2d7dbb365b77db8598e0c86f81b01d2157a0cf1c",
+    "kernel/gpu_unlock/unlock_610.c": "463cf98c3e38de64e46f20792c2be465ce4225d3cebb60356738dfd4de5954df"
+  },
+  "limits": [
+    "One matched pair on one card, measured unlocked first and stock second; repeated pairs and independently confirmed cold starts remain untested.",
+    "Instruction rates and seeded numerical checks do not establish application performance or extended stability.",
+    "Other 2803 boards and the 8 GB variant remain unverified."
+  ],
+  "sanitization": "GPU UUID replaced with GPU-UUID-OMITTED, actual PCI location with <target>, and build paths normalized to bin/. Numerical output is unchanged.",
+  "comparison_order": [
+    "unlocked",
+    "stock"
+  ],
+  "matching_inputs": {
+    "source_commit": "41818acc40e5420620d54409f0350fa39dbc43ab",
+    "kernel_image_sha256": "81c31e6f05531d8d10ef02bfc657294253cd34877ac7a7476d1f55dba5cd39f5",
+    "initramfs_sha256": {
+      "/boot/initramfs-linux-lts.img": "4751c519a3d9da2cdb15a5d8b1e9d219f43b0d060c8d1cfd359eb892d7806f9a",
+      "/boot/initramfs-linux-lts-fallback.img": "a6bb3d027407998b7f65b1bdfb952c95723383fef163a1eabf894d153b3d0e37"
+    },
+    "installed_module_srcversion": "4CBF8DEA8F096595485F37A",
+    "installed_module_sha256": "784bdc1b550d81e487e92c47d07e1c2dbe26f0418c32acb5d03af0899d301a97",
+    "clock_policy": "Unchanged; reported clock policy and maximum clocks matched.",
+    "desktop_activity": "Wayland desktop active; kwin_wayland present, no other compute processes at preflight."
+  }
+}

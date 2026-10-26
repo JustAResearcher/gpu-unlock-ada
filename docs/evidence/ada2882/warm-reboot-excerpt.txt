@@ -1,0 +1,52 @@
+pci 0000:0d:00.0: entry: plm=0xffffff8f ss0=0x0 ss1=0x0 wpr2_hi=0x0
+pci 0000:0d:00.0: AD102 permission before-firmware: WPR_CFG[0x1fa7cc]=0x4cb8f before=0x4cb8f expected=0xfffff0ff required=1 valid=1 pci=0x288210de chip=0x197000a1
+pci 0000:0d:00.0: AD102 permission before-firmware: FBPA[0x9a0148]=0xffffff0f before=0xffffff0f expected=0xffffffff required=0 valid=1 pci=0x288210de chip=0x197000a1
+pci 0000:0d:00.0: AD102 permission before-firmware: WPR[0x1fa7c4]=0x4cb8f before=0x4cb8f expected=0xffffffff required=1 valid=1 pci=0x288210de chip=0x197000a1
+pci 0000:0d:00.0: AD102 permission before-firmware: FEAT[0x823804]=0xffffff8f before=0xffffff8f expected=0xffffffff required=1 valid=1 pci=0x288210de chip=0x197000a1
+pci 0000:0d:00.0: AD102 before-firmware: readout1=0x410080 fields=0 0 2 0 0 2 0 2 0 valid=1 full=0
+pci 0000:0d:00.0: Falcon reset begin: base=0x110000
+pci 0000:0d:00.0: poll timeout tolerated: reg=0x1100f4 last=0x47b7 mask=0x80000000 expected=0x80000000 budget_us=1000
+pci 0000:0d:00.0: Falcon pre-reset timeout tolerated per HW bug 3419321
+pci 0000:0d:00.0: Falcon reset done: base=0x110000 hwcfg=0x67b7 chip=0x197000a1
+pci 0000:0d:00.0: Falcon start: base=0x110000 cpuctl=0x10 code_va=0x0 sig_dmem=0xb24 engine_mask=0x400 ucode=9 mailbox=0x0:0x0
+pci 0000:0d:00.0: Falcon reset begin: base=0x840000
+pci 0000:0d:00.0: poll timeout tolerated: reg=0x8400f4 last=0x67b7 mask=0x80000000 expected=0x80000000 budget_us=1000
+pci 0000:0d:00.0: Falcon pre-reset timeout tolerated per HW bug 3419321
+pci 0000:0d:00.0: Falcon reset done: base=0x840000 hwcfg=0x67b7 chip=0x197000a1
+pci 0000:0d:00.0: Falcon start: base=0x840000 cpuctl=0x10 code_va=0x100 sig_dmem=0x10 engine_mask=0x1 ucode=3 mailbox=0x0:0xfeddf000
+pci 0000:0d:00.0: AD102 permission after-payload: WPR_CFG[0x1fa7cc]=0xfffff0ff before=0x4cb8f expected=0xfffff0ff required=1 valid=1 pci=0x288210de chip=0x197000a1
+pci 0000:0d:00.0: AD102 permission after-payload: FBPA[0x9a0148]=0xffffff0f before=0xffffff0f expected=0xffffffff required=0 valid=1 pci=0x288210de chip=0x197000a1
+pci 0000:0d:00.0: AD102 permission after-payload: WPR[0x1fa7c4]=0xffffffff before=0x4cb8f expected=0xffffffff required=1 valid=1 pci=0x288210de chip=0x197000a1
+pci 0000:0d:00.0: AD102 permission after-payload: FEAT[0x823804]=0xffffffff before=0xffffff8f expected=0xffffffff required=1 valid=1 pci=0x288210de chip=0x197000a1
+pci 0000:0d:00.0: AD102 after-payload: readout1=0x410080 fields=0 0 2 0 0 2 0 2 0 valid=1 full=0
+pci 0000:0d:00.0: AD102 payload result: boot=0 halt=0 marker=0x67b00001 expected=0x67b00001 marker_ok=1 required_permissions=1 cpuctl=0x10 halted=1 debug=0xda550000 ss0=0x0 ss1=0x0
+pci 0000:0d:00.0: selector read: SS0=0x0 expected_unlock=0x88888888
+pci 0000:0d:00.0: selector write: SS0=0x88888888
+pci 0000:0d:00.0: selector result: SS0=0x88888888 expected=0x88888888 matched=1
+pci 0000:0d:00.0: selector read: SS1=0x0 expected_unlock=0x8
+pci 0000:0d:00.0: selector write: SS1=0x8
+pci 0000:0d:00.0: selector result: SS1=0x8 expected=0x8 matched=1
+pci 0000:0d:00.0: AD102 selectors-applied: readout1=0x0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+pci 0000:0d:00.0: pre-FLR selectors: ss0=0x88888888 expected=0x88888888 ss1=0x8 expected=0x8
+pci 0000:0d:00.0: AD102 pre-FLR: readout1=0x0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+pci 0000:0d:00.0: vgaarb: deactivate vga console
+pci 0000:0d:00.0: PCIe FLR begin: BME=0 DMA retained, chip=0x197000a1
+pci 0000:0d:00.0: PCIe FLR returned: result=0
+pci 0000:0d:00.0: post-FLR BAR ready: chip=0x197000a1
+pci 0000:0d:00.0: post-FLR GFW result: error=0 pci=0x288210de plm=0x8b8f boot=0x3ff cpuctl=0x10 budget_us=2050000
+pci 0000:0d:00.0: engine reset assert: phase=post-FLR base=0x840000 before=0x0 write=0x1
+pci 0000:0d:00.0: engine reset propagation: phase=post-FLR base=0x840000 first=0x1 tenth=0x1
+pci 0000:0d:00.0: engine reset asserted: phase=post-FLR base=0x840000 error=0 last=0x1
+pci 0000:0d:00.0: engine reset release: phase=post-FLR base=0x840000 before=0x1 write=0x0
+pci 0000:0d:00.0: engine reset released: phase=post-FLR base=0x840000 engine=0x0 hwcfg2=0x67b7
+pci 0000:0d:00.0: post-FLR SEC2 reset released, GSP halted, BME=0 pending=0 WPR2=1ffffe00:00000000 SS0=88888888 SS1=00000008
+pci 0000:0d:00.0: AD102 permission post-FLR: WPR_CFG[0x1fa7cc]=0x4cb8f before=0x4cb8f expected=0xfffff0ff required=1 valid=1 pci=0x288210de chip=0x197000a1
+pci 0000:0d:00.0: AD102 permission post-FLR: FBPA[0x9a0148]=0xffffff0f before=0xffffff0f expected=0xffffffff required=0 valid=1 pci=0x288210de chip=0x197000a1
+pci 0000:0d:00.0: AD102 permission post-FLR: WPR[0x1fa7c4]=0x4cb8f before=0x4cb8f expected=0xffffffff required=1 valid=1 pci=0x288210de chip=0x197000a1
+pci 0000:0d:00.0: AD102 permission post-FLR: FEAT[0x823804]=0xffffffff before=0xffffff8f expected=0xffffffff required=1 valid=1 pci=0x288210de chip=0x197000a1
+pci 0000:0d:00.0: AD102 post-FLR: readout1=0x0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+pci 0000:0d:00.0: driver probe resources: phase=handoff empty=1
+pci 0000:0d:00.0: restore streaming mask: actual=0xffffffff expected=0xffffffff
+pci 0000:0d:00.0: restore coherent mask: actual=0xffffffff expected=0xffffffff
+pci 0000:0d:00.0: restore PCI command: actual=0x3 original=0x3 mask=0x6
+pci 0000:0d:00.0: gpu_unlock: unlocked

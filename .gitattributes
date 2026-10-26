@@ -28,6 +28,7 @@
 /debian -export-ignore
 # Keep published evidence bytes identical on Windows and Linux clones.
 /docs/evidence/ada2705/* -text
+/docs/evidence/ada2803/* -text
 /docs/evidence/rtx4090/* -text
 /docs/evidence/rtx4090-pr1-stock/* -text
 /docs/evidence/rtx4090-pr1-stock/gemm_bench.cu -export-ignore
@@ -42,3 +43,6 @@
 # The 4070 SUPER overlay is hash-pinned, including original line endings.
 /windows/ad104-4070-super/overlay/** -text whitespace=cr-at-eol,-blank-at-eof
 /docs/evidence/ad104-4070-super/** -text whitespace=cr-at-eol,-blank-at-eof
+
+# Preserve exact native RTX 4070 evidence bytes across platforms.
+/docs/evidence/ada2786/* -text

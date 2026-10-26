@@ -1,0 +1,36 @@
+kernel: Command line: BOOT_IMAGE=/boot/vmlinuz-7.0.0-38-generic root=UUID=<root-uuid> ro quiet splash iommu=pt crashkernel=2G-4G:320M,4G-32G:512M,32G-64G:1024M,64G-128G:2048M,128G-:4096M gpu_unlock.targets=0000:XX:00.0
+kernel: Kernel command line: BOOT_IMAGE=/boot/vmlinuz-7.0.0-38-generic root=UUID=<root-uuid> ro quiet splash iommu=pt crashkernel=2G-4G:320M,4G-32G:512M,32G-64G:1024M,64G-128G:2048M,128G-:4096M gpu_unlock.targets=0000:XX:00.0
+kernel: gpu_unlock: loading out-of-tree module taints kernel.
+kernel: gpu_unlock: module verification failed: signature and/or required key missing - tainting kernel
+kernel: pci 0000:XX:00.0: entry: plm=0xffffff8f ss0=0x42706126 ss1=0x5 wpr2_hi=0x0
+kernel: pci 0000:XX:00.0: FWSEC: reading PROM at 0x300000
+kernel: pci 0000:XX:00.0: FWSEC: PROM bytes=1048576 signature=0xaa55
+kernel: gpu_unlock: ROM chain: pos=0x0 data=0x52494350 bytes=64512 type=0x0 last=0
+kernel: gpu_unlock: ROM chain: pos=0xfc00 data=0x52494350 bytes=85504 type=0x3 last=0
+kernel: gpu_unlock: ROM chain: pos=0x24a00 data=0x5344504e bytes=24576 type=0xe0 last=0
+kernel: gpu_unlock: ROM chain: pos=0x2aa00 data=0x5344504e bytes=451584 type=0xe0 last=128
+kernel: gpu_unlock: ROM expansion: base=0xfc00 ext=0x24a00 adjust=0x14e00
+kernel: gpu_unlock: ROM BIT: offset=0x1b0 size=12 stride=6 tokens=19 adjust=0x14e00
+kernel: gpu_unlock: ROM ucode table: offset=0x98cd8 version=1 header=6 stride=6 entries=16
+kernel: gpu_unlock: FWSEC descriptor: offset=0x4515c ROM_bytes=1048576 header=0x32c0301
+kernel: gpu_unlock: FWSEC geometry: image_off=0x45488 size=0x10300 imem=0xf500 va=0x0 pa=0x0 dmem=0xd80 pa=0x0 pkc=0xb24 interface=0x1c engine=0x400 ucode=9 signatures=2 versions=0x3 bytes=768
+kernel: gpu_unlock: FWSEC interface: offset=0x1c version=1 header=4 stride=8 entries=2 FRTS=0xbff200000
+kernel: gpu_unlock: FWSEC mapper: version=3 size=64 cmd_offset=0xd40 cmd_size=64
+kernel: pci 0000:XX:00.0: FWSEC fuse: raw=0x1 version=1
+kernel: gpu_unlock: FWSEC signature selection: versions=0x3 fuse_version=1 sig_bytes=384
+kernel: pci 0000:XX:00.0: FWSEC result: scratch=0x0 expected_hi16=0
+kernel: pci 0000:XX:00.0: FWSEC WPR2: low=0xbff2000 high=0xbff2e00 expected_page=0xbff200 end=0xbff300000
+kernel: pci 0000:XX:00.0: post-FLR BAR ready: chip=0x192000a1
+kernel: pci 0000:XX:00.0: post-FLR GFW result: error=0 pci=0x268410de plm=0x8b8f boot=0x3ff cpuctl=0x10 budget_us=2050000
+kernel: pci 0000:XX:00.0: engine reset assert: phase=post-FLR base=0x840000 before=0x0 write=0x1
+kernel: pci 0000:XX:00.0: engine reset propagation: phase=post-FLR base=0x840000 first=0x1 tenth=0x1
+kernel: pci 0000:XX:00.0: engine reset asserted: phase=post-FLR base=0x840000 error=0 last=0x1
+kernel: pci 0000:XX:00.0: engine reset release: phase=post-FLR base=0x840000 before=0x1 write=0x0
+kernel: pci 0000:XX:00.0: engine reset released: phase=post-FLR base=0x840000 engine=0x0 hwcfg2=0x67b7
+kernel: pci 0000:XX:00.0: post-FLR SEC2 reset released, GSP halted, BME=0 pending=0 WPR2=1ffffe00:00000000 SS0=88888888 SS1=00000008
+kernel: pci 0000:XX:00.0: AD102 permission post-FLR: WPR_CFG[0x1fa7cc]=0x4cb8f before=0x4cb8f expected=0xfffff0ff required=1 valid=1 pci=0x268410de chip=0x192000a1
+kernel: pci 0000:XX:00.0: AD102 permission post-FLR: FBPA[0x9a0148]=0xffffff0f before=0xffffff0f expected=0xffffffff required=0 valid=1 pci=0x268410de chip=0x192000a1
+kernel: pci 0000:XX:00.0: AD102 permission post-FLR: WPR[0x1fa7c4]=0x4cb8f before=0x4cb8f expected=0xffffffff required=1 valid=1 pci=0x268410de chip=0x192000a1
+kernel: pci 0000:XX:00.0: AD102 permission post-FLR: FEAT[0x823804]=0xffffffff before=0xffffff8f expected=0xffffffff required=1 valid=1 pci=0x268410de chip=0x192000a1
+kernel: pci 0000:XX:00.0: AD102 post-FLR: readout1=0x0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+kernel: pci 0000:XX:00.0: gpu_unlock: unlocked

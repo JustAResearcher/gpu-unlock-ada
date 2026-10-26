@@ -1,0 +1,12 @@
+[  501.461705] nvidia 0000:01:00.0: gpu_peek: driver=nvidia BAR0=0x71000000 len=0x1000000 command=0x407 (MEM=0x1 MASTER=0x1)
+[  501.461710] nvidia 0000:01:00.0: gpu_peek: 0x00000000 PMC_BOOT_0 (chip id)   = 0x192000a1
+[  501.461712] nvidia 0000:01:00.0: gpu_peek: 0x00118128 GFW PLM                = 0x00008b8f
+[  501.461714] nvidia 0000:01:00.0: gpu_peek: 0x00118234 GFW boot progress      = 0x000003ff
+[  501.461715] nvidia 0000:01:00.0: gpu_peek: 0x00110100 GFW falcon CPUCTL      = 0xbadf5720
+[  501.461716] nvidia 0000:01:00.0: gpu_peek: 0x001fa824 WPR2 lo                = 0x05f1f000
+[  501.461718] nvidia 0000:01:00.0: gpu_peek: 0x001fa828 WPR2 hi                = 0x05ff2e00
+[  501.461719] nvidia 0000:01:00.0: gpu_peek: 0x00823804 PLM entry              = 0xffffffff
+[  501.461721] nvidia 0000:01:00.0: gpu_peek: 0x00823814 fuse feature_readout   = 0x00000233
+[  501.461722] nvidia 0000:01:00.0: gpu_peek: 0x0082381c SS0 speed select       = 0x88888888
+[  501.461724] nvidia 0000:01:00.0: gpu_peek: 0x00823820 SS1 speed select       = 0x00000008
+[  501.461725] nvidia 0000:01:00.0: gpu_peek: summary boot_completed=1 gfw_plm_level0=1 falcon_halted=0 falcon_accessible=0 wpr2_up=1 plm_open=1 ss0_unlocked=1 ss1_unlocked=1

@@ -1,0 +1,2 @@
+pci 0000:00:10.0: entry: plm=0xffffffff ss0=0x88888888 ss1=0x8 wpr2_hi=0x0
+pci 0000:00:10.0: gpu_unlock: unlock failed (-114)

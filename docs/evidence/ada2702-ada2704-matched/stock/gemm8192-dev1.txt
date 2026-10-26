@@ -1,0 +1,1 @@
+NVIDIA GeForce RTX 4080            n=8192  10.7 ms/iter  102.5 TFLOPS  (sm_89, 76 SMs)

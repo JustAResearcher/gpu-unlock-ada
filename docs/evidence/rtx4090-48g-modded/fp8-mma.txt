@@ -1,0 +1,24 @@
+# FP8 (E4M3) tensor-core issue rate on the unlocked modified 48 GB RTX 4090
+# harness: 1056 blocks x 8 warps x 8 independent accumulator chains,
+#          mma.sync.aligned.m16n8k32.row.col.f32.e4m3.e4m3.f32, 8192 FLOP/instruction
+# instruction validated first: all-ones E4M3 inputs give exactly k=32 in every output
+# session: unlocked boot, lightdm inactive, no compute process on /dev/nvidia*
+# gpu: NVIDIA GeForce RTX 4090, 610.57.04, 10.35 W, 35, 210 MHz, 3105 MHz
+
+# instruction check: d = 32.0 32.0 32.0 32.0 (expect 32.0 each)
+  rep 0: 18.374 ms  602.7 TF/s
+  rep 1: 18.362 ms  603.0 TF/s
+  rep 2: 18.360 ms  603.1 TF/s
+  rep 3: 18.360 ms  603.1 TF/s
+  rep 4: 18.359 ms  603.1 TF/s
+e4m3/e4m3->f32  best 603.1 TF/s   (reference: f16/f32 328.9, f16/f16 330.8, s8/s32 657.7)
+
+# same-session reference (mma_bench 20000 5):
+# # NVIDIA GeForce RTX 4090, 128 SMs, sm_89, iters=20000 reps=5
+# mode       best TF/s   all runs
+# f16/f16        330.8 309.9/309.9/315.0/330.8/330.7
+# f16/f32        330.6 330.6/330.6/330.6/330.6/330.6
+# bf16/f32       329.5 329.5/327.8/328.8/327.1/328.7
+# s8/s32         657.6 657.6/657.6/657.6/657.6/657.6
+# dp4a           163.5 163.5/163.5/163.5/163.5/163.5
+# ffma            78.7 78.7/78.7/78.7/78.7/78.7

@@ -1,0 +1,7 @@
+GPU: NVIDIA GeForce RTX 4070, sm_89, PCI 0000:04:00.0
+FP16/FP32: m=256 n=256 k=256 seed=1, 65536 cells, failures=0, max_abs=0
+BF16/FP32: m=256 n=256 k=256 seed=1, 65536 cells, failures=0, max_abs=0
+FP16/FP32: m=64 n=96 k=128 seed=2, 6144 cells, failures=0, max_abs=0
+BF16/FP32: m=64 n=96 k=128 seed=2, 6144 cells, failures=0, max_abs=0
+FP16/FP32: m=127 n=65 k=95 seed=3, 8255 cells, failures=0, max_abs=0
+BF16/FP32: m=127 n=65 k=95 seed=3, 8255 cells, failures=0, max_abs=0

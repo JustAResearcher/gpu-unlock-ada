@@ -1,0 +1,172 @@
+{
+  "source_commit": "4e7fefcc4923f9e083d5324dc75a7d2f906af77f",
+  "version": "1.1.1",
+  "gpu": "NVIDIA GeForce RTX 4090 (modified 48 GB board, AD102)",
+  "device_id": "10de:2684",
+  "vbios": "95.02.3C.00.02",
+  "memory_total_MiB": 49140,
+  "SMs": 128,
+  "compute_capability": "8.9",
+  "kernel": "7.0.0-38-generic",
+  "distribution": "Ubuntu 26.04.1 LTS",
+  "driver": "610.57.04 (NVIDIA open kernel modules, DKMS)",
+  "CUDA_toolkit": "13.2",
+  "power_limit_W": 450,
+  "clock_policy": "Stock clock and power policy retained; no changes during these runs.",
+  "background": "GNOME/Wayland session terminated and lightdm desktop stopped before the benchmark phase; fuser reported no process holding /dev/nvidia0, /dev/nvidiactl or /dev/nvidia-uvm. A lightdm greeter session was present during the earlier stock sample.",
+  "module_sha256": "7304879c95e51129c9a2aabc76ae4bf555ca13f781f089913f3d4cdbce66cf54",
+  "firmware_sha256": {
+    "booter_load_ad102.bin": "6ee05b20e1dc244c08c052f36ef28469b8d09f4955d1fe33e48a179e11a7fd49",
+    "booter_load_ga102.bin": "056cbc064a888f80717726c54d7f64fcd68044d123870c95a74f37f4975dcaa4",
+    "gsp_boot_ad102.bin": "45d6335a8185d6ff13e8d1484cea73f68d3d13aa1c19dc080ed1c3482dd5bac0",
+    "gsp_boot_desc_ad102.bin": "83f8f3f1f5f9496e0ea8fc7103c2beb64d0b6de2f5ffe725f13514de5a95fa42",
+    "gsp_boot_desc_ga102.bin": "cc5a3fc1f4c47f2fe107b1b68f0176d8a448e6dec84b575e5560ccef5262bf15",
+    "gsp_boot_ga102.bin": "3df651acb174fd5f5561a1996965b192f50c5d763168446ed0d4ead19d895768",
+    "gsp_ga10x.bin": "572373620a37418f24dc16b5031c39338778c3257e48e8408de9a57291b24f3a",
+    "v67-ad102-610.43.03-four-plm.bin": "44c36b2d6b3424e53e18f3e55db85c833655de071ce66ce42749588a4a7dc8cb",
+    "v67-ga102-610.43.03.bin": "2a0aa1f86d0b6afff5214d641d87d46dc98ef06ed908ff05d0ddbad5ffb7e197"
+  },
+  "benchmark_hashes": {
+    "bin/mma_bench": "d8a5bb40c5c4d3ed6ef0159c595a3630a34abcaf6593934274d54b1b7cbdddf0",
+    "bin/gemm_bench": "5df119d1be38cd4b6faeac718a132adffe76452d7c59bf017034f0a3e62d18f1",
+    "bin/validate_gemm": "e510b7e1502b648f36a0284017a7d95d4613c065f3916424f4d9d1879f4f3a91",
+    "bin/read_sm_rates.py": "1e5ef78dfcbe8ce5960fd81c81eb1ede86f08babbb8715d7e40ac1e8f9329421"
+  },
+  "compiler": "/usr/local/cuda-13.2/bin/nvcc -O3 -arch=sm_89 -std=c++17 (CUDA 12.8 rejects gcc 15)",
+  "phases": {
+    "stock": {
+      "mma_TF_s": {
+        "f16/f16": 330.8,
+        "f16/f32": 164.9,
+        "bf16/f32": 164.8,
+        "s8/s32": 659.4,
+        "dp4a": 164.0,
+        "ffma": 78.5
+      },
+      "sm_rate_selectors": {
+        "fmla32": 1,
+        "imla2": 1,
+        "imla4": 1
+      },
+      "serving": {
+        "P1K": {
+          "prefill_tok_s": 1351.4218627706757,
+          "ttft_ms": 783.7566221132874,
+          "decode_tok_s": 200.5
+        },
+        "P8K": {
+          "prefill_tok_s": 3518.764743727214,
+          "ttft_ms": 2356.7154621705413,
+          "decode_tok_s": 143.1
+        },
+        "P32K": {
+          "prefill_tok_s": 3916.555151978589,
+          "ttft_ms": 8415.865184972063,
+          "decode_tok_s": 141.1
+        },
+        "D1K": {
+          "prefill_tok_s": 1279.6442687747035,
+          "ttft_ms": 827.4286610540003,
+          "decode_tok_s": 184.8
+        },
+        "D32K": {
+          "prefill_tok_s": 3894.221630868656,
+          "ttft_ms": 8464.349231915548,
+          "decode_tok_s": 164.0
+        }
+      },
+      "note": "Single sample on an engine that had been serving for 3 days; GNOME session active."
+    },
+    "unlocked": {
+      "mma_TF_s": {
+        "f16/f16": 330.8,
+        "f16/f32": 328.9,
+        "bf16/f32": 328.7,
+        "s8/s32": 657.7,
+        "dp4a": 163.5,
+        "ffma": 78.6
+      },
+      "sm_rate_selectors": {
+        "fmla32": 0,
+        "imla2": 0,
+        "imla4": 0
+      },
+      "serving": {
+        "P1K": {
+          "prefill_tok_s_median": 1193.1360128987678,
+          "prefill_tok_s_min": 1109.9207199485752,
+          "prefill_tok_s_max": 1221.4100448007543,
+          "ttft_ms_median": 886.2067879999813,
+          "decode_tok_s_median": 201.0
+        },
+        "P8K": {
+          "prefill_tok_s_median": 3457.809997471129,
+          "prefill_tok_s_min": 3381.9770797262754,
+          "prefill_tok_s_max": 3525.7209162404915,
+          "ttft_ms_median": 2396.860232999984,
+          "decode_tok_s_median": 142.3
+        },
+        "P32K": {
+          "prefill_tok_s_median": 3890.293255479997,
+          "prefill_tok_s_min": 3847.101763939582,
+          "prefill_tok_s_max": 3892.418215282313,
+          "ttft_ms_median": 8470.598773999995,
+          "decode_tok_s_median": 141.1
+        },
+        "D1K": {
+          "prefill_tok_s_median": 1257.2815533980583,
+          "prefill_tok_s_min": 1169.0363349131121,
+          "prefill_tok_s_max": 1261.875761266748,
+          "ttft_ms_median": 841.5186139999378,
+          "decode_tok_s_median": 206.6
+        },
+        "D32K": {
+          "prefill_tok_s_median": 3913.235522341733,
+          "prefill_tok_s_min": 3892.187128947993,
+          "prefill_tok_s_max": 3914.7309965964055,
+          "ttft_ms_median": 8421.074701999942,
+          "decode_tok_s_median": 154.3
+        }
+      },
+      "note": "Four consecutive matrix passes on a freshly started engine; the first pass is retained separately because a cold engine is measurably slower. Medians use passes 2-4."
+    }
+  },
+  "fp8_e4m3_to_f32_TF_s": 603.1,
+  "fp8_note": "Issue-rate probe (mma.sync m16n8k32 e4m3) on the unlocked boot: 603.1 TF/s, 91% of the 660.6 TF/s nominal FP8 rate and 1.82x the same-session FP16/FP32-accumulate rate. No locked-boot run of this probe, so no stock/unlocked ratio is claimed.",
+  "model_quantization_mix": {
+    "source": "model-quantization.json",
+    "files": [
+      "Qwen3.8-Flash-Next-GSQ-RCO-abliterated-IQ3_S-00001-of-00002.gguf",
+      "Qwen3.8-Flash-Next-GSQ-RCO-abliterated-IQ3_S-00002-of-00002.gguf"
+    ],
+    "total_GiB": 78.09,
+    "total_elements_billions": 176.9,
+    "element_fraction_by_type": {
+      "Q6_K": 0.0094,
+      "BF16": 0.0043,
+      "F32": 0.0,
+      "IQ4_XS": 0.0149,
+      "Q4_K": 0.0016,
+      "IQ4_NL": 0.4743,
+      "Q8_0": 0.0047,
+      "IQ3_XXS": 0.1612,
+      "Q5_K": 0.0025,
+      "custom": 0.0427,
+      "IQ2_S": 0.1896,
+      "F16": 0.0,
+      "IQ3_S": 0.0948
+    },
+    "high_precision_tensors": 777,
+    "high_precision_byte_fraction": 0.0183,
+    "high_precision_element_fraction": 0.0043
+  },
+  "sanitization": "GPU UUID, actual PCI bus address, host name, root UUID, host paths and LAN addresses omitted. Journal timestamps stripped. Numeric outputs and timings preserved verbatim.",
+  "limits": [
+    "One modified 48 GB board, one cold boot, one kernel/driver combination.",
+    "About 30 minutes of load after the unlock; no long-duration stability run.",
+    "No warm-reboot persistence test and no repeated cold-boot test were performed.",
+    "The stock serving sample is a single run on a long-running engine; the unlocked side is a fresh engine measured over three passes. Expert-cache residency differs, so small-prompt differences are not attributable to the unlock.",
+    "Decode throughput varied by about 12% between identical passes; no decode claim is made.",
+    "No claim about unquantized (FP16/BF16) workloads, other engines, training, lifetime reliability, or maximum board power."
+  ]
+}

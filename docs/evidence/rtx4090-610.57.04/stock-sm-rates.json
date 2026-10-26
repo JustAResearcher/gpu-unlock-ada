@@ -1,0 +1,1 @@
+{"gpu": "<uuid>, NVIDIA GeForce RTX 4090, 00000000:01:00.0, 610.57.04, 450.00, 495, 405", "command": "0x20801230", "rates": {"imla0": 0, "fmla16": 0, "dp": 0, "fmla32": 1, "ffma": 0, "imla1": 0, "imla2": 1, "imla3": 0, "imla4": 1}, "meaning": "0=full; 1=half; 2=quarter; higher values are further reductions", "hardware_changes": false}

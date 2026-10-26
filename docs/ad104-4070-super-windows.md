@@ -36,7 +36,9 @@ Core i5-13600KF, Windows 11 Pro build 26300, NVIDIA driver 617.42 and VBIOS
 95.04.69.00.e7. The GPU reported 12,282 MiB. The benchmark environment was
 Python 3.14.6, PyTorch 2.13.0+cu132, CUDA 13.2 and cuBLAS 130400.
 
-The operator cold-booted the EFI from an existing internal ESP and pressed `U`.
+The operator chose the existing internal ESP for convenience, avoiding the
+need to prepare a USB drive, then cold-booted the EFI and pressed `U`. USB boot
+has not been tested on this board.
 The [transaction log](evidence/ad104-4070-super/RUN0001.sanitized.txt) records:
 
 - The Windows image was staged from the original ESP and passed its SHA-256 check.
@@ -87,18 +89,25 @@ code/entry-point profiles before releasing them. It preserves the USB input
 path while the display drivers detach. No raw handle address is baked into
 the implementation.
 
-**Internal-disk boot.** The EFI stages the pinned Windows image from the ESP,
-reads the large GSP through the firmware's native NTFS filesystem protocol,
+**Internal-disk boot (Experimental).** The EFI stages the pinned Windows image
+from the ESP, reads the large GSP through the firmware's native NTFS filesystem protocol,
 and writes a new log under its own ESP directory. It has no boot-variable
-writer. The Windows-side setup uses a separate one-time firmware entry; the
-operator controls the cold boot and unlock key.
+writer. The Windows-side setup creates a persistent firmware menu entry and
+selects it for one boot with `bootsequence`; consuming that selection leaves
+the entry and on-disk files in place. The operator controls the cold boot and
+unlock key. The current profile requires its pinned internal launch volume
+and rejects USB volumes. A USB variant would need a reviewed boot-I/O profile
+and physical validation.
 
 ## Rebuild and reproduce
 
 The [workflow](../windows/ad104-4070-super/README.md) covers source assembly,
 read-only capture, local firmware generation, profile configuration, host
 checks, manual boot and matched matrix measurements. It includes a disk-only
-route, so no USB drive or ESP resizing is required on the tested layout.
+route, chosen for convenience, with no ESP resizing on the tested layout.
+The [rollback section](../windows/ad104-4070-super/README.md#8-rollback-and-remove-the-experimental-setup)
+covers deleting the trial boot entry, EFI files, captures and the GSP file,
+and restoring firmware settings.
 
 The physical run used a 98,816-byte EFI with SHA-256
 `b20394d76f7b7dc706e7d7ba893a4ca56b958db66232b7b22ed60a63d28acf84`.

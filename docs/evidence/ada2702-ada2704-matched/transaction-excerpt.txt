@@ -1,0 +1,68 @@
+2026-10-25T16:29:28+00:00 kernel: Command line: BOOT_IMAGE=/vmlinuz-6.8.0-147-generic root=/dev/mapper/ubuntu--vg-ubuntu--lv ro gpu_unlock.targets=0000:04:00.0,0000:2b:00.0 gpu_unlock.ad103_experimental=1
+2026-10-25T16:29:28+00:00 kernel: Kernel command line: BOOT_IMAGE=/vmlinuz-6.8.0-147-generic root=/dev/mapper/ubuntu--vg-ubuntu--lv ro gpu_unlock.targets=0000:04:00.0,0000:2b:00.0 gpu_unlock.ad103_experimental=1
+2026-10-25T16:29:28+00:00 kernel: gpu_unlock: loading out-of-tree module taints kernel.
+2026-10-25T16:29:28+00:00 kernel: gpu_unlock: module verification failed: signature and/or required key missing - tainting kernel
+2026-10-25T16:29:28+00:00 kernel: pci 0000:04:00.0: AD102 permission before-firmware: WPR_CFG[0x1fa7cc]=0x4cb8f before=0x4cb8f expected=0xfffff0ff required=1 valid=1 pci=0x270410de chip=0x193000a1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:2b:00.0: AD102 permission before-firmware: WPR_CFG[0x1fa7cc]=0x4cb8f before=0x4cb8f expected=0xfffff0ff required=1 valid=1 pci=0x270210de chip=0x193000a1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:04:00.0: AD102 permission before-firmware: FBPA[0x9a0148]=0xffffff0f before=0xffffff0f expected=0xffffffff required=0 valid=1 pci=0x270410de chip=0x193000a1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:2b:00.0: AD102 permission before-firmware: FBPA[0x9a0148]=0xffffff0f before=0xffffff0f expected=0xffffffff required=0 valid=1 pci=0x270210de chip=0x193000a1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:04:00.0: AD102 permission before-firmware: WPR[0x1fa7c4]=0x4cb8f before=0x4cb8f expected=0xffffffff required=1 valid=1 pci=0x270410de chip=0x193000a1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:2b:00.0: AD102 permission before-firmware: WPR[0x1fa7c4]=0x4cb8f before=0x4cb8f expected=0xffffffff required=1 valid=1 pci=0x270210de chip=0x193000a1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:04:00.0: AD102 permission before-firmware: FEAT[0x823804]=0xffffff8f before=0xffffff8f expected=0xffffffff required=1 valid=1 pci=0x270410de chip=0x193000a1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:2b:00.0: AD102 permission before-firmware: FEAT[0x823804]=0xffffff8f before=0xffffff8f expected=0xffffffff required=1 valid=1 pci=0x270210de chip=0x193000a1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:04:00.0: AD102 before-firmware: readout1=0x410080 fields=0 0 2 0 0 2 0 2 0 valid=1 full=0
+2026-10-25T16:29:28+00:00 kernel: pci 0000:2b:00.0: AD102 before-firmware: readout1=0x410080 fields=0 0 2 0 0 2 0 2 0 valid=1 full=0
+2026-10-25T16:29:28+00:00 kernel: gpu_unlock: ROM chain: pos=0x0 data=0x52494350 bytes=64512 type=0x0 last=0
+2026-10-25T16:29:28+00:00 kernel: gpu_unlock: ROM chain: pos=0xfc00 data=0x52494350 bytes=86016 type=0x3 last=0
+2026-10-25T16:29:28+00:00 kernel: gpu_unlock: ROM chain: pos=0x24c00 data=0x5344504e bytes=24576 type=0xe0 last=0
+2026-10-25T16:29:28+00:00 kernel: gpu_unlock: ROM chain: pos=0x2ac00 data=0x5344504e bytes=456192 type=0xe0 last=128
+2026-10-25T16:29:28+00:00 kernel: gpu_unlock: ROM expansion: base=0xfc00 ext=0x24c00 adjust=0x15000
+2026-10-25T16:29:28+00:00 kernel: gpu_unlock: ROM BIT: offset=0x1b0 size=12 stride=6 tokens=19 adjust=0x15000
+2026-10-25T16:29:28+00:00 kernel: gpu_unlock: ROM ucode table: offset=0x99fb6 version=1 header=6 stride=6 entries=16
+2026-10-25T16:29:28+00:00 kernel: gpu_unlock: FWSEC descriptor: offset=0x4581c ROM_bytes=1048576 header=0x32c0301
+2026-10-25T16:29:28+00:00 kernel: gpu_unlock: FWSEC geometry: image_off=0x45b48 size=0x10500 imem=0xf700 va=0x0 pa=0x0 dmem=0xd80 pa=0x0 pkc=0xb24 interface=0x1c engine=0x400 ucode=9 signatures=2 versions=0x3 bytes=768
+2026-10-25T16:29:28+00:00 kernel: gpu_unlock: FWSEC interface: offset=0x1c version=1 header=4 stride=8 entries=2 FRTS=0x3ff600000
+2026-10-25T16:29:28+00:00 kernel: gpu_unlock: FWSEC mapper: version=3 size=64 cmd_offset=0xd40 cmd_size=64
+2026-10-25T16:29:28+00:00 kernel: gpu_unlock: FWSEC signature selection: versions=0x3 fuse_version=1 sig_bytes=384
+2026-10-25T16:29:28+00:00 kernel: pci 0000:2b:00.0: AD102 permission after-payload: WPR_CFG[0x1fa7cc]=0xfffff0ff before=0x4cb8f expected=0xfffff0ff required=1 valid=1 pci=0x270210de chip=0x193000a1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:2b:00.0: AD102 permission after-payload: FBPA[0x9a0148]=0xffffff0f before=0xffffff0f expected=0xffffffff required=0 valid=1 pci=0x270210de chip=0x193000a1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:2b:00.0: AD102 permission after-payload: WPR[0x1fa7c4]=0xffffffff before=0x4cb8f expected=0xffffffff required=1 valid=1 pci=0x270210de chip=0x193000a1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:2b:00.0: AD102 permission after-payload: FEAT[0x823804]=0xffffffff before=0xffffff8f expected=0xffffffff required=1 valid=1 pci=0x270210de chip=0x193000a1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:2b:00.0: AD102 after-payload: readout1=0x410080 fields=0 0 2 0 0 2 0 2 0 valid=1 full=0
+2026-10-25T16:29:28+00:00 kernel: pci 0000:2b:00.0: AD102 payload result: boot=0 halt=0 marker=0x67b00001 expected=0x67b00001 marker_ok=1 required_permissions=1 cpuctl=0x10 halted=1 debug=0xda550000 ss0=0x0 ss1=0x0
+2026-10-25T16:29:28+00:00 kernel: pci 0000:2b:00.0: AD102 selectors-applied: readout1=0x0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:2b:00.0: pre-FLR selectors: ss0=0x88888888 expected=0x88888888 ss1=0x8 expected=0x8
+2026-10-25T16:29:28+00:00 kernel: pci 0000:2b:00.0: AD102 pre-FLR: readout1=0x0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+2026-10-25T16:29:28+00:00 kernel: gpu_unlock: ROM chain: pos=0x0 data=0x52494350 bytes=64512 type=0x0 last=0
+2026-10-25T16:29:28+00:00 kernel: gpu_unlock: ROM chain: pos=0xfc00 data=0x52494350 bytes=85504 type=0x3 last=0
+2026-10-25T16:29:28+00:00 kernel: gpu_unlock: ROM chain: pos=0x24a00 data=0x5344504e bytes=24576 type=0xe0 last=0
+2026-10-25T16:29:28+00:00 kernel: gpu_unlock: ROM chain: pos=0x2aa00 data=0x5344504e bytes=450560 type=0xe0 last=128
+2026-10-25T16:29:28+00:00 kernel: gpu_unlock: ROM expansion: base=0xfc00 ext=0x24a00 adjust=0x14e00
+2026-10-25T16:29:28+00:00 kernel: gpu_unlock: ROM BIT: offset=0x1b0 size=12 stride=6 tokens=19 adjust=0x14e00
+2026-10-25T16:29:28+00:00 kernel: gpu_unlock: ROM ucode table: offset=0x98854 version=1 header=6 stride=6 entries=16
+2026-10-25T16:29:28+00:00 kernel: gpu_unlock: FWSEC descriptor: offset=0x44f54 ROM_bytes=1048576 header=0x32c0301
+2026-10-25T16:29:28+00:00 kernel: gpu_unlock: FWSEC geometry: image_off=0x45280 size=0x10100 imem=0xf300 va=0x0 pa=0x0 dmem=0xd80 pa=0x0 pkc=0xb24 interface=0x1c engine=0x400 ucode=9 signatures=2 versions=0x3 bytes=768
+2026-10-25T16:29:28+00:00 kernel: gpu_unlock: FWSEC interface: offset=0x1c version=1 header=4 stride=8 entries=2 FRTS=0x3ff600000
+2026-10-25T16:29:28+00:00 kernel: gpu_unlock: FWSEC mapper: version=3 size=64 cmd_offset=0xd40 cmd_size=64
+2026-10-25T16:29:28+00:00 kernel: gpu_unlock: FWSEC signature selection: versions=0x3 fuse_version=1 sig_bytes=384
+2026-10-25T16:29:28+00:00 kernel: pci 0000:04:00.0: AD102 permission after-payload: WPR_CFG[0x1fa7cc]=0xfffff0ff before=0x4cb8f expected=0xfffff0ff required=1 valid=1 pci=0x270410de chip=0x193000a1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:04:00.0: AD102 permission after-payload: FBPA[0x9a0148]=0xffffff0f before=0xffffff0f expected=0xffffffff required=0 valid=1 pci=0x270410de chip=0x193000a1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:04:00.0: AD102 permission after-payload: WPR[0x1fa7c4]=0xffffffff before=0x4cb8f expected=0xffffffff required=1 valid=1 pci=0x270410de chip=0x193000a1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:04:00.0: AD102 permission after-payload: FEAT[0x823804]=0xffffffff before=0xffffff8f expected=0xffffffff required=1 valid=1 pci=0x270410de chip=0x193000a1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:04:00.0: AD102 after-payload: readout1=0x410080 fields=0 0 2 0 0 2 0 2 0 valid=1 full=0
+2026-10-25T16:29:28+00:00 kernel: pci 0000:04:00.0: AD102 payload result: boot=0 halt=0 marker=0x67b00001 expected=0x67b00001 marker_ok=1 required_permissions=1 cpuctl=0x10 halted=1 debug=0xda550000 ss0=0x0 ss1=0x0
+2026-10-25T16:29:28+00:00 kernel: pci 0000:04:00.0: AD102 selectors-applied: readout1=0x0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:04:00.0: pre-FLR selectors: ss0=0x88888888 expected=0x88888888 ss1=0x8 expected=0x8
+2026-10-25T16:29:28+00:00 kernel: pci 0000:04:00.0: AD102 pre-FLR: readout1=0x0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:2b:00.0: AD102 permission post-FLR: WPR_CFG[0x1fa7cc]=0x4cb8f before=0x4cb8f expected=0xfffff0ff required=1 valid=1 pci=0x270210de chip=0x193000a1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:2b:00.0: AD102 permission post-FLR: FBPA[0x9a0148]=0xffffff0f before=0xffffff0f expected=0xffffffff required=0 valid=1 pci=0x270210de chip=0x193000a1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:2b:00.0: AD102 permission post-FLR: WPR[0x1fa7c4]=0x4cb8f before=0x4cb8f expected=0xffffffff required=1 valid=1 pci=0x270210de chip=0x193000a1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:2b:00.0: AD102 permission post-FLR: FEAT[0x823804]=0xffffffff before=0xffffff8f expected=0xffffffff required=1 valid=1 pci=0x270210de chip=0x193000a1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:2b:00.0: AD102 post-FLR: readout1=0x0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:2b:00.0: gpu_unlock: unlocked
+2026-10-25T16:29:28+00:00 kernel: pci 0000:04:00.0: AD102 permission post-FLR: WPR_CFG[0x1fa7cc]=0x4cb8f before=0x4cb8f expected=0xfffff0ff required=1 valid=1 pci=0x270410de chip=0x193000a1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:04:00.0: AD102 permission post-FLR: FBPA[0x9a0148]=0xffffff0f before=0xffffff0f expected=0xffffffff required=0 valid=1 pci=0x270410de chip=0x193000a1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:04:00.0: AD102 permission post-FLR: WPR[0x1fa7c4]=0x4cb8f before=0x4cb8f expected=0xffffffff required=1 valid=1 pci=0x270410de chip=0x193000a1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:04:00.0: AD102 permission post-FLR: FEAT[0x823804]=0xffffffff before=0xffffff8f expected=0xffffffff required=1 valid=1 pci=0x270410de chip=0x193000a1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:04:00.0: AD102 post-FLR: readout1=0x0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+2026-10-25T16:29:28+00:00 kernel: pci 0000:04:00.0: gpu_unlock: unlocked

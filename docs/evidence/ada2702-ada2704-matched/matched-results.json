@@ -1,0 +1,55 @@
+{
+  "host": {
+    "os": "Ubuntu 24.04.4",
+    "kernel": "6.8.0-147-generic",
+    "driver": "595.99.02",
+    "secure_boot": false,
+    "headless": true,
+    "power_limit_w": 250,
+    "cmdline_stock": "BOOT_IMAGE=/vmlinuz-6.8.0-147-generic root=/dev/mapper/ubuntu--vg-ubuntu--lv ro",
+    "cmdline_unlocked": "BOOT_IMAGE=/vmlinuz-6.8.0-147-generic root=/dev/mapper/ubuntu--vg-ubuntu--lv ro gpu_unlock.targets=0000:04:00.0,0000:2b:00.0 gpu_unlock.ad103_experimental=1",
+    "build": "gpu-unlock-ada v1.1.1 + local card routing (0x2704, 0x2702; explicit address list for AD103)"
+  },
+  "cards": [
+    { "index": 0, "name": "RTX 4080", "pci_id": "10de:2704", "bdf": "0000:04:00.0", "vbios": "95.03.1E.00.3F", "sm": 76, "link": "PCIe x4" },
+    { "index": 1, "name": "RTX 4080 SUPER", "pci_id": "10de:2702", "bdf": "0000:2b:00.0", "vbios": "95.03.44.00.DB", "sm": 80, "link": "PCIe x16" }
+  ],
+  "transaction": {
+    "feat_0x823804": { "before": "0xffffff8f", "after": "0xffffffff" },
+    "marker": "0x67b00001", "halt": 0,
+    "ss0": "0x88888888", "ss1": "0x8",
+    "post_flr": { "readout1": "0x0", "full": 1 },
+    "cards_unlocked_in_one_boot": 2
+  },
+  "instruction_rates_tflops": {
+    "RTX 4080": {
+      "stock":    { "f16_f32": 107.0, "bf16_f32": 106.9, "f16_f16": 214.2, "s8_s32": 427.1, "dp4a": 106.0, "ffma": 50.8 },
+      "unlocked": { "f16_f32": 213.7, "bf16_f32": 213.6, "f16_f16": 213.9, "s8_s32": 425.7, "dp4a": 105.8, "ffma": 50.7 }
+    },
+    "RTX 4080 SUPER": {
+      "stock":    { "f16_f32": 104.8, "bf16_f32": 104.8, "f16_f16": 210.1, "s8_s32": 418.9, "dp4a": 103.9, "ffma": 49.4 },
+      "unlocked": { "f16_f32": 209.7, "bf16_f32": 209.3, "f16_f16": 210.4, "s8_s32": 417.0, "dp4a": 103.8, "ffma": 49.7 }
+    }
+  },
+  "cublas_gemm_fp16_fp32_tflops": {
+    "RTX 4080":       { "4096": { "stock": 100.7, "unlocked": 194.9 }, "8192": { "stock": 102.5, "unlocked": 164.9 } },
+    "RTX 4080 SUPER": { "4096": { "stock": 98.7,  "unlocked": 190.7 }, "8192": { "stock": 100.9, "unlocked": 177.7 } }
+  },
+  "power_cap_sweep_8192_super_single_runs": { "180W": 127.9, "250W": 192.1, "320W": 188.3 },
+  "application_check": {
+    "engine": "Strata 0.2.1, Qwen3.8-Flash-Next Q4 MoE, both cards",
+    "prompt_tokens": 13020,
+    "runs_per_boot": 4,
+    "stock_prefill_tps": 981.5,
+    "unlocked_prefill_tps_range": [1015, 1104],
+    "decode_tps": "unchanged, about 146",
+    "caveat": "cross-boot comparison; host page cache and expert cache are cold after each reboot, which is larger than the effect; reported as a range"
+  },
+  "limits": [
+    "one machine, one driver version, one kernel",
+    "instruction rates are register-resident issue rates, not application speedups",
+    "cuBLAS numbers are one run per shape",
+    "no extended stability run; about one hour unlocked without Xid or NVRM errors",
+    "a warm reboot returns the card to stock"
+  ]
+}

@@ -15,9 +15,22 @@
 #define RTX_3090 0x2204
 #define RTX_3070 0x2484
 #define RTX_A2000 0x2531 /* GA106 professional: not supported */
+#define RTX_3050_6GB 0x2584 /* GA107 */
 #define RTX_4090 0x2684 /* AD102 */
 #define RTX_4070TI_SUPER GU_AD103_RTX_4070_TI_SUPER
+#define RTX_4070_AD103 GU_AD103_RTX_4070
+#define RTX_4080_SUPER GU_AD103_RTX_4080_SUPER
+#define RTX_4060TI GU_AD106_RTX_4060_TI
 #define RTX_4060TI_16GB GU_AD106_RTX_4060_TI_16GB
+#define RTX_4060_MOBILE GU_AD107_RTX_4060_MOBILE
+#define RTX_4050_MOBILE GU_AD107_RTX_4050_MOBILE
+#define RTX_4070TI GU_AD104_RTX_4070_TI
+#define RTX_4070TIS_AD102 GU_AD102_RTX_4070_TI_SUPER
+#define RTX_4060_LAPTOP GU_AD107_RTX_4060_LAPTOP
+#define RTX_4070_SUPER GU_AD104_RTX_4070_SUPER
+#define RTX_4090_LAPTOP GU_AD103M_RTX_4090_MOBILE
+#define RTX_4060 GU_AD107_RTX_4060
+#define RTX_3060 0x2504 /* GA106, standard (non-experimental) path */
 
 static struct pci_dev devices[MAX_DEVICES];
 static unsigned int device_count;
@@ -202,8 +215,14 @@ static void reset(char *list)
 	memset(&fake, 0, sizeof(fake));
 	device_count = 0;
 	targets = list;
+	rtx4080_experimental = false;
 	ad103_experimental = false;
 	ad106_experimental = false;
+	ad104_experimental = false;
+	rtx4070tis_ad102_experimental = false;
+	ad107_experimental = false;
+	ad103m_experimental = false;
+	ad107_experimental = false;
 }
 
 /* Runs init, then checks what holds for every case. */
@@ -233,14 +252,16 @@ int main(void)
 	add("0000:31:00.0", RTX_A2000, false);
 	add("0000:41:00.0", RTX_3090, true);
 	add("0000:61:00.0", 0x2208, false);
-	fake.expected_concurrent = 3;
+	add("0000:71:00.0", RTX_3050_6GB, false);
+	fake.expected_concurrent = 4;
 	run();
-	assert(fake.max_in_flight == 3 && fake.started == 3);
-	assert(fake.unlocks[0] && fake.unlocks[1] && !fake.unlocks[2] && !fake.unlocks[3] && fake.unlocks[4]);
+	assert(fake.max_in_flight == 4 && fake.started == 4);
+	assert(fake.unlocks[0] && fake.unlocks[1] && !fake.unlocks[2] && !fake.unlocks[3] && fake.unlocks[4] && fake.unlocks[5]);
 	assert(fake.loads == 1 && fake.load_dev == &devices[0] && fake.releases == 1);
-	assert(logged("0000:01:00.0: gpu_unlock: unlocked") && logged("0000:61:00.0: gpu_unlock: unlocked"));
+	assert(logged("0000:01:00.0: gpu_unlock: unlocked") && logged("0000:61:00.0: gpu_unlock: unlocked") &&
+	       logged("0000:71:00.0: gpu_unlock: unlocked"));
 	assert(logged("0000:41:00.0: gpu_unlock: unlock failed (-16)"));
-	puts("all: three cards unlocked concurrently, bound card skipped PASS");
+	puts("all: four cards (incl. GA107) unlocked concurrently, bound card skipped PASS");
 
 	/* A list picks cards in any case; the rest are not touched. */
 	reset("0000:61:00.0,0000:0A:00.0");
@@ -265,6 +286,16 @@ int main(void)
 	assert(logged("0000:01:00.0: gpu_unlock: unlock failed (-5)"));
 	assert(logged("0000:21:00.0: gpu_unlock: unlocked"));
 	puts("failure: other cards unaffected PASS");
+
+	/* A card whose PLM is already open is reported as skipped, not failed. */
+	reset("all");
+	add("0000:01:00.0", RTX_3090, false);
+	fake.fail_unlock[0] = -EALREADY;
+	fake.expected_concurrent = 1;
+	run();
+	assert(logged("0000:01:00.0: gpu_unlock: already unlocked (PLM open at entry), skipping"));
+	assert(!logged("unlock failed"));
+	puts("already unlocked: skipped, not failed PASS");
 
 	/* Without the shared firmware no card is attempted. */
 	reset("all");
@@ -303,7 +334,7 @@ int main(void)
 	assert(!logged("no supported card"));
 	puts("ad102: selected by PCI address PASS");
 
-	/* The AD103 canary needs both an explicit flag and exactly one BDF. */
+	/* The AD103 canary needs both an explicit flag and its exact BDF in the list. */
 	reset("0000:01:00.0");
 	add("0000:01:00.0", RTX_4070TI_SUPER, false);
 	run();
@@ -314,14 +345,14 @@ int main(void)
 	add("0000:01:00.0", RTX_4070TI_SUPER, false);
 	run();
 	assert(!fake.loads && !fake.started);
-	assert(logged("experimental AD103 requires a single exact PCI target"));
+	assert(logged("experimental AD103 requires its exact PCI address in the list"));
 	reset("0000:01:00.0,0000:02:00.0");
 	ad103_experimental = true;
 	add("0000:01:00.0", RTX_4070TI_SUPER, false);
 	add("0000:02:00.0", RTX_3090, false);
-	fake.expected_concurrent = 1;
+	fake.expected_concurrent = 2;
 	run();
-	assert(!fake.unlocks[0] && fake.unlocks[1]);
+	assert(fake.unlocks[0] && fake.unlocks[1]);
 	reset("0000:01:00.0");
 	ad103_experimental = true;
 	add("0000:01:00.0", RTX_4070TI_SUPER, false);
@@ -330,30 +361,363 @@ int main(void)
 	assert(fake.loads == 1 && fake.started == 1 && fake.unlocks[0]);
 	puts("ad103: gated exact-card dispatch PASS");
 
-	/* The AD106 target needs its own flag and exactly one BDF. */
+	/* AD104 must stay opt-in, reject all, wrong BDFs and bound cards, and
+	 * accept its exact BDF alone or in a list. */
+	char *ad104_targets[] = {"all", "0000:01:00.0,0000:02:00.0", "0000:02:00.0", "0000:01:00.0"};
+	for (unsigned int flag = 0; flag < 2; flag++) {
+		for (unsigned int t = 0; t < ARRAY_SIZE(ad104_targets); t++) {
+			reset(ad104_targets[t]);
+			ad104_experimental = flag;
+			add("0000:01:00.0", GU_AD104_RTX_4070, false);
+			bool expected = flag && (t == 1 || t == 3);
+			fake.expected_concurrent = expected;
+			run();
+			assert(fake.loads == expected && fake.started == expected);
+		}
+	}
+	for (unsigned int other = 0; other < 2; other++) {
+		reset("0000:01:00.0");
+		if (other)
+			ad106_experimental = true;
+		else
+			ad103_experimental = true;
+		add("0000:01:00.0", GU_AD104_RTX_4070, false);
+		run();
+		assert(!fake.loads && !fake.started);
+	}
 	reset("0000:01:00.0");
+	ad104_experimental = true;
+	add("0000:01:00.0", GU_AD104_RTX_4070, true);
+	run();
+	assert(!fake.started && logged("unlock failed (-16)"));
+	puts("ad104: experimental flag, single-BDF and bound-driver guards PASS");
+
+	/* The AD103 RTX 4070 (0x2709) shares the 2705 flag and exact-BDF gate. */
+	reset("0000:01:00.0");
+	add("0000:01:00.0", RTX_4070_AD103, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	assert(logged("no supported card at \"0000:01:00.0\""));
+	reset("all");
+	ad103_experimental = true;
+	add("0000:01:00.0", RTX_4070_AD103, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	assert(logged("experimental AD103 requires its exact PCI address in the list"));
+	reset("0000:01:00.0");
+	ad106_experimental = true;
+	add("0000:01:00.0", RTX_4070_AD103, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	reset("0000:01:00.0");
+	ad103_experimental = true;
+	add("0000:01:00.0", RTX_4070_AD103, false);
+	fake.expected_concurrent = 1;
+	run();
+	assert(fake.loads == 1 && fake.started == 1 && fake.unlocks[0]);
+	puts("ad103 0x2709: gated exact-card dispatch PASS");
+
+	/* The RTX 4080 SUPER (0x2702) takes the AD103 flag, not the 2704 one. */
+	reset("0000:01:00.0");
+	add("0000:01:00.0", RTX_4080_SUPER, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	assert(logged("no supported card at \"0000:01:00.0\""));
+	reset("0000:01:00.0");
+	rtx4080_experimental = true;
+	add("0000:01:00.0", RTX_4080_SUPER, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	assert(logged("no supported card at \"0000:01:00.0\""));
+	reset("all");
+	ad103_experimental = true;
+	add("0000:01:00.0", RTX_4080_SUPER, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	assert(logged("experimental AD103 requires its exact PCI address in the list"));
+	reset("0000:01:00.0");
+	ad103_experimental = true;
+	add("0000:01:00.0", RTX_4080_SUPER, false);
+	fake.expected_concurrent = 1;
+	run();
+	assert(fake.loads == 1 && fake.started == 1 && fake.unlocks[0]);
+	/* The matched evidence host: a 2704 and a 2702 listed together. */
+	reset("0000:04:00.0,0000:2b:00.0");
+	rtx4080_experimental = true;
+	ad103_experimental = true;
+	add("0000:04:00.0", GU_AD103_RTX_4080, false);
+	add("0000:2b:00.0", RTX_4080_SUPER, false);
+	fake.expected_concurrent = 2;
+	run();
+	assert(fake.unlocks[0] && fake.unlocks[1]);
+	puts("ad103 0x2702: gated exact-card dispatch PASS");
+
+	/* The AD106 target needs its own flag and its exact BDF in the list. */
+	const unsigned short ad106_ids[] = { RTX_4060TI_16GB, RTX_4060TI };
+	for (unsigned int i = 0; i < ARRAY_SIZE(ad106_ids); i++) {
+		reset("0000:01:00.0");
+		add("0000:01:00.0", ad106_ids[i], false);
+		run();
+		assert(!fake.loads && !fake.started);
+		assert(logged("no supported card at \"0000:01:00.0\""));
+		reset("0000:01:00.0");
+		ad103_experimental = true;
+		add("0000:01:00.0", ad106_ids[i], false);
+		run();
+		assert(!fake.loads && !fake.started);
+		reset("all");
+		ad106_experimental = true;
+		add("0000:01:00.0", ad106_ids[i], false);
+		run();
+		assert(!fake.loads && !fake.started);
+		assert(logged("experimental AD106 requires its exact PCI address in the list"));
+		reset("0000:01:00.0");
+		ad106_experimental = true;
+		add("0000:01:00.0", ad106_ids[i], false);
+		fake.expected_concurrent = 1;
+		run();
+		assert(fake.loads == 1 && fake.started == 1 && fake.unlocks[0]);
+		printf("ad106 %#x: gated exact-card dispatch PASS\n", ad106_ids[i]);
+	}
+	/* Experimental cards may share a list with other supported cards. */
+	reset("0000:01:00.0,0000:02:00.0");
+	ad106_experimental = true;
 	add("0000:01:00.0", RTX_4060TI_16GB, false);
+	add("0000:02:00.0", RTX_3090, false);
+	fake.expected_concurrent = 2;
+	run();
+	assert(fake.unlocks[0] && fake.unlocks[1]);
+	reset("all");
+	ad107_experimental = true;
+	add("0000:01:00.0", RTX_4060_LAPTOP, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	assert(logged("experimental AD107 requires its exact PCI address in the list"));
+	reset("0000:01:00.0");
+	ad107_experimental = true;
+	add("0000:01:00.0", RTX_4060_LAPTOP, false);
+	fake.expected_concurrent = 1;
+	run();
+	assert(fake.loads == 1 && fake.started == 1 && fake.unlocks[0]);
+	puts("ad107: gated exact-card dispatch PASS");
+
+
+	/* The AD103M laptop target needs its own flag and its exact BDF listed. */
+	reset("0000:01:00.0");
+	ad103_experimental = true;
+	add("0000:01:00.0", RTX_4090_LAPTOP, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	reset("all");
+	ad103m_experimental = true;
+	add("0000:01:00.0", RTX_4090_LAPTOP, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	assert(logged("experimental AD103M mobile requires its exact PCI address in the list"));
+	reset("0000:02:00.0,0000:03:00.0");
+	ad103m_experimental = true;
+	add("0000:01:00.0", RTX_4090_LAPTOP, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	reset("0000:02:00.0,0000:01:00.0");
+	ad103m_experimental = true;
+	add("0000:01:00.0", RTX_4090_LAPTOP, false);
+	fake.expected_concurrent = 1;
+	run();
+	assert(fake.loads == 1 && fake.started == 1 && fake.unlocks[0]);
+	reset("0000:01:00.0");
+	ad103m_experimental = true;
+	add("0000:01:00.0", RTX_4090_LAPTOP, false);
+	fake.expected_concurrent = 1;
+	run();
+	assert(fake.loads == 1 && fake.started == 1 && fake.unlocks[0]);
+	puts("ad103m: gated exact-card dispatch PASS");
+
+    /* The local 4080 port never broadens the existing AD103 flag or all. */
+    reset("0000:01:00.0");
+    ad103_experimental = true;
+    add("0000:01:00.0", GU_AD103_RTX_4080, false);
+    run();
+    assert(!fake.loads && !fake.started);
+    reset("all");
+    rtx4080_experimental = true;
+    add("0000:01:00.0", GU_AD103_RTX_4080, false);
+    run();
+    assert(!fake.loads && !fake.started);
+    reset("0000:02:00.0,0000:03:00.0");
+    rtx4080_experimental = true;
+    add("0000:01:00.0", GU_AD103_RTX_4080, false);
+    run();
+    assert(!fake.loads && !fake.started);
+    reset("0000:01:00.0,0000:02:00.0");
+    rtx4080_experimental = true;
+    add("0000:01:00.0", GU_AD103_RTX_4080, false);
+    fake.expected_concurrent = 1;
+    run();
+    assert(fake.loads == 1 && fake.started == 1 && fake.unlocks[0]);
+    reset("0000:01:00.0");
+    rtx4080_experimental = true;
+    add("0000:01:00.0", GU_AD103_RTX_4080, false);
+    fake.expected_concurrent = 1;
+    run();
+    assert(fake.loads == 1 && fake.started == 1 && fake.unlocks[0]);
+    puts("RTX 4080: separate opt-in and exact PCI target PASS");
+	/* The AD107 target needs its own flag and its exact BDF in the list. */
+	reset("0000:01:00.0");
+	add("0000:01:00.0", RTX_4050_MOBILE, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	assert(logged("no supported card at \"0000:01:00.0\""));
+	reset("0000:01:00.0");
+	ad106_experimental = true;
+	add("0000:01:00.0", RTX_4050_MOBILE, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	reset("all");
+	ad107_experimental = true;
+	add("0000:01:00.0", RTX_4050_MOBILE, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	assert(logged("experimental AD107 requires its exact PCI address in the list"));
+	reset("0000:01:00.0");
+	ad107_experimental = true;
+	add("0000:01:00.0", RTX_4050_MOBILE, false);
+	fake.expected_concurrent = 1;
+	run();
+	assert(fake.loads == 1 && fake.started == 1 && fake.unlocks[0]);
+	reset("all");
+	ad107_experimental = true;
+	add("0000:01:00.0", RTX_4060_MOBILE, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	assert(logged("experimental AD107 requires its exact PCI address in the list"));
+	reset("0000:01:00.0");
+	ad107_experimental = true;
+	add("0000:01:00.0", RTX_4060_MOBILE, false);
+	fake.expected_concurrent = 1;
+	run();
+	assert(fake.loads == 1 && fake.started == 1 && fake.unlocks[0]);
+	puts("ad107: gated exact-card dispatch PASS");
+
+	/* The AD104 target needs its own flag and its exact BDF in the list. */
+	reset("0000:01:00.0");
+	add("0000:01:00.0", RTX_4070TI, false);
 	run();
 	assert(!fake.loads && !fake.started);
 	assert(logged("no supported card at \"0000:01:00.0\""));
 	reset("0000:01:00.0");
 	ad103_experimental = true;
-	add("0000:01:00.0", RTX_4060TI_16GB, false);
+	ad106_experimental = true;
+	add("0000:01:00.0", RTX_4070TI, false);
 	run();
 	assert(!fake.loads && !fake.started);
 	reset("all");
-	ad106_experimental = true;
-	add("0000:01:00.0", RTX_4060TI_16GB, false);
+	ad104_experimental = true;
+	add("0000:01:00.0", RTX_4070TI, false);
 	run();
 	assert(!fake.loads && !fake.started);
-	assert(logged("experimental AD106 requires a single exact PCI target"));
+	assert(logged("experimental AD104 requires its exact PCI address in the list"));
 	reset("0000:01:00.0");
-	ad106_experimental = true;
-	add("0000:01:00.0", RTX_4060TI_16GB, false);
+	ad104_experimental = true;
+	add("0000:01:00.0", RTX_4070TI, false);
 	fake.expected_concurrent = 1;
 	run();
 	assert(fake.loads == 1 && fake.started == 1 && fake.unlocks[0]);
-	puts("ad106: gated exact-card dispatch PASS");
+	puts("ad104: gated exact-card dispatch PASS");
+
+	/* The AD102 RTX 4070 Ti SUPER needs its own flag and its exact BDF in the list. */
+	reset("0000:01:00.0");
+	add("0000:01:00.0", RTX_4070TIS_AD102, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	assert(logged("no supported card at \"0000:01:00.0\""));
+	reset("0000:01:00.0");
+	ad103_experimental = true;
+	add("0000:01:00.0", RTX_4070TIS_AD102, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	reset("all");
+	rtx4070tis_ad102_experimental = true;
+	add("0000:01:00.0", RTX_4070TIS_AD102, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	assert(logged("experimental AD102 RTX 4070 Ti SUPER requires its exact PCI address in the list"));
+	reset("0000:01:00.0,0000:02:00.0");
+	rtx4070tis_ad102_experimental = true;
+	add("0000:01:00.0", RTX_4070TIS_AD102, false);
+	add("0000:02:00.0", RTX_3090, false);
+	fake.expected_concurrent = 2;
+	run();
+	assert(fake.unlocks[0] && fake.unlocks[1]);
+	reset("0000:01:00.0");
+	rtx4070tis_ad102_experimental = true;
+	add("0000:01:00.0", RTX_4070TIS_AD102, false);
+	fake.expected_concurrent = 1;
+	run();
+	assert(fake.loads == 1 && fake.started == 1 && fake.unlocks[0]);
+	puts("ad102 4070 Ti SUPER: gated exact-card dispatch PASS");
+
+	/* The AD104 target needs its own flag and its exact BDF in the list. */
+	reset("0000:01:00.0");
+	add("0000:01:00.0", RTX_4070_SUPER, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	assert(logged("no supported card at \"0000:01:00.0\""));
+	reset("0000:01:00.0");
+	ad103_experimental = true;
+	ad106_experimental = true;
+	add("0000:01:00.0", RTX_4070_SUPER, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	reset("all");
+	ad104_experimental = true;
+	add("0000:01:00.0", RTX_4070_SUPER, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	assert(logged("experimental AD104 requires its exact PCI address in the list"));
+	reset("0000:01:00.0");
+	ad104_experimental = true;
+	add("0000:01:00.0", RTX_4070_SUPER, false);
+	fake.expected_concurrent = 1;
+	run();
+	assert(fake.loads == 1 && fake.started == 1 && fake.unlocks[0]);
+	puts("ad104: gated exact-card dispatch PASS");
+
+	/* The AD107 target needs its own flag and its exact BDF in the list. */
+	reset("0000:01:00.0");
+	add("0000:01:00.0", RTX_4060, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	assert(logged("no supported card at \"0000:01:00.0\""));
+	reset("0000:01:00.0");
+	ad106_experimental = true;
+	add("0000:01:00.0", RTX_4060, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	reset("all");
+	ad107_experimental = true;
+	add("0000:01:00.0", RTX_4060, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	assert(logged("experimental AD107 requires its exact PCI address in the list"));
+	reset("0000:01:00.0");
+	ad107_experimental = true;
+	add("0000:01:00.0", RTX_4060, false);
+	fake.expected_concurrent = 1;
+	run();
+	assert(fake.loads == 1 && fake.started == 1 && fake.unlocks[0]);
+	puts("ad107: gated exact-card dispatch PASS");
+
+	/* Exact mixed dual-card case: AD106 2805 + GA106 2504 in one list. */
+	reset("0000:04:00.0,0000:03:00.0");
+	ad106_experimental = true;
+	add("0000:04:00.0", RTX_4060TI_16GB, false);
+	add("0000:03:00.0", RTX_3060, false);
+	fake.expected_concurrent = 2;
+	run();
+	assert(fake.unlocks[0] && fake.unlocks[1]);
+	assert(fake.loads == 1 && fake.started == 2 && fake.releases == 1);
+	puts("ad106+ga106 dual-card list dispatch PASS");
 
 	/* No opt-in on the command line: the module does nothing. */
 	for (int empty = 0; empty < 2; empty++) {

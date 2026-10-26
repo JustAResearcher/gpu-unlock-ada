@@ -1,0 +1,136 @@
+{
+  "date": "2026-10-24",
+  "scope": "One user-reported full power cycle, one successful native Linux unlock boot and one matched instruction benchmark invocation per state",
+  "pci": "10de:2786",
+  "subsystem": "1458:40ee",
+  "kernel": "7.3.0-5-cachyos",
+  "driver": "615.78.08",
+  "vbios": "95.04.3E.08.BE",
+  "benchmark_sha256": "7405a0d6c40f603983fd44ece26e861cda858cec874061395e5490ab474da127",
+  "iterations": 20000,
+  "repetitions": 3,
+  "checks": {
+    "payload_marker_and_halt": true,
+    "cold_wpr2_disabled": true,
+    "post_flr_selectors": true,
+    "post_flr_effective_full_rate": true,
+    "unlock_completion": true,
+    "no_xid_or_retained_dma": true
+  },
+  "rm_rates_after": {
+    "imla0": 0,
+    "fmla16": 0,
+    "dp": 0,
+    "fmla32": 0,
+    "ffma": 0,
+    "imla1": 0,
+    "imla2": 0,
+    "imla3": 0,
+    "imla4": 0
+  },
+  "comparison": {
+    "f16/f16": {
+      "stock": 133.9,
+      "unlocked": 133.9,
+      "ratio": 1.0,
+      "change_percent": 0.0,
+      "stock_runs": [
+        120.6,
+        133.2,
+        133.9
+      ],
+      "unlocked_runs": [
+        110.7,
+        133.9,
+        133.9
+      ]
+    },
+    "f16/f32": {
+      "stock": 67.0,
+      "unlocked": 133.8,
+      "ratio": 1.9970149253731344,
+      "change_percent": 99.70149253731344,
+      "stock_runs": [
+        67.0,
+        67.0,
+        67.0
+      ],
+      "unlocked_runs": [
+        133.8,
+        133.8,
+        133.8
+      ]
+    },
+    "bf16/f32": {
+      "stock": 66.9,
+      "unlocked": 133.7,
+      "ratio": 1.998505231689088,
+      "change_percent": 99.8505231689088,
+      "stock_runs": [
+        66.9,
+        66.9,
+        66.9
+      ],
+      "unlocked_runs": [
+        133.7,
+        133.7,
+        133.6
+      ]
+    },
+    "s8/s32": {
+      "stock": 267.4,
+      "unlocked": 266.7,
+      "ratio": 0.9973821989528796,
+      "change_percent": -0.2617801047120394,
+      "stock_runs": [
+        267.2,
+        267.4,
+        267.4
+      ],
+      "unlocked_runs": [
+        266.7,
+        266.6,
+        266.6
+      ]
+    },
+    "dp4a": {
+      "stock": 66.6,
+      "unlocked": 66.4,
+      "ratio": 0.9969969969969972,
+      "change_percent": -0.30030030030028243,
+      "stock_runs": [
+        66.6,
+        66.6,
+        66.6
+      ],
+      "unlocked_runs": [
+        66.4,
+        66.4,
+        66.4
+      ]
+    },
+    "ffma": {
+      "stock": 32.1,
+      "unlocked": 32.1,
+      "ratio": 1.0,
+      "change_percent": 0.0,
+      "stock_runs": [
+        32.1,
+        32.1,
+        32.0
+      ],
+      "unlocked_runs": [
+        32.1,
+        32.1,
+        32.1
+      ]
+    }
+  },
+  "signing_note": "Module is signed with existing DKMS key, but kernel reported verification failure/untrusted or missing required key and tainted. SecureBoot was already 0 and remains 0; no enforcement disabled.",
+  "limitations": [
+    "No cold A/B/A reproduction or warm reboot repeat yet",
+    "No application benchmark or sustained stability test",
+    "Clock/power values are point samples, not continuous traces",
+    "Not proof for other AD104 boards or Secure-Boot-enabled operation"
+  ]
+}

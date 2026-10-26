@@ -1,0 +1,82 @@
+{
+  "files": [
+    "Qwen3.8-Flash-Next-GSQ-RCO-abliterated-IQ3_S-00001-of-00002.gguf",
+    "Qwen3.8-Flash-Next-GSQ-RCO-abliterated-IQ3_S-00002-of-00002.gguf"
+  ],
+  "total_bytes": 83852561949,
+  "total_elements": 176943899520,
+  "by_type": {
+    "Q6_K": {
+      "tensors": 89,
+      "bytes": 1361740800,
+      "elements": 1660026880
+    },
+    "BF16": {
+      "tensors": 484,
+      "bytes": 1527889930,
+      "elements": 763944960
+    },
+    "F32": {
+      "tensors": 292,
+      "bytes": 10063360,
+      "elements": 2515840
+    },
+    "IQ4_XS": {
+      "tensors": 45,
+      "bytes": 1398906880,
+      "elements": 2633236480
+    },
+    "Q4_K": {
+      "tensors": 43,
+      "bytes": 163307520,
+      "elements": 290324480
+    },
+    "IQ4_NL": {
+      "tensors": 40,
+      "bytes": 47202647059,
+      "elements": 83915816960
+    },
+    "Q8_0": {
+      "tensors": 96,
+      "bytes": 885719040,
+      "elements": 833617920
+    },
+    "IQ3_XXS": {
+      "tensors": 34,
+      "bytes": 10918297600,
+      "elements": 28521267200
+    },
+    "Q5_K": {
+      "tensors": 31,
+      "bytes": 303677440,
+      "elements": 441712640
+    },
+    "custom": {
+      "tensors": 9,
+      "bytes": 2123366400,
+      "elements": 7549747200
+    },
+    "IQ2_S": {
+      "tensors": 40,
+      "bytes": 10747904000,
+      "elements": 33554432000
+    },
+    "F16": {
+      "tensors": 1,
+      "bytes": 81920,
+      "elements": 40960
+    },
+    "IQ3_S": {
+      "tensors": 20,
+      "bytes": 7208960000,
+      "elements": 16777216000
+    }
+  },
+  "high_precision": {
+    "tensors": 777,
+    "bytes": 1538035210,
+    "elements": 766501760,
+    "byte_fraction": 0.018342137368867143,
+    "element_fraction": 0.0043318914191408
+  }
+}

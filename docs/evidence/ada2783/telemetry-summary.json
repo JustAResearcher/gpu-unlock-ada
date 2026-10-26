@@ -1,0 +1,14 @@
+{
+ "stock": {
+  "samples": 64,
+  "sm_mhz_max": 2700,
+  "power_w_max": 141.6,
+  "temp_c_max": 51
+ },
+ "unlocked_gemm": {
+  "samples": 24,
+  "sm_mhz_max": 2700,
+  "power_w_max": 151.5,
+  "temp_c_max": 53
+ }
+}

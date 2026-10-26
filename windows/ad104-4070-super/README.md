@@ -1,4 +1,4 @@
-# RTX 4070 SUPER on Windows
+# RTX 4070 SUPER on Windows (Experimental)
 
 The Tensor unlock succeeded on a Gigabyte RTX 4070 SUPER (`10de:2783`,
 `1458:413b`) running Windows 11. At the same 220 W power limit, matched cuBLAS
@@ -20,7 +20,14 @@ contains all six matrix measurements and the sanitized EFI log.
 | CPU | Intel Core i5-13600KF |
 | OS / driver | Windows 11 Pro, build 26300 / NVIDIA 617.42 |
 | GPU power limit | 220 W before and after |
-| Boot method | Existing internal ESP, one-time firmware entry, operator presses `U` |
+| Boot method | Existing internal ESP, persistent menu entry selected for one boot, operator presses `U` |
+
+We used the internal ESP for convenience, so the trial did not need a prepared
+USB drive. USB boot has not been tested on this board; the trial does not show
+that the board requires internal-disk boot. The current unlock profile checks
+that it was launched from the pinned internal ESP and rejects USB volumes.
+A USB-launched variant would need a separate, reviewed boot-I/O profile and
+physical validation; copying this unlock EFI onto a USB drive is insufficient.
 
 The source retains the successful run's exact GPU, firmware, driver-code and
 boot checks. Another system needs its own capture and a reviewed profile if
@@ -47,7 +54,7 @@ The repository's `.gitattributes` preserves the bytes used by the hash catalog.
 All commands below use the assembled tree. Keep captures, local configuration,
 firmware and executable outputs under the ignored `build/` directory.
 
-## 2. Capture the card before Windows loads
+## 2. Capture the card before Windows loads (Experimental internal-ESP setup)
 
 Build the collector from PowerShell:
 
@@ -62,9 +69,9 @@ The build runs host tests and PE checks, then writes
 driver ownership/code. Its only persistent output is a new
 `AD104-PROBE/CAPxxxx.JSON` on the volume from which it started.
 
-An existing FAT32 EFI System Partition works; a USB drive is optional. In an
-administrator PowerShell, first verify that `S:` is unused and mount the system
-ESP with `mountvol S: /S`. Check the disk/partition identity and available space;
+This experimental workflow uses the existing internal FAT32 EFI System
+Partition. In an administrator PowerShell, first verify that `S:` is unused
+and mount the system ESP with `mountvol S: /S`. Check the disk/partition identity and available space;
 leave at least 8 MiB for each capture. Create an **unused** `S:\EFI\4070S-PROBE`
 directory and copy the collector there as `COLD.EFI`. Keep Windows Boot Manager
 at `\EFI\Microsoft\Boot\bootmgfw.efi` intact.
@@ -83,6 +90,12 @@ bcdedit /set "{fwbootmgr}" displayorder $entry /addlast
 bcdedit /set "{fwbootmgr}" bootsequence $entry
 bcdedit /enum firmware /v
 ```
+
+The entry and its `displayorder` membership persist. Only `bootsequence` is
+one-shot; consuming it does not delete the entry or files. The collector writes
+captures to `S:\AD104-PROBE\`, while the unlock writes logs under
+`S:\EFI\4070S-PROBE\LOGS\`. [Section 8](#8-rollback-and-remove-the-experimental-setup)
+covers removal of both the entry and the on-disk files.
 
 Confirm that Windows remains the first default entry, the previous entries
 retain their order, and only the new entry is selected for the next boot.
@@ -212,7 +225,7 @@ telemetry and stops on its temperature/time/memory limits. Each run multiplies
 five products after a one-second warmup. The benchmark verifies a full 256-square
 CPU reference, 1,024 elements of the large result, and the complete output hash.
 
-## 6. Run the manual unlock once
+## 6. Run the manual unlock once (Experimental)
 
 Mount the same ESP. Copy your verified EFI as
 `S:\EFI\4070S-PROBE\UNLOCK.EFI` and the four small assets into `ASSETS/`.
@@ -261,6 +274,74 @@ VBIOS, power limit, dimensions or output hashes. Keep all runs, including slow
 ones, and inspect clocks and temperature alongside median throughput.
 Share the matrix JSON, sanitized transaction log and exact tested source/binary
 hashes. Raw captures and generated firmware remain local.
+
+## 8. Rollback and remove the experimental setup
+
+Deleting the boot entry or files does not reset an already unlocked GPU.
+End the unlocked session with a full shutdown and power-off, then boot Windows
+Boot Manager directly. Run the cleanup below from administrator PowerShell.
+
+1. Restore `$entry` from the identifier saved in section 2. Inspect it first
+   and confirm its description and EFI path belong to this trial:
+
+   ```powershell
+   $entry = '{NEW-ENTRY-GUID}'
+   bcdedit /enum $entry /v
+   ```
+
+   Use only the entry created for this workflow. Then remove it and its menu
+   references with the documented `/cleanup` option:
+
+   ```powershell
+   bcdedit /delete $entry /cleanup
+   bcdedit /enum firmware /v
+   ```
+
+   Stop on an error. Verify that the trial entry is absent, Windows Boot
+   Manager remains first, and the other entries retain their previous order.
+   `bcdedit /? DELETE` describes `/cleanup`, which removes references to the
+   deleted entry, including a pending one-time selection. A full BCD import
+   is unnecessary for this removal and would replace unrelated entries too.
+
+2. Verify that `S:` is unused, mount the system ESP with `mountvol S: /S`,
+   and compare its disk/partition identity with the private setup notes.
+   Inspect the exact directory before removing it:
+
+   ```powershell
+   Get-Item -LiteralPath 'S:\EFI\4070S-PROBE'
+   Get-ChildItem -LiteralPath 'S:\EFI\4070S-PROBE' -Force
+   ```
+
+   After saving any wanted logs privately and confirming that this is the
+   dedicated directory created in section 2, remove it:
+
+   ```powershell
+   Remove-Item -LiteralPath 'S:\EFI\4070S-PROBE' -Recurse
+   Test-Path -LiteralPath 'S:\EFI\4070S-PROBE'
+   ```
+
+   `Test-Path` should return `False`. This removes the collector/unlock EFI,
+   four small assets and unlock logs. Keep `S:\EFI\Microsoft` and all other
+   bootloader directories intact.
+
+3. The collector's captures are separate: inspect `S:\AD104-PROBE\` and
+   delete only the `CAPxxxx.JSON` files created by this trial. Remove that
+   directory only if it was created for the trial and is now empty. Remove
+   the temporary drive letter with `mountvol S: /D` when ESP cleanup is done.
+
+4. On `C:`, remove the exact GSP file configured in the private header.
+   For the example path in section 4, that is
+   `Remove-Item -LiteralPath 'C:\gpu-unlock\gsp_ga10x.bin'`; substitute the
+   actual configured path and leave unrelated files in its parent directory.
+   Also remove unwanted capture copies and extracted PROM/driver-code inputs
+   under `build/private/`, the local `boot_profile.h`, generated assets and
+   trial build outputs. Inspect each location before deletion and retain any
+   wanted evidence in private storage. Raw captures, BCD exports and local
+   partition identifiers must stay out of commits and public replies.
+
+Restore any firmware settings changed for the trial, including Secure Boot,
+to their previous values. No rollback or deletion command above is run by the
+build scripts; cleanup remains an explicit operator action.
 
 ## Credits
 

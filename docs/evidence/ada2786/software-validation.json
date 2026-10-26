@@ -1,0 +1,21 @@
+{
+  "hardware_source_commit": "0eb54148094f26e1ae49cdc894db555639ca4172",
+  "hardware_signed_module_sha256": "b0a2c173a44e71e73116622e32d4d3a06d53bb4767519de3b67528568aed96ef",
+  "hardware_module_srcversion": "7D33C9E126D92F9899AC172",
+  "publication_changes_after_hardware_run": "Kernel differences are comments, module description and parameter help only; transaction/admission semantics unchanged. Helper label, helper test and documentation updated.",
+  "full_suite": {
+    "tests_run": 31,
+    "skipped": 0,
+    "result": "OK",
+    "real_assets": true,
+    "real_nvidia_source": true,
+    "optional_decoder_dependency": "PyCryptodome in isolated venv"
+  },
+  "module_build": {
+    "kernel": "7.3.0-5-cachyos",
+    "LLVM": 1,
+    "result": "passed",
+    "publication_unsigned_module_sha256": "c6eee87880d413466082fdd791929abb7ba98f9647d0ba4a6c88c0d650c7f24b"
+  },
+  "binary_publication": false
+}

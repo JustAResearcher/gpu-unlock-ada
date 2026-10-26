@@ -1,0 +1,159 @@
+{
+  "source_size": 2048000,
+  "source_sha256": "ad166cab91ee607b3e5cf2f2198c617a857de5908972770ae40b5ca81d08854f",
+  "outer_magic": "NVGI",
+  "analysis_mode": "offline-only",
+  "raw_container_parser_result": -22,
+  "rom_candidates": [
+    {
+      "container_offset": 37888,
+      "logical_rom_size": 629760,
+      "logical_rom_sha256": "bc49205f188f1409b1bec45acadd125488a74d4a36265e4b22c7181f24d3ba2a",
+      "pcir_vendor": 4318,
+      "pcir_device": 10118,
+      "images": [
+        {
+          "offset": 0,
+          "size": 64512,
+          "code_type": 0,
+          "last": false
+        },
+        {
+          "offset": 64512,
+          "size": 86016,
+          "code_type": 3,
+          "last": false
+        },
+        {
+          "offset": 150528,
+          "size": 24576,
+          "code_type": 224,
+          "last": false
+        },
+        {
+          "offset": 175104,
+          "size": 454656,
+          "code_type": 224,
+          "last": true
+        }
+      ],
+      "parser_result": 0,
+      "fwsec": {
+        "image_off": 284808,
+        "image_size": 66816,
+        "imem_pa": 0,
+        "imem_size": 63232,
+        "imem_va": 0,
+        "dmem_pa": 0,
+        "data_off": 63232,
+        "dmem_size": 3456,
+        "pkc_off": 2852,
+        "interface_off": 28,
+        "ucode_id": 9,
+        "engine_mask": 1024,
+        "sig_count": 2,
+        "sig_versions": 3,
+        "sig_off": 284040,
+        "sig_bytes": 768
+      },
+      "fwsec_descriptor_rom_offset": 283996,
+      "fwsec_image_sha256": "49fc3b561ad6087f597d19da8aadaccf0d967c18b76f464c8a39a01911e5bfaa",
+      "measured_fuse_raw": 1,
+      "computed_fuse_version": 1,
+      "fuse_register": 8536544,
+      "signature_selection_result": 0,
+      "selected_signature_offset_in_table": 384,
+      "selected_signature_rom_offset": 284424,
+      "selected_signature_sha256": "04e022518e4782d4e4dc7b4f79cff4a84c5f3b4e239b905dc300ada10779d0f5",
+      "frts_patch_in_ram_result": 0,
+      "frts_test_address": 1048576,
+      "dma_bounds_pass": true,
+      "engine_mask_supported": true,
+      "identity_strings": [
+        "GV-N4070WF3OC-12GD/F31/0F0C",
+        "Version 95.04.3E.08.BE "
+      ]
+    },
+    {
+      "container_offset": 955392,
+      "logical_rom_size": 629760,
+      "logical_rom_sha256": "bc49205f188f1409b1bec45acadd125488a74d4a36265e4b22c7181f24d3ba2a",
+      "pcir_vendor": 4318,
+      "pcir_device": 10118,
+      "images": [
+        {
+          "offset": 0,
+          "size": 64512,
+          "code_type": 0,
+          "last": false
+        },
+        {
+          "offset": 64512,
+          "size": 86016,
+          "code_type": 3,
+          "last": false
+        },
+        {
+          "offset": 150528,
+          "size": 24576,
+          "code_type": 224,
+          "last": false
+        },
+        {
+          "offset": 175104,
+          "size": 454656,
+          "code_type": 224,
+          "last": true
+        }
+      ],
+      "parser_result": 0,
+      "fwsec": {
+        "image_off": 284808,
+        "image_size": 66816,
+        "imem_pa": 0,
+        "imem_size": 63232,
+        "imem_va": 0,
+        "dmem_pa": 0,
+        "data_off": 63232,
+        "dmem_size": 3456,
+        "pkc_off": 2852,
+        "interface_off": 28,
+        "ucode_id": 9,
+        "engine_mask": 1024,
+        "sig_count": 2,
+        "sig_versions": 3,
+        "sig_off": 284040,
+        "sig_bytes": 768
+      },
+      "fwsec_descriptor_rom_offset": 283996,
+      "fwsec_image_sha256": "49fc3b561ad6087f597d19da8aadaccf0d967c18b76f464c8a39a01911e5bfaa",
+      "measured_fuse_raw": 1,
+      "computed_fuse_version": 1,
+      "fuse_register": 8536544,
+      "signature_selection_result": 0,
+      "selected_signature_offset_in_table": 384,
+      "selected_signature_rom_offset": 284424,
+      "selected_signature_sha256": "04e022518e4782d4e4dc7b4f79cff4a84c5f3b4e239b905dc300ada10779d0f5",
+      "frts_patch_in_ram_result": 0,
+      "frts_test_address": 1048576,
+      "dma_bounds_pass": true,
+      "engine_mask_supported": true,
+      "identity_strings": [
+        "GV-N4070WF3OC-12GD/F31/0F0C",
+        "Version 95.04.3E.08.BE "
+      ]
+    }
+  ],
+  "copies_identical": true,
+  "booter": {
+    "sha256": "6ee05b20e1dc244c08c052f36ef28469b8d09f4955d1fe33e48a179e11a7fd49",
+    "ucode_id": 3,
+    "num_sigs": 2,
+    "fuse_register": 8536392,
+    "measured_fuse_raw": 1,
+    "computed_fuse_version": 1,
+    "geometry_validation_result": 0,
+    "signature_patch_in_ram_result": 0,
+    "selected_signature_slot": 0
+  }
+}

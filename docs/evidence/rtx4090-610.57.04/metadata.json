@@ -1,0 +1,154 @@
+{
+  "source_commit": "4e7fefcc4923f9e083d5324dc75a7d2f906af77f",
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "device_id": "10de:2684",
+  "SMs": 128,
+  "compute_capability": "8.9",
+  "kernel": "7.2.5-3-omarchy",
+  "driver": "610.57.04",
+  "CUDA_toolkit": "13.3",
+  "power_limit_W": 450,
+  "clock_policy": "Existing clock and power policy retained; no changes during these runs.",
+  "background": "Hyprland compositor, quickshell panel, Xwayland, two Chromium-based processes. No Steam or game processes during unlocked run. Stock run had Steam active.",
+  "pair_count": 1,
+  "timing_repetitions": 5,
+  "large_gemm_warmups": 10,
+  "large_gemm_iterations_per_timing": 20,
+  "module_sha256": "0a912f20f9cd9febab8214298f8f5e0017689ef211dcf25075f0ab585c6a79aa",
+  "firmware_sha256": {
+    "booter_load_ga102.bin": "056cbc064a888f80717726c54d7f64fcd68044d123870c95a74f37f4975dcaa4",
+    "gsp_boot_ga102.bin": "3df651acb174fd5f5561a1996965b192f50c5d763168446ed0d4ead19d895768",
+    "gsp_boot_desc_ga102.bin": "cc5a3fc1f4c47f2fe107b1b68f0176d8a448e6dec84b575e5560ccef5262bf15",
+    "booter_load_ad102.bin": "6ee05b20e1dc244c08c052f36ef28469b8d09f4955d1fe33e48a179e11a7fd49",
+    "gsp_boot_ad102.bin": "45d6335a8185d6ff13e8d1484cea73f68d3d13aa1c19dc080ed1c3482dd5bac0",
+    "gsp_boot_desc_ad102.bin": "83f8f3f1f5f9496e0ea8fc7103c2beb64d0b6de2f5ffe725f13514de5a95fa42",
+    "gsp_ga10x.bin": "572373620a37418f24dc16b5031c39338778c3257e48e8408de9a57291b24f3a",
+    "v67-ga102-610.43.03.bin": "2a0aa1f86d0b6afff5214d641d87d46dc98ef06ed908ff05d0ddbad5ffb7e197",
+    "v67-ad102-610.43.03-four-plm.bin": "44c36b2d6b3424e53e18f3e55db85c833655de071ce66ce42749588a4a7dc8cb"
+  },
+  "benchmark_hashes": {
+    "mma_bench": "4a8f3513b65698bc2d60906922e2a0282400337eb180374c7a0c145c488f1b17",
+    "validate_gemm": "0d58e9b2e55896a671e4cee96de214e7764ff9622266e73c23932a3c51f6b0f3",
+    "gemm_bench": "cbd901f9779ccf9019dab9cd14e20a6fc5236f1a8d54339336121cf3e263d24a",
+    "tensor_modes_issue_sm89.cubin": "33aa6db385aa9eb8a1f73bb2f74891aea84794326b7c40992bc642f93a3c614d"
+  },
+  "phases": {
+    "stock": {
+      "started_utc": "20261025T135041Z",
+      "status": "passed",
+      "sm_rates": {
+        "fmla32": 1,
+        "imla2": 1,
+        "imla4": 1,
+        "fmla16": 0,
+        "ffma": 0,
+        "dp": 0,
+        "imla0": 0,
+        "imla1": 0,
+        "imla3": 0
+      },
+      "bar0_registers": {
+        "PLM_entry_0x00823804": "0xffffff8f",
+        "SS0_0x0082381c": "0x47131055",
+        "SS1_0x00823820": "0x00000001",
+        "FUSE_SS_FMLA32_0x008207d8": "0x00000001",
+        "FUSE_SS_IMLA2_0x008207e4": "0x00000001",
+        "FUSE_SS_IMLA4_0x008207ec": "0x00000001"
+      },
+      "mma_Top_s": {
+        "f16/f16": 332.8,
+        "f16/f32": 162.7,
+        "bf16/f32": 162.9,
+        "s8/s32": 661.6,
+        "dp4a": 164.6,
+        "ffma": 79.3
+      },
+      "active_telemetry": {
+        "power.draw [W]": {
+          "min": 31.8,
+          "max": 313.17,
+          "mean": 177.06
+        },
+        "temperature.gpu": {
+          "min": 35,
+          "max": 53,
+          "mean": 42.6
+        },
+        "clocks.current.graphics [MHz]": {
+          "min": 600,
+          "max": 2775,
+          "mean": 2478
+        },
+        "clocks_throttle_reasons_nonzero": "0x4 (SW Power Cap) during GEMM only"
+      },
+      "journal_returncode": 0
+    },
+    "unlocked": {
+      "started_utc": "20261025T140434Z",
+      "status": "passed",
+      "sm_rates": {
+        "fmla32": 0,
+        "imla2": 0,
+        "imla4": 0,
+        "fmla16": 0,
+        "ffma": 0,
+        "dp": 0,
+        "imla0": 0,
+        "imla1": 0,
+        "imla3": 0
+      },
+      "bar0_registers": {
+        "PLM_entry_0x00823804": "0xffffffff",
+        "SS0_0x0082381c": "0x88888888",
+        "SS1_0x00823820": "0x00000008",
+        "FUSE_SS_FMLA32_0x008207d8": "0x00000001",
+        "FUSE_SS_IMLA2_0x008207e4": "0x00000001",
+        "FUSE_SS_IMLA4_0x008207ec": "0x00000001",
+        "summary": "plm_open=1 ss0_unlocked=1 ss1_unlocked=1"
+      },
+      "mma_Top_s": {
+        "f16/f16": 312.7,
+        "f16/f32": 327.6,
+        "bf16/f32": 323.0,
+        "s8/s32": 645.2,
+        "dp4a": 164.6,
+        "ffma": 79.3
+      },
+      "active_telemetry": {
+        "power.draw [W]": {
+          "min": 35.85,
+          "max": 345.66,
+          "mean": 167.47
+        },
+        "temperature.gpu": {
+          "min": 34,
+          "max": 50,
+          "mean": 42.8
+        },
+        "clocks.current.graphics [MHz]": {
+          "min": 915,
+          "max": 2775,
+          "mean": 2312
+        },
+        "clocks_throttle_reasons_nonzero": "0x4 (SW Power Cap) during MMA and GEMM"
+      },
+      "journal_returncode": 0
+    }
+  },
+  "boot_evidence": "Selected-card gpu_unlock: unlocked message and full-rate RM getter after NVIDIA initialization. BAR0 gpu_peek registers confirm PLM opened and SS0/SS1 at full-rate values. Fuse registers unchanged (silicon-burned).",
+  "error_check": "No NVRM Xid lines observed in current-boot journal before or after unlocked benchmarks.",
+  "sanitization": "GPU UUID, host name, boot IDs, root UUID and host paths omitted. Numeric outputs/timings preserved. BAR0 register values preserved exactly.",
+  "new_in_this_submission": [
+    "First documented reproduction on NVIDIA driver 610.57.04 (prior evidence used 615.78.08).",
+    "Matched BAR0 gpu_peek register dumps (stock vs unlocked) showing PLM, SS0, SS1 and fuse register values.",
+    "Power/thermal analysis: unlocked card peaks at 346 W vs 313 W stock; SW Power Cap throttle triggers earlier, reducing minimum clock to 2505 MHz vs 2655 MHz stock."
+  ],
+  "limits": [
+    "One matched stock/unlocked pair on one owner-controlled RTX 4090, with five internal timing repetitions per mode.",
+    "No warm-reboot persistence test in this submission.",
+    "Stock run had Steam processes active (~193 MiB VRAM); unlocked run did not. Neither was compute-active.",
+    "Desktop activity (Hyprland compositor), clocks and temperature are potential timing confounders.",
+    "Large-GEMM performance inputs have a cheap exact reference; seeded varied-matrix validation is separate.",
+    "No claim about whole applications, inference, training, lifetime reliability or maximum board power."
+  ]
+}

@@ -158,9 +158,57 @@ int main(int argc, char **argv)
         assert(!fake.live && !fake.fw_live && dev.refs==1);
         puts("AD103 0x2705 profile dispatch under mocked registers PASS");
         {
+        /* Synthetic AD103/A1 and 32 GiB geometry, not measured board values.
+         * Exercise the high address bits and the same negative safety gates. */
+        static const int cases4080[]={0,1,2,4,7,8,10};
+        for (unsigned j=0;j<ARRAY_SIZE(cases4080);j++) {
+        ad102_setup(&w);dev.device=GU_AD103_RTX_4080;regs[0]=0x193000a1;
+        fake.ad_mode=cases4080[j];load_rom(argv[1]);
+        regs[0x1183a4/4]=0x8000;regs[0x625f04/4]=1;regs[0x1fa7c8/4]=0x45cb8f;
+        regs[0x1fa82c/4]=0xfffffff0;regs[0x1fa830/4]=0;
+        regs[(GU_FUSE_SEC2_UCODE1+2*4)/4]=1;
+        fake.fwsec_wpr=1;
+        fake.fwsec_wpr_lo=(u32)((0x7ffe00000ull>>12)<<4);
+        fake.fwsec_wpr_hi=(u32)((0x7ffee0000ull>>12)<<4);
+        struct gpu_unlock_610_shared shared4080={0};last_work=NULL;
+        assert(!gpu_unlock_610_load_shared(&dev,&shared4080));
+        int ret4080=gpu_unlock_610_unlock(&dev,&shared4080);
+        gpu_unlock_610_release_shared(&shared4080);
+        assert((!ret4080)==(cases4080[j]==0) && fake.starts==1 && fake.gsp_starts==1);
+        if(cases4080[j]==0)assert(fake.flrs==1);
+        if(cases4080[j]==1 || cases4080[j]==2 || cases4080[j]==4 || cases4080[j]==10)
+            assert(!fake.selector_writes && !fake.ss1_writes && !fake.flrs);
+        if(fake.pins) {
+            assert(fake.live && !fake.frees && last_work->retained);
+            last_work->firmware_started=false;
+            assert(!unlock_transaction_unwind(last_work));
+            pci_dev_put(last_work->pdev);free(last_work);
+        }
+        assert(!fake.live && !fake.fw_live && dev.refs==1);
+        printf("AD103 0x2704 synthetic 32GiB mode=%d result=%d PASS\n",cases4080[j],ret4080);
+        }
+        }
+        {
         /* Dispatch the same published AD102-family payload through the exact
-         * 0x2805 profile under mocked registers. This is not silicon proof. */
-        ad102_setup(&w);dev.device=GU_AD106_RTX_4060_TI_16GB;load_rom(argv[1]);
+         * 0x2786 profile under mocked registers. This is not silicon proof. */
+        ad102_setup(&w);dev.device=GU_AD104_RTX_4070;load_rom(argv[1]);
+        regs[0x1183a4/4]=0x5ff4;regs[0x625f04/4]=1;regs[0x1fa7c8/4]=0x45cb8f;
+        regs[0x1fa82c/4]=0x100000;regs[0x1fa830/4]=0x5cf3ff0;
+        regs[(GU_FUSE_SEC2_UCODE1+2*4)/4]=1;
+        fake.fwsec_wpr=1;fake.fwsec_wpr_lo=0x5ff2000;fake.fwsec_wpr_hi=0x5ff2e00;
+        struct gpu_unlock_610_shared shared104={0};last_work=NULL;
+        assert(!gpu_unlock_610_load_shared(&dev,&shared104));
+        ret=gpu_unlock_610_unlock(&dev,&shared104);
+        gpu_unlock_610_release_shared(&shared104);
+        assert(!ret && fake.starts==1 && fake.gsp_starts==1 && fake.flrs==1);
+        assert(!fake.live && !fake.fw_live && dev.refs==1);
+        puts("AD104 0x2786 profile dispatch under mocked registers PASS");
+        }
+        const unsigned short ad106_ids[]={GU_AD106_RTX_4060_TI_16GB,GU_AD106_RTX_4060_TI};
+        for(unsigned i=0;i<ARRAY_SIZE(ad106_ids);i++) {
+        /* Dispatch the same published AD102-family payload through the exact
+         * 0x2805 and 0x2803 profiles under mocked registers. This is not silicon proof. */
+        ad102_setup(&w);dev.device=ad106_ids[i];load_rom(argv[1]);
         regs[0x1183a4/4]=0x5ff4;regs[0x625f04/4]=1;regs[0x1fa7c8/4]=0x45cb8f;
         regs[0x1fa82c/4]=0x100000;regs[0x1fa830/4]=0x5cf3ff0;
         regs[(GU_FUSE_SEC2_UCODE1+2*4)/4]=1;
@@ -171,7 +219,149 @@ int main(int argc, char **argv)
         gpu_unlock_610_release_shared(&shared106);
         assert(!ret && fake.starts==1 && fake.gsp_starts==1 && fake.flrs==1);
         assert(!fake.live && !fake.fw_live && dev.refs==1);
-        puts("AD106 0x2805 profile dispatch under mocked registers PASS");
+        printf("AD106 %#x profile dispatch under mocked registers PASS\n",ad106_ids[i]);
+        }
+        {
+        /* Dispatch the same published AD102-family payload through the exact
+         * 0x28e1 profile under mocked registers. This is not silicon proof. */
+        ad102_setup(&w);dev.device=GU_AD107_RTX_4050_MOBILE;load_rom(argv[1]);
+        regs[0x1183a4/4]=0x5ff4;regs[0x625f04/4]=1;regs[0x1fa7c8/4]=0x45cb8f;
+        regs[0x1fa82c/4]=0x100000;regs[0x1fa830/4]=0x5cf3ff0;
+        regs[(GU_FUSE_SEC2_UCODE1+2*4)/4]=1;
+        fake.fwsec_wpr=1;fake.fwsec_wpr_lo=0x5ff2000;fake.fwsec_wpr_hi=0x5ff2e00;
+        struct gpu_unlock_610_shared shared107={0};last_work=NULL;
+        assert(!gpu_unlock_610_load_shared(&dev,&shared107));
+        ret=gpu_unlock_610_unlock(&dev,&shared107);
+        gpu_unlock_610_release_shared(&shared107);
+        assert(!ret && fake.starts==1 && fake.gsp_starts==1 && fake.flrs==1);
+        assert(!fake.live && !fake.fw_live && dev.refs==1);
+        puts("AD107 0x28e1 profile dispatch under mocked registers PASS");
+        }
+        {
+        /* Dispatch the same published AD102-family payload through the exact
+         * 0x28e0 profile under mocked registers. This is not silicon proof. */
+        ad102_setup(&w);dev.device=GU_AD107_RTX_4060_MOBILE;load_rom(argv[1]);
+        regs[0x1183a4/4]=0x5ff4;regs[0x625f04/4]=1;regs[0x1fa7c8/4]=0x45cb8f;
+        regs[0x1fa82c/4]=0x100000;regs[0x1fa830/4]=0x5cf3ff0;
+        regs[(GU_FUSE_SEC2_UCODE1+2*4)/4]=1;
+        fake.fwsec_wpr=1;fake.fwsec_wpr_lo=0x5ff2000;fake.fwsec_wpr_hi=0x5ff2e00;
+        struct gpu_unlock_610_shared shared107_4060={0};last_work=NULL;
+        assert(!gpu_unlock_610_load_shared(&dev,&shared107_4060));
+        ret=gpu_unlock_610_unlock(&dev,&shared107_4060);
+        gpu_unlock_610_release_shared(&shared107_4060);
+        assert(!ret && fake.starts==1 && fake.gsp_starts==1 && fake.flrs==1);
+        assert(!fake.live && !fake.fw_live && dev.refs==1);
+        puts("AD107 0x28e0 profile dispatch under mocked registers PASS");
+        }
+        {
+        /* Same AD102-family payload through the exact 0x2782 profile under
+         * mocked registers. This is not silicon proof. */
+        ad102_setup(&w);dev.device=GU_AD104_RTX_4070_TI;load_rom(argv[1]);
+        regs[0x1183a4/4]=0x5ff4;regs[0x625f04/4]=1;regs[0x1fa7c8/4]=0x45cb8f;
+        regs[0x1fa82c/4]=0x100000;regs[0x1fa830/4]=0x5cf3ff0;
+        regs[(GU_FUSE_SEC2_UCODE1+2*4)/4]=1;
+        fake.fwsec_wpr=1;fake.fwsec_wpr_lo=0x5ff2000;fake.fwsec_wpr_hi=0x5ff2e00;
+        struct gpu_unlock_610_shared shared104={0};last_work=NULL;
+        assert(!gpu_unlock_610_load_shared(&dev,&shared104));
+        ret=gpu_unlock_610_unlock(&dev,&shared104);
+        gpu_unlock_610_release_shared(&shared104);
+        assert(!ret && fake.starts==1 && fake.gsp_starts==1 && fake.flrs==1);
+        assert(!fake.live && !fake.fw_live && dev.refs==1);
+        puts("AD104 0x2782 profile dispatch under mocked registers PASS");
+        }
+        {
+        /* Dispatch the same published AD102 payload through the exact 0x2689
+         * cut-down AD102 profile under mocked registers. This is not silicon proof. */
+        ad102_setup(&w);dev.device=GU_AD102_RTX_4070_TI_SUPER;load_rom(argv[1]);
+        regs[0x1183a4/4]=0x5ff4;regs[0x625f04/4]=1;regs[0x1fa7c8/4]=0x45cb8f;
+        regs[0x1fa82c/4]=0x100000;regs[0x1fa830/4]=0x5cf3ff0;
+        regs[(GU_FUSE_SEC2_UCODE1+2*4)/4]=1;
+        fake.fwsec_wpr=1;fake.fwsec_wpr_lo=0x5ff2000;fake.fwsec_wpr_hi=0x5ff2e00;
+        struct gpu_unlock_610_shared shared2689={0};last_work=NULL;
+        assert(!gpu_unlock_610_load_shared(&dev,&shared2689));
+        ret=gpu_unlock_610_unlock(&dev,&shared2689);
+        gpu_unlock_610_release_shared(&shared2689);
+        assert(!ret && fake.starts==1 && fake.gsp_starts==1 && fake.flrs==1);
+        assert(!fake.live && !fake.fw_live && dev.refs==1);
+        puts("AD102 0x2689 profile dispatch under mocked registers PASS");
+        }
+        {
+        /* Same mocked dispatch for the AD103 RTX 4070 (0x2709). */
+        ad102_setup(&w);dev.device=GU_AD103_RTX_4070;load_rom(argv[1]);
+        regs[0x1183a4/4]=0x5ff4;regs[0x625f04/4]=1;regs[0x1fa7c8/4]=0x45cb8f;
+        regs[0x1fa82c/4]=0x100000;regs[0x1fa830/4]=0x5cf3ff0;
+        regs[(GU_FUSE_SEC2_UCODE1+2*4)/4]=1;
+        fake.fwsec_wpr=1;fake.fwsec_wpr_lo=0x5ff2000;fake.fwsec_wpr_hi=0x5ff2e00;
+        struct gpu_unlock_610_shared shared2709={0};last_work=NULL;
+        assert(!gpu_unlock_610_load_shared(&dev,&shared2709));
+        ret=gpu_unlock_610_unlock(&dev,&shared2709);
+        gpu_unlock_610_release_shared(&shared2709);
+        assert(!ret && fake.starts==1 && fake.gsp_starts==1 && fake.flrs==1);
+        assert(!fake.live && !fake.fw_live && dev.refs==1);
+        puts("AD103 0x2709 profile dispatch under mocked registers PASS");
+        }
+        {
+        /* Same mocked dispatch for the AD103 RTX 4080 SUPER (0x2702). */
+        ad102_setup(&w);dev.device=GU_AD103_RTX_4080_SUPER;load_rom(argv[1]);
+        regs[0x1183a4/4]=0x5ff4;regs[0x625f04/4]=1;regs[0x1fa7c8/4]=0x45cb8f;
+        regs[0x1fa82c/4]=0x100000;regs[0x1fa830/4]=0x5cf3ff0;
+        regs[(GU_FUSE_SEC2_UCODE1+2*4)/4]=1;
+        fake.fwsec_wpr=1;fake.fwsec_wpr_lo=0x5ff2000;fake.fwsec_wpr_hi=0x5ff2e00;
+        struct gpu_unlock_610_shared shared2702={0};last_work=NULL;
+        assert(!gpu_unlock_610_load_shared(&dev,&shared2702));
+        ret=gpu_unlock_610_unlock(&dev,&shared2702);
+        gpu_unlock_610_release_shared(&shared2702);
+        assert(!ret && fake.starts==1 && fake.gsp_starts==1 && fake.flrs==1);
+        assert(!fake.live && !fake.fw_live && dev.refs==1);
+        puts("AD103 0x2702 profile dispatch under mocked registers PASS");
+        }
+        {
+        /* Dispatch the same published AD102-family payload through the exact
+         * 0x28a0 profile under mocked registers. This is not silicon proof. */
+        ad102_setup(&w);dev.device=GU_AD107_RTX_4060_LAPTOP;load_rom(argv[1]);
+        regs[0x1183a4/4]=0x5ff4;regs[0x625f04/4]=1;regs[0x1fa7c8/4]=0x45cb8f;
+        regs[0x1fa82c/4]=0x100000;regs[0x1fa830/4]=0x5cf3ff0;
+        regs[(GU_FUSE_SEC2_UCODE1+2*4)/4]=1;
+        fake.fwsec_wpr=1;fake.fwsec_wpr_lo=0x5ff2000;fake.fwsec_wpr_hi=0x5ff2e00;
+        struct gpu_unlock_610_shared shared107={0};last_work=NULL;
+        assert(!gpu_unlock_610_load_shared(&dev,&shared107));
+        ret=gpu_unlock_610_unlock(&dev,&shared107);
+        gpu_unlock_610_release_shared(&shared107);
+        assert(!ret && fake.starts==1 && fake.gsp_starts==1 && fake.flrs==1);
+        assert(!fake.live && !fake.fw_live && dev.refs==1);
+        puts("AD107 0x28a0 profile dispatch under mocked registers PASS");
+        }
+        {
+        /* Dispatch the same published AD102-family payload through the exact
+         * 0x2757 profile under mocked registers. This is not silicon proof. */
+        ad102_setup(&w);dev.device=GU_AD103M_RTX_4090_MOBILE;load_rom(argv[1]);
+        regs[0x1183a4/4]=0x5ff4;regs[0x625f04/4]=1;regs[0x1fa7c8/4]=0x45cb8f;
+        regs[0x1fa82c/4]=0x100000;regs[0x1fa830/4]=0x5cf3ff0;
+        regs[(GU_FUSE_SEC2_UCODE1+2*4)/4]=1;
+        fake.fwsec_wpr=1;fake.fwsec_wpr_lo=0x5ff2000;fake.fwsec_wpr_hi=0x5ff2e00;
+        struct gpu_unlock_610_shared shared103m={0};last_work=NULL;
+        assert(!gpu_unlock_610_load_shared(&dev,&shared103m));
+        ret=gpu_unlock_610_unlock(&dev,&shared103m);
+        gpu_unlock_610_release_shared(&shared103m);
+        assert(!ret && fake.starts==1 && fake.gsp_starts==1 && fake.flrs==1);
+        assert(!fake.live && !fake.fw_live && dev.refs==1);
+        puts("AD103M 0x2757 profile dispatch under mocked registers PASS");
+        }
+        {
+        /* Dispatch the same published AD102-family payload through the exact
+         * 0x2882 profile under mocked registers. This is not silicon proof. */
+        ad102_setup(&w);dev.device=GU_AD107_RTX_4060;load_rom(argv[1]);
+        regs[0x1183a4/4]=0x5ff4;regs[0x625f04/4]=1;regs[0x1fa7c8/4]=0x45cb8f;
+        regs[0x1fa82c/4]=0x100000;regs[0x1fa830/4]=0x5cf3ff0;
+        regs[(GU_FUSE_SEC2_UCODE1+2*4)/4]=1;
+        fake.fwsec_wpr=1;fake.fwsec_wpr_lo=0x5ff2000;fake.fwsec_wpr_hi=0x5ff2e00;
+        struct gpu_unlock_610_shared shared107={0};last_work=NULL;
+        assert(!gpu_unlock_610_load_shared(&dev,&shared107));
+        ret=gpu_unlock_610_unlock(&dev,&shared107);
+        gpu_unlock_610_release_shared(&shared107);
+        assert(!ret && fake.starts==1 && fake.gsp_starts==1 && fake.flrs==1);
+        assert(!fake.live && !fake.fw_live && dev.refs==1);
+        puts("AD107 0x2882 profile dispatch under mocked registers PASS");
         }
     }
     puts("AD102 marker, permission, HALT, readout, metadata and retention gates passed under mocked hardware");

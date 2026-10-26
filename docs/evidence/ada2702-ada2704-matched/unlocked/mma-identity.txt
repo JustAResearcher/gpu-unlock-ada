@@ -1,0 +1,2 @@
+# NVIDIA GeForce RTX 4080 SUPER, 80 SMs, sm_89, iters=20000 reps=3
+# NVIDIA GeForce RTX 4080, 76 SMs, sm_89, iters=20000 reps=3

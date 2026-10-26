@@ -48,6 +48,16 @@ static bool permissions;
 module_param(permissions, bool, 0444);
 MODULE_PARM_DESC(permissions, "also sample the three additional AD102 payload permission targets (read-only)");
 
+static bool prom;
+module_param(prom, bool, 0444);
+MODULE_PARM_DESC(prom, "also sample PROM at BAR0 + 0x300000 and parse FWSEC (read-only)");
+
+static bool sec2 = true;
+module_param(sec2, bool, 0444);
+MODULE_PARM_DESC(sec2, "sample SEC2 Falcon and BCR registers (read-only)");
+
+#include "../../kernel/gpu_unlock/vbios_610.c"
+
 enum {
 	S_PMC, S_GFW_PLM, S_GFW_BOOT, S_GFW_CPUCTL, S_WPR2_LO, S_WPR2_HI,
 	S_PLM_ENTRY, S_FEATURE_READOUT, S_SS0, S_SS1, S_COUNT
@@ -118,6 +128,8 @@ static const struct cluster_reg cluster_regs[] = {
 	{ "FECS_FEAT_OVERRIDE_SM_SPEED_SEL", 0x00409664 },
 	{ "FECS_FEAT_READOUT_1",             0x00409668 },
 	{ "SM_ISSUE_RATE_MODIFIER",          0x00504204 },
+	{ "GU_FUSE_SEC2_UCODE1",             0x00824148 },
+	{ "FWSEC fuse (ucode id 9)",         0x008241e0 },
 };
 
 static void peek_cluster(struct pci_dev *pdev, void __iomem *bar)
@@ -196,6 +208,51 @@ static void peek_one(struct pci_dev *pdev)
 			dev_info(&pdev->dev, "gpu_peek: %#010x %-22s = %#010x\n",
 				 permission_regs[i].offset, permission_regs[i].name,
 				 ioread32(bar + permission_regs[i].offset));
+	}
+	if (sec2) {
+		static const struct probe sec2_regs[] = {
+			{ "SEC2 HWCFG",     0x00840108 },
+			{ "SEC2 CPUCTL",    0x00840100 },
+			{ "SEC2 MAILBOX0",  0x00840040 },
+			{ "SEC2 MAILBOX1",  0x00840044 },
+			{ "SEC2 RESET",     0x008403c0 },
+			{ "SEC2 RESET PLM", 0x008403c4 },
+			{ "SEC2 BCR_CTRL",  0x00841668 },
+			{ "SEC2 DMACTL",    0x0084010c },
+		};
+
+		for (i = 0; i < ARRAY_SIZE(sec2_regs); i++)
+			dev_info(&pdev->dev, "gpu_peek: %#010x %-22s = %#010x\n",
+				 sec2_regs[i].offset, sec2_regs[i].name,
+				 ioread32(bar + sec2_regs[i].offset));
+	}
+	if (prom) {
+		size_t bar_len = pci_resource_len(pdev, 0);
+		if (bar_len >= 0x300000 + 0x1a) {
+			size_t mapped = min_t(size_t, 1024 * 1024, bar_len - 0x300000);
+			u8 *rom_buf = kvmalloc(mapped, GFP_KERNEL);
+			if (rom_buf) {
+				struct gpu_unlock_fwsec fw;
+				int ret;
+				memcpy_fromio(rom_buf, bar + 0x300000, mapped);
+				dev_info(&pdev->dev, "gpu_peek: PROM @ 0x300000 bytes=%zu sig=%#06x first16=%*ph\n",
+					 mapped, (unsigned int)(rom_buf[0] | (rom_buf[1] << 8)),
+					 16, rom_buf);
+				ret = gpu_unlock_vbios_fwsec(rom_buf, mapped, &fw);
+				if (!ret) {
+					dev_info(&pdev->dev, "gpu_peek: SUCCESS: FWSEC-FRTS parsed from PROM! ucode_id=%u engine_mask=%#x img_off=%#x img_size=%#x imem=%#x dmem=%#x sig_count=%u sig_versions=%#x\n",
+						 fw.ucode_id, fw.engine_mask, fw.image_off, fw.image_size,
+						 fw.imem_size, fw.dmem_size, fw.sig_count, fw.sig_versions);
+				} else {
+					dev_warn(&pdev->dev, "gpu_peek: gpu_unlock_vbios_fwsec failed: %d\n", ret);
+				}
+				kvfree(rom_buf);
+			} else {
+				dev_err(&pdev->dev, "gpu_peek: kvmalloc failed for PROM buffer\n");
+			}
+		} else {
+			dev_warn(&pdev->dev, "gpu_peek: BAR0 length %#zx too short for PROM\n", bar_len);
+		}
 	}
 	pci_iounmap(pdev, bar);
 

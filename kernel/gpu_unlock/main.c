@@ -10,20 +10,36 @@
 
 static char *targets;
 module_param(targets, charp, 0444);
-MODULE_PARM_DESC(targets, "\"all\" or comma-separated PCI addresses of supported RTX 4090/GA10x cards; AD103 and AD106 require an exact single address");
+MODULE_PARM_DESC(targets, "\"all\" or comma-separated PCI addresses of supported cards; experimental Ada IDs must be named by exact address, never via all");
+
+static bool rtx4080_experimental;
+module_param(rtx4080_experimental, bool, 0444);
+MODULE_PARM_DESC(rtx4080_experimental, "permit the experimental RTX 4080 10de:2704 when listed by exact PCI address in targets");
 
 static bool ad103_experimental;
 module_param(ad103_experimental, bool, 0444);
-MODULE_PARM_DESC(ad103_experimental, "permit only the exact 10de:2705 AD103 canary with a single explicit PCI address");
+MODULE_PARM_DESC(ad103_experimental, "permit experimental 10de:2702, 10de:2705 and 10de:2709 AD103 targets when listed by exact PCI address in targets");
+static bool ad104_experimental;
+module_param(ad104_experimental, bool, 0444);
+MODULE_PARM_DESC(ad104_experimental, "permit experimental 10de:2782, 10de:2783 and 10de:2786 AD104 targets when listed by exact PCI address in targets");
 static bool ad106_experimental;
 module_param(ad106_experimental, bool, 0444);
-MODULE_PARM_DESC(ad106_experimental, "permit only the exact 10de:2805 AD106 target with a single explicit PCI address; untested on silicon");
+MODULE_PARM_DESC(ad106_experimental, "permit experimental 10de:2803 and 10de:2805 AD106 targets when listed by exact PCI address in targets");
+static bool ad107_experimental;
+module_param(ad107_experimental, bool, 0444);
+MODULE_PARM_DESC(ad107_experimental, "permit experimental 10de:2882, 10de:28a0, 10de:28e0 and 10de:28e1 AD107 targets when listed by exact PCI address in targets");
 
+static bool rtx4070tis_ad102_experimental;
+module_param(rtx4070tis_ad102_experimental, bool, 0444);
+MODULE_PARM_DESC(rtx4070tis_ad102_experimental, "permit the experimental AD102 RTX 4070 Ti SUPER 10de:2689 when listed by exact PCI address in targets");
+static bool ad103m_experimental;
+module_param(ad103m_experimental, bool, 0444);
+MODULE_PARM_DESC(ad103m_experimental, "permit the experimental AD103M RTX 4090 Laptop GPU 10de:2757 when listed by exact PCI address in targets");
 static bool rtx4090d_experimental;
 module_param(rtx4090d_experimental, bool, 0444);
 MODULE_PARM_DESC(rtx4090d_experimental, "permit experimental RTX 4090 D (10de:2685) targets");
 
-/* RTX 4090 and supported desktop GA102/GA103/GA104/GA106 GPU functions.
+/* RTX 4090 and supported desktop GA102/GA103/GA104/GA106/GA107 GPU functions.
  * Professional parts already have full FP32-accumulate tensor issue rate.
  */
 static const unsigned short supported_ids[] = {
@@ -42,22 +58,58 @@ static const unsigned short supported_ids[] = {
 	/* GA106 (validated only on RTX 3060 12GB 0x2504) */
 	0x2501, 0x2503, 0x2504, 0x2505, 0x2507, 0x2508, 0x2509, 0x252f,
 	0x2544,
+	/* GA107 (validated only on RTX 3050 6GB 0x2584); same GA102 Booter HAL */
+	0x2584,
+};
+
+/* Experimental IDs, each admitted only by its own opt-in. Exact ones must
+ * be named by their exact PCI address in targets, never through all.
+ */
+static const struct experimental_id {
+	unsigned short device;
+	const bool *enabled;
+	bool exact;
+	const char *name;
+} experimental_ids[] = {
+	{ GU_AD102_RTX_4090_D, &rtx4090d_experimental, false, "RTX 4090 D" },
+	{ GU_AD102_RTX_4070_TI_SUPER, &rtx4070tis_ad102_experimental, true, "AD102 RTX 4070 Ti SUPER" },
+	{ GU_AD103_RTX_4080_SUPER, &ad103_experimental, true, "AD103" },
+	{ GU_AD103_RTX_4080, &rtx4080_experimental, true, "RTX 4080" },
+	{ GU_AD103_RTX_4070_TI_SUPER, &ad103_experimental, true, "AD103" },
+	{ GU_AD103_RTX_4070, &ad103_experimental, true, "AD103" },
+	{ GU_AD103M_RTX_4090_MOBILE, &ad103m_experimental, true, "AD103M mobile" },
+	{ GU_AD104_RTX_4070_TI, &ad104_experimental, true, "AD104" },
+	{ GU_AD104_RTX_4070_SUPER, &ad104_experimental, true, "AD104" },
+	{ GU_AD104_RTX_4070, &ad104_experimental, true, "AD104" },
+	{ GU_AD106_RTX_4060_TI, &ad106_experimental, true, "AD106" },
+	{ GU_AD106_RTX_4060_TI_16GB, &ad106_experimental, true, "AD106" },
+	{ GU_AD107_RTX_4060, &ad107_experimental, true, "AD107" },
+	{ GU_AD107_RTX_4060_LAPTOP, &ad107_experimental, true, "AD107" },
+	{ GU_AD107_RTX_4060_MOBILE, &ad107_experimental, true, "AD107" },
+	{ GU_AD107_RTX_4050_MOBILE, &ad107_experimental, true, "AD107" },
 };
 
 static ASYNC_DOMAIN_EXCLUSIVE(unlock_domain);
 static struct gpu_unlock_610_shared shared;
 
-/* True for a card this load may act on at all. */
-static bool supported(const struct pci_dev *pdev)
+static const struct experimental_id *experimental(const struct pci_dev *pdev)
 {
 	unsigned int i;
 
-	if (pdev->device == GU_AD103_RTX_4070_TI_SUPER)
-		return ad103_experimental;
-	if (pdev->device == GU_AD102_RTX_4090_D)
-		return rtx4090d_experimental;
-	if (pdev->device == GU_AD106_RTX_4060_TI_16GB)
-		return ad106_experimental;
+	for (i = 0; i < ARRAY_SIZE(experimental_ids); i++)
+		if (pdev->device == experimental_ids[i].device)
+			return &experimental_ids[i];
+	return NULL;
+}
+
+/* True for a card this load may act on at all. */
+static bool supported(const struct pci_dev *pdev)
+{
+	const struct experimental_id *id = experimental(pdev);
+	unsigned int i;
+
+	if (id)
+		return *id->enabled;
 	for (i = 0; i < ARRAY_SIZE(supported_ids); i++)
 		if (pdev->device == supported_ids[i])
 			return true;
@@ -84,7 +136,9 @@ static void unlock_one(void *data, async_cookie_t cookie)
 	pci_dev_lock(pdev);
 	ret = pdev->driver ? -EBUSY : gpu_unlock_610_unlock(pdev, &shared);
 	pci_dev_unlock(pdev);
-	if (ret)
+	if (ret == -EALREADY)
+		pci_info(pdev, "gpu_unlock: already unlocked (PLM open at entry), skipping\n");
+	else if (ret)
 		pci_err(pdev, "gpu_unlock: unlock failed (%d)\n", ret);
 	else
 		pci_info(pdev, "gpu_unlock: unlocked\n");
@@ -137,14 +191,11 @@ static int __init gpu_unlock_init(void)
 	if (!all)
 		report_unmatched();
 	while ((pdev = next_supported(pdev))) {
-		if (pdev->device == GU_AD103_RTX_4070_TI_SUPER &&
-		    (all || strcasecmp(targets, pci_name(pdev)))) {
-			pci_err(pdev, "gpu_unlock: experimental AD103 requires a single exact PCI target\n");
-			continue;
-		}
-		if (pdev->device == GU_AD106_RTX_4060_TI_16GB &&
-		    (all || strcasecmp(targets, pci_name(pdev)))) {
-			pci_err(pdev, "gpu_unlock: experimental AD106 requires a single exact PCI target\n");
+		const struct experimental_id *id = experimental(pdev);
+
+		if (id && id->exact && (all || !listed(pci_name(pdev)))) {
+			pci_err(pdev, "gpu_unlock: experimental %s requires its exact PCI address in the list\n",
+				id->name);
 			continue;
 		}
 		if (!all && !listed(pci_name(pdev)))
@@ -172,5 +223,5 @@ static void __exit gpu_unlock_exit(void)
 module_init(gpu_unlock_init);
 module_exit(gpu_unlock_exit);
 MODULE_LICENSE("GPL");
-MODULE_DESCRIPTION("RTX 4090, experimental RTX 4070 Ti SUPER and supported GA10x pre-driver tensor unlock");
+MODULE_DESCRIPTION("RTX 4090, experimental Ada and supported GA10x pre-driver tensor unlock");
 MODULE_VERSION("1.1.1");

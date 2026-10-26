@@ -1,0 +1,2 @@
+2026-10-25T16:52:50+00:00 kernel: gpu_unlock: loading out-of-tree module taints kernel.
+2026-10-25T16:52:50+00:00 kernel: gpu_unlock: module verification failed: signature and/or required key missing - tainting kernel

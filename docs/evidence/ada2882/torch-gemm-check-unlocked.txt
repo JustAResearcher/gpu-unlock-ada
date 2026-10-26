@@ -1,0 +1,7 @@
+input rounding floor fp16 2.94e-04  bf16 2.35e-03
+error fp16       3.60e-04
+error fp16-acc16 3.33e-03
+error bf16       2.88e-03
+error tf32       2.94e-04
+error fp32       1.15e-06
+stability: 57074 GEMMs in 180 s, 0 differed from the first result

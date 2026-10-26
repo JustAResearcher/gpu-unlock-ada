@@ -8,7 +8,7 @@ pkgver=1.1.1
 pkgrel=1
 _nv=610.43.03
 _utils=nvidia-utils-$_nv-1-x86_64_v3.pkg.tar.zst
-pkgdesc='RTX 4090 and experimental RTX 4070 Ti SUPER tensor unlock before NVIDIA loads'
+pkgdesc='RTX 4090 and experimental Ada tensor unlock before NVIDIA loads'
 arch=('x86_64')
 url='https://github.com/JustAResearcher/gpu-unlock-ada'
 license=('GPL-2.0-only')
@@ -36,7 +36,7 @@ build() {
 
 check() {
   cd $pkgbase
-  make test ASSETS="$srcdir/assets"
+  make test-full ASSETS="$srcdir/assets" NVIDIA_SOURCE="$srcdir/NVIDIA-kernel-module-source-$_nv"
 }
 
 package_gpu-unlock-dkms() {
@@ -47,7 +47,7 @@ package_gpu-unlock-dkms() {
   replaces=('gpu-unlock-mkinitcpio')
   install=gpu-unlock.install
   cd $pkgbase
-  make DESTDIR="$pkgdir" install-dkms install-mkinitcpio
+  make DESTDIR="$pkgdir" install-dkms install-mkinitcpio install-dracut
   make DESTDIR="$pkgdir" PKG=$pkgname install-licenses
 }
 

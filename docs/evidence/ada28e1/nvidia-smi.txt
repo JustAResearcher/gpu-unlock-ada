@@ -1,0 +1,30 @@
+Sun Oct 25 03:30:03 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 615.78.08              KMD Version: 615.78.08     CUDA UMD Version: 13.4     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GeForce RTX 4050 ...    On  |   00000000:01:00.0  On |                  N/A |
+| N/A   40C    P8              4W /  115W |     846MiB /   6141MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A            1164      G   niri                                      4MiB |
+|    0   N/A  N/A            1208      G   noctalia                                 30MiB |
+|    0   N/A  N/A            1221      G   /usr/bin/warp-taskbar                     6MiB |
+|    0   N/A  N/A            1248      G   Xwayland                                  2MiB |
+|    0   N/A  N/A            1804      G   /usr/bin/easyeffects                      2MiB |
+|    0   N/A  N/A            1822    C+G   /usr/bin/sunshine                        85MiB |
+|    0   N/A  N/A            2177      G   alacritty                                28MiB |
+|    0   N/A  N/A            2345      G   /usr/lib/electron/app                   131MiB |
+|    0   N/A  N/A            3708      G   /usr/lib/electron/app                   125MiB |
+|    0   N/A  N/A            6576      G   /usr/lib/electron/app                   128MiB |
+|    0   N/A  N/A           20971      G   alacritty                                20MiB |
++-----------------------------------------------------------------------------------------+

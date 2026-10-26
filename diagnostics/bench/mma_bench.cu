@@ -8,6 +8,7 @@
  *   f16/f32   mma.m16n16k16, half inputs, float accumulator
  *   bf16/f32  mma.m16n16k16, bfloat16 inputs, float accumulator
  *   s8/s32    mma.m16n16k16, int8 inputs, int32 accumulator
+ *   fp8/e4m3  mma.m16n8k32, e4m3 inputs with an FP32 accumulator (sm_89+ only)
  *   dp4a      dp4a.s32.s32, the integer dot-product instruction
  *   ffma      fma.rn.f32, the scalar FP32 unit
  *
@@ -53,6 +54,7 @@ static void cuda_check(cudaError_t code, const char *where)
 #define CHAINS 8               /* independent accumulator chains per warp (mma) */
 #define SCHAINS 32             /* the scalar units need more: 8 chains is latency-bound */
 #define WMMA_FLOPS 8192.0      /* 16*16*16*2 */
+#define FP8_FLOPS 8192.0       /* 16*8*32*2, same product as the 16x16x16 mma */
 #define DP4A_FLOPS 8.0
 #define FFMA_FLOPS 2.0
 #define LANES 32               /* the scalar asm below is per lane, mma is per warp */
@@ -85,6 +87,51 @@ __global__ void bench_mma(unsigned long long iters, float *sink)
 			carry += c[j].x[e];
 	if (carry == (Acc)0x7fffffff)
 		sink[threadIdx.x] = 1.0f;
+}
+
+/* FP8 (E4M3) needs the 8-bit mma shape and cannot go through the wmma API, so it
+ * is written as PTX. Every input is 1.0 in e4m3 (0x38), so each accumulator must
+ * end at 1.0 * k = 32 per instruction; the value is not checked here, it only has
+ * to stay alive so the compiler cannot drop the loop. sm_89 or newer only. */
+__global__ void bench_fp8(unsigned long long iters, float *sink)
+{
+	float d[CHAINS][4];
+	unsigned a[4], b[2];
+	const unsigned one = 0x38383838u;
+	float carry = 0.0f;
+	int j, e;
+
+#pragma unroll
+	for (j = 0; j < CHAINS; j++) {
+		d[j][0] = 0.0f; d[j][1] = 0.0f; d[j][2] = 0.0f; d[j][3] = 0.0f;
+	}
+#pragma unroll
+	for (e = 0; e < 4; e++)
+		a[e] = one;
+	b[0] = one;
+	b[1] = one;
+
+	for (unsigned long long i = 0; i < iters; i++) {
+#if __CUDA_ARCH__ >= 890
+#pragma unroll
+		for (j = 0; j < CHAINS; j++)
+			asm volatile(
+				"mma.sync.aligned.m16n8k32.row.col.f32.e4m3.e4m3.f32 "
+				"{%0,%1,%2,%3}, {%4,%5,%6,%7}, {%8,%9}, {%0,%1,%2,%3};\n"
+				: "+f"(d[j][0]), "+f"(d[j][1]), "+f"(d[j][2]), "+f"(d[j][3])
+				: "r"(a[0]), "r"(a[1]), "r"(a[2]), "r"(a[3]), "r"(b[0]), "r"(b[1]));
+#endif
+	}
+#pragma unroll
+	for (j = 0; j < CHAINS; j++)
+		for (e = 0; e < 4; e++)
+			carry += d[j][e];
+	if (carry == 1234.5678f)
+		sink[threadIdx.x] = 1.0f;
+#if __CUDA_ARCH__ < 890
+	/* Built without the instruction: mark the sink so the host skips the mode. */
+	sink[threadIdx.x] = -1.0f;
+#endif
 }
 
 __global__ void bench_dp4a(unsigned long long iters, float *sink)
@@ -166,6 +213,23 @@ LAUNCH(launch_mma_f16_f32, __half, float)
 LAUNCH(launch_mma_bf16_f32, __nv_bfloat16, float)
 LAUNCH(launch_mma_s8_s32, signed char, int)
 
+static void launch_fp8(unsigned long long iters, float *sink)
+{
+	bench_fp8<<<BLOCKS, WARPS_PER_BLOCK * 32>>>(iters, sink);
+}
+
+/* A build below sm_89 times an empty FP8 loop; its kernel marks the sink. */
+static bool fp8_built(float *sink)
+{
+	float mark = 0.0f;
+
+	cuda_check(cudaMemset(sink, 0, sizeof(float)), "clear sink");
+	launch_fp8(1, sink);
+	cuda_check(cudaDeviceSynchronize(), "fp8 build probe");
+	cuda_check(cudaMemcpy(&mark, sink, sizeof(float), cudaMemcpyDeviceToHost), "read sink");
+	return mark == 0.0f;
+}
+
 static void launch_dp4a(unsigned long long iters, float *sink)
 {
 	bench_dp4a<<<BLOCKS, WARPS_PER_BLOCK * 32>>>(iters, sink);
@@ -198,6 +262,7 @@ int main(int argc, char **argv)
 		{ "f16/f32 ", launch_mma_f16_f32, WMMA_FLOPS * CHAINS },
 		{ "bf16/f32", launch_mma_bf16_f32, WMMA_FLOPS * CHAINS },
 		{ "s8/s32  ", launch_mma_s8_s32, WMMA_FLOPS * CHAINS },
+		{ "fp8/e4m3", launch_fp8, FP8_FLOPS * CHAINS },
 		{ "dp4a    ", launch_dp4a, DP4A_FLOPS * SCHAINS * LANES },
 		{ "ffma    ", launch_ffma, FFMA_FLOPS * SCHAINS * LANES },
 	};
@@ -219,6 +284,10 @@ int main(int argc, char **argv)
 		double best = 0.0, tflops;
 		std::vector<double> runs;
 
+		if (modes[i].launch == launch_fp8 && !fp8_built(sink)) {
+			printf("%-9s %10s (build for sm_89 or newer)\n", modes[i].name, "n/a");
+			continue;
+		}
 		for (r = 0; r < reps; r++) {
 			float ms = time_ms(modes[i].launch, iters, sink);
 			if (ms <= 0.0f)

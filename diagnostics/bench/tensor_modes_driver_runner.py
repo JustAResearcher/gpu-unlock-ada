@@ -31,12 +31,17 @@ def digest(path):
     return h.hexdigest()
 
 
+def power_limit(value):
+    """A cap in watts, or None for the [N/A] laptops with Dynamic Boost report."""
+    return None if value.strip("[]").upper() == "N/A" else float(value)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("cubin", type=Path)
     parser.add_argument("--sha256", required=True)
     parser.add_argument("--expect-uuid", required=True)
-    parser.add_argument("--expect-power-limit", type=float, required=True)
+    parser.add_argument("--expect-power-limit", type=power_limit, required=True)
     parser.add_argument("--iters", type=int, default=20000)
     parser.add_argument("--reps", type=int, default=3)
     args = parser.parse_args()
@@ -48,7 +53,11 @@ def main():
     ).stdout.strip()
     fields = [field.strip() for field in gpu.split(",")]
     assert len(fields) == 5 and fields[0] == args.expect_uuid, gpu
-    assert abs(float(fields[4]) - args.expect_power_limit) < 0.01, gpu
+    limit = power_limit(fields[4])
+    if args.expect_power_limit is None:
+        assert limit is None, gpu
+    else:
+        assert limit is not None and abs(limit - args.expect_power_limit) < 0.01, gpu
 
     lib = C.CDLL("libcuda.so.1")
     def api(name, argtypes):

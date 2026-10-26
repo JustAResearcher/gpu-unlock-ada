@@ -1,0 +1,10 @@
+# host
+Linux 6.8.0-147-generic x86_64 GNU/Linux
+
+# cmdline
+BOOT_IMAGE=/vmlinuz-6.8.0-147-generic root=/dev/mapper/ubuntu--vg-ubuntu--lv ro gpu_unlock.targets=0000:04:00.0,0000:2b:00.0 gpu_unlock.ad103_experimental=1
+
+# driver and cards
+index, name, uuid, pci.bus_id, vbios_version, driver_version, power.limit [W], temperature.gpu, clocks.max.sm [MHz], memory.total [MiB]
+0, NVIDIA GeForce RTX 4080, GPU-<redacted-0>, 00000000:04:00.0, 95.03.1E.00.3F, 595.99.02, 250.00 W, 36, 3105 MHz, 16376 MiB
+1, NVIDIA GeForce RTX 4080 SUPER, GPU-<redacted-1>, 00000000:2B:00.0, 95.03.44.00.DB, 595.99.02, 250.00 W, 39, 3135 MHz, 16376 MiB

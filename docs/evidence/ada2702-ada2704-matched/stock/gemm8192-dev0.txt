@@ -1,0 +1,1 @@
+NVIDIA GeForce RTX 4080 SUPER      n=8192  10.9 ms/iter  100.9 TFLOPS  (sm_89, 80 SMs)

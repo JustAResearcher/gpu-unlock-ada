@@ -1,6 +1,8 @@
 /workbook/
 /scratchpad/
 /build/
+# Local application benchmarks and owner-specific results.
+/bench/
 **/__pycache__/
 *.pyc
 *.ko

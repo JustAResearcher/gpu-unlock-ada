@@ -45,8 +45,21 @@ static u64 mask;
 static struct pci_dev dev;
 static bool fake_ada_id(void) {
     return dev.device==GU_AD102_RTX_4090 ||
+           dev.device==GU_AD103_RTX_4080_SUPER ||
+           dev.device==GU_AD103_RTX_4080 ||
            dev.device==GU_AD103_RTX_4070_TI_SUPER ||
-           dev.device==GU_AD106_RTX_4060_TI_16GB;
+           dev.device==GU_AD103_RTX_4070 ||
+           dev.device==GU_AD106_RTX_4060_TI_16GB ||
+           dev.device==GU_AD107_RTX_4050_MOBILE ||
+           dev.device==GU_AD104_RTX_4070 ||
+           dev.device==GU_AD104_RTX_4070_TI ||
+           dev.device==GU_AD102_RTX_4070_TI_SUPER ||
+           dev.device==GU_AD107_RTX_4060_LAPTOP ||
+           dev.device==GU_AD103M_RTX_4090_MOBILE ||
+           dev.device==GU_AD106_RTX_4060_TI ||
+           dev.device==GU_AD104_RTX_4070_SUPER ||
+           dev.device==GU_AD107_RTX_4060 ||
+           dev.device==GU_AD107_RTX_4060_MOBILE;
 }
 static u8 fw_image[4097];
 static struct firmware fw={sizeof(fw_image),fw_image};
@@ -285,6 +298,12 @@ static void check_published_image(void) {
         assert(!memcmp((u8 *)w->booter_cpu+w->booter_hdr.patch_loc,
                        w->booter_fw->data+72+w->booter_image_size,384));
         assert(w->booter_image_size==0xde00 && w->boot_desc.image_size==36864);
+        if(dev.device==GU_AD103_RTX_4080) {
+            assert(get64(meta+176)==(32ull<<30));
+            assert(get64(meta+184)==0x7fff00000ull);
+            assert(get64(meta+152)==0x7ffe00000ull);
+            assert(get64(meta+168)==0x7fff00000ull);
+        }
         return;
     }
     assert(get64(meta+112)==0x5f5400000ull && get64(meta+136)==0x5fada0000ull);
@@ -361,7 +380,60 @@ int main(int argc, char **argv) {
     assert(!strcmp(unlock_assets(&dev)->signature_section, ".fwsignature_ad10x"));
     assert(unlock_assets(&dev)->boot_image_size==36864);
     assert(is_ad102(&w));
-    dev.device=GU_AD106_RTX_4060_TI_16GB;
+    dev.device=GU_AD103_RTX_4070;
+    assert(!strcmp(unlock_assets(&dev)->booter, BOOTER_FILE_AD102));
+    assert(!strcmp(unlock_assets(&dev)->signature_section, ".fwsignature_ad10x"));
+    assert(unlock_assets(&dev)->boot_image_size==36864);
+    assert(is_ad102(&w));
+    dev.device=GU_AD103_RTX_4080_SUPER;
+    assert(!strcmp(unlock_assets(&dev)->booter, BOOTER_FILE_AD102));
+    assert(!strcmp(unlock_assets(&dev)->signature_section, ".fwsignature_ad10x"));
+    assert(unlock_assets(&dev)->boot_image_size==36864);
+    assert(is_ad102(&w));
+    dev.device=GU_AD104_RTX_4070;
+    assert(!strcmp(unlock_assets(&dev)->booter, BOOTER_FILE_AD102));
+    assert(!strcmp(unlock_assets(&dev)->payload, V67_FILE_AD102));
+    assert(unlock_assets(&dev)->arch==GU_BOOTER_AD10X);
+    assert(is_ad102(&w));
+    const unsigned short ad106_ids[]={GU_AD106_RTX_4060_TI,GU_AD106_RTX_4060_TI_16GB};
+    for(unsigned i=0;i<ARRAY_SIZE(ad106_ids);i++) {
+        dev.device=ad106_ids[i];
+        assert(!strcmp(unlock_assets(&dev)->booter, BOOTER_FILE_AD102));
+        assert(!strcmp(unlock_assets(&dev)->boot, BOOT_FILE_AD102));
+        assert(!strcmp(unlock_assets(&dev)->desc, BOOT_DESC_FILE_AD102));
+        assert(!strcmp(unlock_assets(&dev)->payload, V67_FILE_AD102));
+        assert(!strcmp(unlock_assets(&dev)->signature_section, ".fwsignature_ad10x"));
+        assert(unlock_assets(&dev)->arch==GU_BOOTER_AD10X);
+        assert(unlock_assets(&dev)->boot_image_size==36864);
+        assert(is_ad102(&w));
+        assert(unlock_transaction_selector(&w)==-EPROTO && !fake.writes);
+    }
+    dev.device=GU_AD104_RTX_4070_TI;
+    assert(!strcmp(unlock_assets(&dev)->booter, BOOTER_FILE_AD102));
+    assert(!strcmp(unlock_assets(&dev)->signature_section, ".fwsignature_ad10x"));
+    assert(unlock_assets(&dev)->boot_image_size==36864);
+    assert(is_ad102(&w));
+    dev.device=GU_AD102_RTX_4070_TI_SUPER;
+    assert(!strcmp(unlock_assets(&dev)->booter, BOOTER_FILE_AD102));
+    assert(!strcmp(unlock_assets(&dev)->signature_section, ".fwsignature_ad10x"));
+    assert(unlock_assets(&dev)->boot_image_size==36864);
+    assert(is_ad102(&w));
+    dev.device=GU_AD107_RTX_4060_LAPTOP;
+    assert(!strcmp(unlock_assets(&dev)->booter, BOOTER_FILE_AD102));
+    assert(!strcmp(unlock_assets(&dev)->signature_section, ".fwsignature_ad10x"));
+    assert(unlock_assets(&dev)->boot_image_size==36864);
+    assert(is_ad102(&w));
+    dev.device=GU_AD103M_RTX_4090_MOBILE;
+    assert(!strcmp(unlock_assets(&dev)->booter, BOOTER_FILE_AD102));
+    assert(!strcmp(unlock_assets(&dev)->payload, V67_FILE_AD102));
+    assert(unlock_assets(&dev)->arch==GU_BOOTER_AD10X);
+    assert(is_ad102(&w));
+    dev.device=GU_AD104_RTX_4070_SUPER;
+    assert(!strcmp(unlock_assets(&dev)->booter, BOOTER_FILE_AD102));
+    assert(!strcmp(unlock_assets(&dev)->signature_section, ".fwsignature_ad10x"));
+    assert(unlock_assets(&dev)->boot_image_size==36864);
+    assert(is_ad102(&w));
+    dev.device=GU_AD107_RTX_4060;
     assert(!strcmp(unlock_assets(&dev)->booter, BOOTER_FILE_AD102));
     assert(!strcmp(unlock_assets(&dev)->signature_section, ".fwsignature_ad10x"));
     assert(unlock_assets(&dev)->boot_image_size==36864);

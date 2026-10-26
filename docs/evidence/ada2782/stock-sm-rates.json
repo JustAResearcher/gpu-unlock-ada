@@ -1,0 +1,1 @@
+{"gpu": "GPU-UUID-OMITTED, NVIDIA GeForce RTX 4070 Ti, 00000000:00:10.0, 595.99.02, 285.00, 420, 810", "command": "0x20801230", "rates": {"imla0": 0, "fmla16": 0, "dp": 0, "fmla32": 1, "ffma": 0, "imla1": 0, "imla2": 1, "imla3": 0, "imla4": 1}, "meaning": "0=full; 1=half; 2=quarter; higher values are further reductions", "hardware_changes": false}
