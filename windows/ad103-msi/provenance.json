@@ -242,7 +242,7 @@
     {
       "path": "windows/README.md",
       "snapshot_sha256": "742da41b36a4d9b9bf7bb40e84ec04e95e63bd9b513afd1be8204b927332930e",
-      "current_sha256": "1b59073c1702e2d5958a16f87cbba75cd3095acece4cf94e9a4ba2c9f9bb2650"
+      "current_sha256": "1ea9bdbaad6ebde2da2cc2ee9ba988905fa7b74121f60855dc079880dd0c77f2"
     },
     {
       "path": "windows/benchmark/README.md",
@@ -255,9 +255,19 @@
       "current_sha256": "806e1bd36f5f7f8268a1d7ef214fd679dd00741cf872c6e1e11501ed2a5a9d2b"
     },
     {
+      "path": "windows/package_diagnostic.py",
+      "snapshot_sha256": "f522ff3134e369f25018bb71f814f165dc8b0ff26048b8e90b6c1af95c67e138",
+      "current_sha256": "2d3e3dd847bf8e187637699070f2df668e0198e47c8fc61cd7554968efb31528"
+    },
+    {
       "path": "windows/tests/Test-BenchmarkLauncher.ps1",
       "snapshot_sha256": "4df0c5ae766ba4554f9a705862a76e5d5b08cbefc258b37da1c5f4b8e68c3a4e",
       "current_sha256": "53fba0f544dfdd60366f1cdfd550d954d7dc7f1f51c5284c1b10f34e5056d456"
+    },
+    {
+      "path": "windows/tests/session_packet_fixture.ps1",
+      "snapshot_sha256": "e9bf252aad5a7b0316bb6d14619bffc5df7b18662c4b413eac488e2f15e290c8",
+      "current_sha256": "7cee07fafc92c88a24ea7ad12462fd6d306c4de5fdfcf2509f4613e03af137ab"
     },
     {
       "path": "windows/tests/test_benchmark_runner.py",
@@ -265,14 +275,34 @@
       "current_sha256": "f370fb0b04b9af3f18d2eecbc9e2afeae904bf5ff6fedb37c40501cd78292aef"
     },
     {
+      "path": "windows/tests/test_diagnostic_package.py",
+      "snapshot_sha256": "e0c369e6158e4ebbb7d28d7c5470497df0e535043b4d33bf81a722daccba7c41",
+      "current_sha256": "662586e5e5f12f61e934d0d219e55879f1d78bf964726a099c53a15e5d87eb8d"
+    },
+    {
+      "path": "windows/tests/test_session.py",
+      "snapshot_sha256": "0ee2efefc43dba459525c5d7af414de4805b8453648fb19f25b1a63cba987d92",
+      "current_sha256": "5e277f5a4fbc7e1fe8f8574346814138b583023f5eab588b537f00f884657c27"
+    },
+    {
       "path": "windows/usb-staged/Run-Benchmark.ps1",
       "snapshot_sha256": "ea8f36ea963e1e4a8b4a21f946618808d5ef85e434477322da8e4c053951579f",
       "current_sha256": "de325d132290c5fd26a7d52904b6625956057c70177bb2c0c709da395d11d173"
     }
   ],
-  "integration_change_scope": "Explicit UUID selection in public benchmark/launcher and related tests/docs; current-result documentation and corrected links. No compiled C, header, include or PTX changes.",
+  "integration_change_scope": "Explicit UUID selection in public benchmark/launcher and related tests/docs; current-result documentation and corrected links. Maintainer follow-up removes the unused Windows boot installer, retains a synthetic session packet fixture, fixes diagnostic package inputs and adds package inventory regression coverage. No compiled C, header, include or PTX changes.",
   "compiled_inputs_unchanged": true,
   "tested_upstream_base": "491925c1079435e260137b9f3526066e764de830",
   "integration_upstream_base": "4e7fefcc4923f9e083d5324dc75a7d2f906af77f",
-  "commit_scope": "tested_source_commit and snapshot_source_commit are local development revisions. integration_upstream_base is the public upstream commit targeted by the isolated PR branch; its Linux core is unchanged."
+  "commit_scope": "tested_source_commit and snapshot_source_commit are local development revisions. integration_upstream_base is the public upstream commit targeted by the isolated PR branch; its Linux core is unchanged.",
+  "removed_after_snapshot": [
+    {
+      "path": "windows/control-center/BootBackend.psm1",
+      "reason": "Unused native Windows boot installer removed following maintainer review; synthetic session packets remain only in the test fixture."
+    },
+    {
+      "path": "windows/control-center/FirmwareVariables.cs",
+      "reason": "Unused native Windows boot installer removed following maintainer review; synthetic session packets remain only in the test fixture."
+    }
+  ]
 }

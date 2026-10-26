@@ -27,7 +27,6 @@ HOST_REQUIRED_SOURCES = {
     'windows/rehearsal_profile.py', 'windows/package_rehearsal.py', 'windows/validate_rehearsal.py',
     'windows/rehearsal/Update-USB.cmd', 'windows/rehearsal/Update-USB.ps1',
     'windows/rehearsal/RehearsalUsb.psm1', 'windows/rehearsal/START-HERE.txt', 'windows/rehearsal/README.md',
-    'windows/control-center/BootBackend.psm1', 'windows/control-center/FirmwareVariables.cs',
     'tests/vbios_fixture.h',
     'firmware/fetch_artifacts.py', 'firmware/extract_boot_assets.py', 'firmware/generate_v67.py',
     'firmware/artifacts-610.43.03.json', 'firmware/ada-610.43.03.json', 'firmware/NOTICE.md',
@@ -115,7 +114,7 @@ def build(output: Path, build_directory: Path, validation_path: Path, vm_path: P
     check_inputs(image_path.read_bytes(), result, validation, vm)
     files = {name: WIN / name for name in (
         'Prepare-USB.cmd', 'Prepare-USB.ps1', 'Update-USB.cmd', 'Update-USB.ps1', 'UsbPreparation.psm1', 'START-HERE.txt',
-        'USB-DIAGNOSTIC-GUIDE.md', 'THIRD_PARTY_NOTICES.md')}
+        'README.md', 'THIRD_PARTY_NOTICES.md')}
     files.update({'LICENSE': ROOT / 'LICENSE', 'USB/EFI/BOOT/BOOTX64.EFI': image_path,
                   'build-result.json': result_path, 'VALIDATION.json': validation_path,
                   'VM-VALIDATION.json': vm_path})
@@ -129,16 +128,13 @@ def build(output: Path, build_directory: Path, validation_path: Path, vm_path: P
     for name in ('build.py', 'board_profile.py', 'prepare_assets.py', 'analyze_diagnostic.py', 'package_diagnostic.py',
                  'rehearsal_profile.py', 'package_rehearsal.py', 'validate_rehearsal.py',
                  'validate_diagnostic.py', 'Prepare-USB.ps1', 'Prepare-USB.cmd', 'Update-USB.ps1', 'Update-USB.cmd',
-                 'UsbPreparation.psm1', 'START-HERE.txt', 'USB-DIAGNOSTIC-GUIDE.md',
-                 'README.md', 'OWNERSHIP-ANALYSIS.md', 'THIRD_PARTY_NOTICES.md'):
+                 'UsbPreparation.psm1', 'START-HERE.txt', 'README.md', 'THIRD_PARTY_NOTICES.md'):
         files['source/windows/' + name] = WIN / name
     for name in ('Update-USB.cmd','Update-USB.ps1','RehearsalUsb.psm1','START-HERE.txt','README.md'):
         files['source/windows/rehearsal/'+name] = WIN/'rehearsal'/name
     files['source/LICENSE'] = ROOT / 'LICENSE'
-    # Dependencies referenced by the included diagnostic/session tests. The
-    # backend is source for a fake-adapter test, never an activation entry point.
-    for name in ('tests/vbios_fixture.h', 'windows/control-center/BootBackend.psm1',
-                 'windows/control-center/FirmwareVariables.cs', 'firmware/fetch_artifacts.py',
+    # Dependencies referenced by the included diagnostic/session tests.
+    for name in ('tests/vbios_fixture.h', 'firmware/fetch_artifacts.py',
                  'firmware/extract_boot_assets.py', 'firmware/generate_v67.py',
                  'firmware/artifacts-610.43.03.json', 'firmware/ada-610.43.03.json', 'firmware/NOTICE.md'):
         files['source/' + name] = ROOT / name

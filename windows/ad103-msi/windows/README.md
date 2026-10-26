@@ -335,8 +335,8 @@ separate experimental build is explicit:
 
 The current 0.4.2 capture intentionally never produces such an eligible report.
 The following is research-source documentation, not a next test step; the
-experimental release path still needs the console-ownership adapter described
-in `OWNERSHIP-ANALYSIS.md`.
+experimental release path still needs a console-ownership adapter. The later
+staged build and its exact capture requirements are documented above.
 
 ```powershell
 py windows/build.py --zig C:\tools\zig-0.14.1\zig.exe --experimental --profile REPORT.TXT

@@ -35,7 +35,7 @@ class SessionTests(unittest.TestCase):
             exe = self.build_harness(Path(td))
             subprocess.run([str(exe)], check=True)
 
-    def test_actual_powershell_packets_are_accepted_by_c_helper(self):
+    def test_synthetic_powershell_packets_are_accepted_by_c_helper(self):
         pwsh = os.environ.get("PWSH") or shutil.which("pwsh")
         if not pwsh:
             self.skipTest("Set PWSH or install pwsh for cross-language integration")
@@ -43,7 +43,6 @@ class SessionTests(unittest.TestCase):
             directory = Path(td)
             exe = self.build_harness(directory)
             subprocess.run([pwsh, "-NoProfile", "-File", str(WIN / "tests/session_packet_fixture.ps1"),
-                            "-ModulePath", str(WIN / "control-center/BootBackend.psm1"),
                             "-OutputDirectory", str(directory),
                             "-ProfileSha256", parse_report(REPORT)["report_sha256"]], check=True)
             subprocess.run([str(exe), str(directory / "boot-option.bin"),

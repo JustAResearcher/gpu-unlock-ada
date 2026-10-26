@@ -1,15 +1,17 @@
 # SPDX-License-Identifier: GPL-2.0-only
 """Packaging must not turn a different/untested payload into a diagnostic."""
 import copy
+import json
 from pathlib import Path
 import struct
 import sys
 import tempfile
 import unittest
+import zipfile
 
 WIN = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(WIN))
-from package_diagnostic import (DIAGNOSTIC_SOURCES, VM_CASES, EXPECTED_CHECKS,
+from package_diagnostic import (DIAGNOSTIC_SOURCES, VM_CASES, EXPECTED_CHECKS, NAME, build,
                                HOST_REQUIRED_SOURCES, check_inputs, digest,
                                validation_source_hashes)
 
@@ -62,6 +64,36 @@ class PackageTests(unittest.TestCase):
 
     def test_accept_complete_consistent_record(self):
         self.check()
+
+    def test_archive_builds_from_public_sources_without_boot_installer(self):
+        # Exercise the real checkout inventory with a non-executable PE fixture.
+        # The archive stays in the temporary directory and is never distributed.
+        root = WIN.parent
+        self.result['source_sha256'] = {
+            name: digest((root / name).read_bytes())
+            for name in DIAGNOSTIC_SOURCES | {'windows/build.py'}
+        }
+        self.validation['tested_source_sha256'] = validation_source_hashes(root)
+        build_dir = self.root / 'build'
+        build_dir.mkdir()
+        (build_dir / 'BOOTX64.EFI').write_bytes(self.image)
+        (build_dir / 'build-result.json').write_text(json.dumps(self.result))
+        validation_path = self.root / 'VALIDATION.json'
+        validation_path.write_text(json.dumps(self.validation))
+        vm_path = self.root / 'VM-VALIDATION.json'
+        vm_path.write_text(json.dumps(self.vm))
+        archive_path = self.root / 'diagnostic.zip'
+        build(archive_path, build_dir, validation_path, vm_path)
+        with zipfile.ZipFile(archive_path) as archive:
+            sums = json.loads(archive.read(NAME + '/SHA256SUMS.json'))
+            for name in ('README.md', 'source/windows/README.md'):
+                self.assertEqual(archive.read(NAME + '/' + name), (WIN / 'README.md').read_bytes())
+            fixture = 'source/windows/tests/session_packet_fixture.ps1'
+            self.assertEqual(archive.read(NAME + '/' + fixture),
+                             (WIN / 'tests/session_packet_fixture.ps1').read_bytes())
+            self.assertFalse(any('control-center/' in name for name in archive.namelist()))
+            for name, expected in sums.items():
+                self.assertEqual(digest(archive.read(NAME + '/' + name)), expected, name)
 
     def test_reject_experimental_or_claimed_hardware_validation(self):
         original = copy.deepcopy(self.result)

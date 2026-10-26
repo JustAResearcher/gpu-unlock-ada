@@ -48,10 +48,13 @@ benchmark's public interface now requires an explicitly selected GPU UUID;
 the original evidence retains its original runner hash. Changing that interface
 does not rewrite or re-attest the historical measurements.
 
-The source includes the earlier diagnostic/rehearsal and session-helper files
-because the existing build modes, host test suite and package inventories refer
-to them. The staged build defines `GU_SESSION_HELPER=0` and does not link session
-machinery. The withdrawn Windows kernel filter is not included. The unused
+The source includes the earlier diagnostic/rehearsal and C session-helper files
+because the existing build modes and host test suite refer to them. The staged
+build defines `GU_SESSION_HELPER=0` and does not link session machinery. The
+unused Windows boot installer and firmware-variable writer have been removed;
+the session protocol test uses synthetic packets written only to its temporary
+test directory. No automatic boot installer is distributed. The withdrawn
+Windows kernel filter is not included. The unused
 `GU_NATIVE_WINDOWS` preprocessor branch in the pinned diagnostic header is
 preserved only for source fidelity; it is not enabled by this build.
 

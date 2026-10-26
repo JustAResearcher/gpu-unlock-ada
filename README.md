@@ -62,6 +62,8 @@ profile; it does **not** add AD104 admission to the Linux module. See the
 binaries or automatic boot installer are distributed. Contribution by **Latence.app**;
 original upstream credits and licences are retained.
 
+## Experimental Windows contribution — ipechman (MSI AD103)
+
 An independent [MSI RTX 4070 Ti SUPER AD103 reference](windows/ad103-msi/README.md)
 preserves the source of the 0.6.4 UEFI image tested on one MSI Z690 system. A matched
 Windows 11 / NVIDIA 621.01 pair measured FP16/FP32 instruction throughput
@@ -69,7 +71,9 @@ Windows 11 / NVIDIA 621.01 pair measured FP16/FP32 instruction throughput
 scalar FP32 control and correct checked outputs. Tensor timings varied; this
 one successful run does not establish repeat boot reliability or application
 speedup. Its private captures and firmware binaries are excluded, and its
-pinned core does not change Linux target admission.
+pinned core does not change Linux target admission. Contribution by
+**[ipechman](https://github.com/ipechman)**; original upstream credits and
+licences are retained. No automatic boot installer is distributed.
 
 ## Supported targets
 
