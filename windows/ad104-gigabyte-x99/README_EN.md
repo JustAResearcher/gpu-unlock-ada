@@ -110,7 +110,7 @@ USB_ROOT/
 
 1. Disable Secure Boot in your UEFI BIOS.
 2. Completely power off the system (cold shutdown; wait 10 seconds).
-3. Power on and open the UEFI Boot Menu (e.g., `F11` or `F12`), select your USB drive.
+3. Power on and open the UEFI Boot Menu by pressing **`F7`** (or **`F11`** depending on Huananzhi BIOS revision), or enter BIOS setup with **`Del`** $\rightarrow$ `Save & Exit` $\rightarrow$ select your USB drive under `Boot Override`.
 4. The loader opens and performs read-only cold checks. Press **`U`** once to authorize the one-shot unlock transaction.
    - Pressing **`S`**, **`Esc`**, or waiting 30 seconds boots stock Windows without touching GPU state.
 5. The display will detach, firmware injection and GSP configuration run, and the loader hands execution over to Windows Boot Manager (`bootmgfw.efi`).
