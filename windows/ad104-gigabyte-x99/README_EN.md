@@ -12,17 +12,17 @@ Measured on physical hardware under Windows 11 x64 with unmodified official NVID
 
 | Workload / Precision | Stock Windows (No Unlock) | Unlocked UEFI Loader | Relative Gain / Impact | Notes |
 |---|---:|---:|:---:|---|
-| **BF16 Tensor Cores (4096² GEMM)** | **73.19 TFLOP/s** (37.2 W) | **143.76 TFLOP/s** (284.9 W) | **+96.4% (~2x Throughput)** 🔥 | Stock throttles down to 37 W |
-| **FP16 Tensor Cores (4096² GEMM)** | **73.58 TFLOP/s** (220.2 W) | **140.10 TFLOP/s** (278.0 W) | **+90.4% Gain** | GSP queue limit removed |
-| **BF16 Tensor Cores (16384² Peak)** | **80.85 TFLOP/s** (240.4 W) | **~145+ TFLOP/s** (284.9 W) | **+79.3% Peak Gain** | Stock hard-capped at 80.8 TFLOPS |
-| **FP16 Tensor Cores (16384² Peak)** | **80.67 TFLOP/s** (256.5 W) | **~142+ TFLOP/s** (278.0 W) | **+76.1% Peak Gain** | Stock hard-capped at 80.6 TFLOPS |
-| **FP32 CUDA Cores (16384² Peak)** | **26.82 TFLOP/s** (283.7 W) | **27.29 TFLOP/s** (284.2 W) | **Parity (~27 TFLOPS)** | Standard ALUs not restricted |
+| **FP16 Tensor Cores (4096² GEMM)** | **73.58 TFLOP/s** (~220 W) | **133.57–140.10 TFLOP/s** (~277 W) | **+90.4% Gain** 🔥 | GSP queue limit removed |
+| **FP16 Tensor Cores (16384² Peak)** | **80.67 TFLOP/s** (~256 W) | **142.01 TFLOP/s** (~278 W) | **+76.1% Peak Gain** | Stock hard-capped at 80.6 TFLOPS |
+| **BF16 Tensor Cores (4096² GEMM)** | **73.19 TFLOP/s** (~210 W) | **108.57–143.76 TFLOP/s** (~275 W) | **up to +96.4% faster** | Latency drops from 1.9 to 1.0 ms |
+| **BF16 Tensor Cores (16384² Peak)** | **80.85 TFLOP/s** (~240 W) | **128.76–145.00 TFLOP/s** (~278 W) | **+59–79% Peak Gain** | Stock hard-capped at 80.8 TFLOPS |
+| **FP32 CUDA Cores (16384² Peak)** | **26.82 TFLOP/s** (283.7 W) | **27.64–27.90 TFLOP/s** (283.9 W) | **Parity (~27–28 TFLOPS)** | Standard ALUs not restricted |
 
 > [!NOTE]
 > **Silicon & Power Mechanics**:  
-> - In pure **FP32 CUDA core** operations, both stock and unlocked runs fully saturate the 285 W board limit (**283.7–284.2 W**), yielding identical baseline compute (~27 TFLOP/s) as NVIDIA does not throttle scalar vector pipelines.
-> - On **Tensor operations (BF16/FP16)**, the stock GeForce driver restricts tensor dispatch: under 4096² GEMM, power drops to just **37.2 W** (silicon artificially starved at 73 TFLOP/s), with an impenetrable ceiling of **80.8 TFLOP/s** even under sustained 16384² load.
-> - The `AD104-EXPERIMENTAL.EFI` pre-boot initialization eliminates this microcode limiter, restoring full hardware saturation (**284.9 W**) and delivering Ada Lovelace's full dense silicon capability of **143.76 TFLOP/s**!
+> - In pure **FP32 CUDA core** operations, both stock and unlocked runs fully saturate the 285 W board limit (**~284 W**), yielding identical baseline compute (~27–28 TFLOP/s) as NVIDIA does not throttle scalar vector pipelines.
+> - On **Tensor operations (FP16/BF16)**, the stock GeForce driver restricts tensor dispatch: video card stays hard-capped at **80.6–80.8 TFLOP/s** even when boosting to 2775 MHz.
+> - The `AD104-EXPERIMENTAL.EFI` pre-boot initialization eliminates this microcode limiter, restoring full hardware saturation (**276–284 W**) and delivering Ada Lovelace's full dense silicon capability of **142+ TFLOP/s**!
 
 ---
 
