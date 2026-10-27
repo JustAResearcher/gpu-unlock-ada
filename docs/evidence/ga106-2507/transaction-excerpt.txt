@@ -1,0 +1,52 @@
+[    3.435030] pci 0000:01:00.0: entry: plm=0xffffff8f ss0=0x10410064 ss1=0x2 wpr2_hi=0x0
+[    3.435036] pci 0000:01:00.0: FWSEC: reading PROM at 0x300000
+[    3.587379] clocksource: Watchdog remote CPU 5 read timed out
+[    3.671733] pci 0000:01:00.0: FWSEC: PROM bytes=1048576 signature=0xaa55
+[    3.671736] gpu_unlock: ROM chain: pos=0x0 data=0x52494350 bytes=65024 type=0x0 last=0
+[    3.671738] gpu_unlock: ROM chain: pos=0xfe00 data=0x52494350 bytes=83968 type=0x3 last=0
+[    3.671740] gpu_unlock: ROM chain: pos=0x24600 data=0x5344504e bytes=22016 type=0xe0 last=0
+[    3.671741] gpu_unlock: ROM chain: pos=0x29c00 data=0x5344504e bytes=394752 type=0xe0 last=128
+[    3.671743] gpu_unlock: ROM expansion: base=0xfe00 ext=0x24600 adjust=0x14800
+[    3.671744] gpu_unlock: ROM BIT: offset=0x1b0 size=12 stride=6 tokens=18 adjust=0x14800
+[    3.671746] gpu_unlock: ROM ucode table: offset=0x8a134 version=1 header=6 stride=6 entries=16
+[    3.671747] gpu_unlock: FWSEC descriptor: offset=0x411ac ROM_bytes=1048576 header=0x4ac0301
+[    3.671749] gpu_unlock: FWSEC geometry: image_off=0x41658 size=0xe900 imem=0xe100 va=0x0 pa=0x0 dmem=0x800 pa=0x0 pkc=0x5a4 interface=0x1c engine=0x400 ucode=9 signatures=3 versions=0x7 bytes=1152
+[    3.671759] gpu_unlock: FWSEC interface: offset=0x1c version=1 header=4 stride=8 entries=2 FRTS=0x1ffe00000
+[    3.671760] gpu_unlock: FWSEC mapper: version=3 size=64 cmd_offset=0x7c0 cmd_size=64
+[    3.671763] pci 0000:01:00.0: FWSEC fuse: raw=0x3 version=2
+[    3.671765] gpu_unlock: FWSEC signature selection: versions=0x7 fuse_version=2 sig_bytes=384
+[    3.671769] pci 0000:01:00.0: Falcon reset begin: base=0x110000
+[    3.672789] pci 0000:01:00.0: poll timeout tolerated: reg=0x1100f4 last=0x47f7 mask=0x80000000 expected=0x80000000 budget_us=1000
+[    3.672792] pci 0000:01:00.0: Falcon pre-reset timeout tolerated per HW bug 3419321
+[    3.672917] pci 0000:01:00.0: Falcon reset done: base=0x110000 hwcfg=0x67f7 chip=0xb76000a1
+[    3.673371] pci 0000:01:00.0: Falcon start: base=0x110000 cpuctl=0x10 code_va=0x0 sig_dmem=0x5a4 engine_mask=0x400 ucode=9 mailbox=0x0:0x0
+[    3.885160] pci 0000:01:00.0: FWSEC result: scratch=0x0 expected_hi16=0
+[    3.885164] pci 0000:01:00.0: FWSEC WPR2: low=0x1ffe000 high=0x1ffee00 expected_page=0x1ffe00 end=0x1fff00000
+[    3.885172] pci 0000:01:00.0: Falcon reset begin: base=0x840000
+[    3.886213] pci 0000:01:00.0: poll timeout tolerated: reg=0x8400f4 last=0x67f7 mask=0x80000000 expected=0x80000000 budget_us=1000
+[    3.886216] pci 0000:01:00.0: Falcon pre-reset timeout tolerated per HW bug 3419321
+[    3.886344] pci 0000:01:00.0: Falcon reset done: base=0x840000 hwcfg=0x67f7 chip=0xb76000a1
+[    3.886808] pci 0000:01:00.0: Falcon start: base=0x840000 cpuctl=0x10 code_va=0x100 sig_dmem=0x10 engine_mask=0x1 ucode=3 mailbox=0x0:0xc69ff000
+[    4.060914] pci 0000:01:00.0: selector read: SS0=0x10410064 expected_unlock=0x88888888
+[    4.060917] pci 0000:01:00.0: selector write: SS0=0x88888888
+[    4.060921] pci 0000:01:00.0: selector result: SS0=0x88888888 expected=0x88888888 matched=1
+[    4.060925] pci 0000:01:00.0: selector read: SS1=0x2 expected_unlock=0x8
+[    4.060927] pci 0000:01:00.0: selector write: SS1=0x8
+[    4.060930] pci 0000:01:00.0: selector result: SS1=0x8 expected=0x8 matched=1
+[    4.060935] pci 0000:01:00.0: pre-FLR selectors: ss0=0x88888888 expected=0x88888888 ss1=0x8 expected=0x8
+[    4.060941] pci 0000:01:00.0: vgaarb: deactivate vga console
+[    4.060946] pci 0000:01:00.0: PCIe FLR begin: BME=0 DMA retained, chip=0xb76000a1
+[    4.163590] pci 0000:01:00.0: PCIe FLR returned: result=0
+[    4.163680] pci 0000:01:00.0: post-FLR BAR ready: chip=0xb76000a1
+[    4.472618] pci 0000:01:00.0: post-FLR GFW result: error=0 pci=0x250710de plm=0x8b8f boot=0x3ff cpuctl=0x10 budget_us=2050000
+[    4.472627] pci 0000:01:00.0: engine reset assert: phase=post-FLR base=0x840000 before=0x0 write=0x1
+[    4.472639] pci 0000:01:00.0: engine reset propagation: phase=post-FLR base=0x840000 first=0x1 tenth=0x1
+[    4.472642] pci 0000:01:00.0: engine reset asserted: phase=post-FLR base=0x840000 error=0 last=0x1
+[    4.472646] pci 0000:01:00.0: engine reset release: phase=post-FLR base=0x840000 before=0x1 write=0x0
+[    4.472779] pci 0000:01:00.0: engine reset released: phase=post-FLR base=0x840000 engine=0x0 hwcfg2=0x67f7
+[    4.472791] pci 0000:01:00.0: post-FLR SEC2 reset released, GSP halted, BME=0 pending=0 WPR2=1ffffe00:00000000 SS0=88888888 SS1=00000008
+[    4.477347] pci 0000:01:00.0: driver probe resources: phase=handoff empty=1
+[    4.477351] pci 0000:01:00.0: restore streaming mask: actual=0xffffffff expected=0xffffffff
+[    4.477354] pci 0000:01:00.0: restore coherent mask: actual=0xffffffff expected=0xffffffff
+[    4.477358] pci 0000:01:00.0: restore PCI command: actual=0x3 original=0x3 mask=0x6
+[    4.477361] pci 0000:01:00.0: gpu_unlock: unlocked

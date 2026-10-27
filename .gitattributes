@@ -42,3 +42,6 @@
 
 # Preserve exact native RTX 4070 evidence bytes across platforms.
 /docs/evidence/ada2786/* -text
+
+# Preserve exact GA106 RTX 3050 8GB evidence bytes across platforms.
+/docs/evidence/ga106-2507/** -text

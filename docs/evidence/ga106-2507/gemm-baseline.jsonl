@@ -1,0 +1,7 @@
+{"mode":"FP16/FP32","n":1024,"warmups":10,"iterations":20,"reps":5,"times_ms":[0.16798720,0.16798720,0.16793600,0.16834559,0.16813760],"median_TF_s":12.783614,"best_TF_s":12.787512,"cells_checked":1048576,"failures":0}
+{"mode":"BF16/FP32","n":1024,"warmups":10,"iterations":20,"reps":5,"times_ms":[0.16291840,0.16348640,0.16239680,0.16327680,0.16332320],"median_TF_s":13.152411,"best_TF_s":13.223682,"cells_checked":1048576,"failures":0}
+{"mode":"FP16/FP32","n":4096,"warmups":10,"iterations":20,"reps":5,"times_ms":[7.75019531,7.27352295,7.26625290,7.26241302,7.26297607],"median_TF_s":18.914694,"best_TF_s":18.924695,"cells_checked":16777216,"failures":0}
+{"mode":"BF16/FP32","n":4096,"warmups":10,"iterations":20,"reps":5,"times_ms":[7.29047012,7.29338913,7.29333725,7.29173889,7.28980484],"median_TF_s":18.848584,"best_TF_s":18.853585,"cells_checked":16777216,"failures":0}
+{"mode":"FP16/FP32","n":8192,"warmups":10,"iterations":20,"reps":5,"times_ms":[56.56775513,56.56576538,56.65510254,56.89738159,56.90505981],"median_TF_s":19.407107,"best_TF_s":19.437757,"cells_checked":67108864,"failures":0}
+{"mode":"BF16/FP32","n":8192,"warmups":10,"iterations":20,"reps":5,"times_ms":[56.91755371,56.90603638,56.90695801,56.90602417,56.91279297],"median_TF_s":19.321216,"best_TF_s":19.321533,"cells_checked":67108864,"failures":0}
+# start=2026-10-27T03:45:46+01:00 end=2026-10-27T03:46:04+01:00 exit=0 cmd=build/matched-bench/gemm_bench

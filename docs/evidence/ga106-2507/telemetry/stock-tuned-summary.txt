@@ -1,0 +1,1 @@
+stock-tuned/ollama.telemetry.csv: n=78/154 limit=['130.00 W'] power W min/med/max=36.5/88.7/109.2 sm MHz min/med/max=1807/1927/1935 temp max=67 throttle_samples={'sw_power_cap': 18, 'hw_slowdown': 0, 'sw_thermal': 0, 'hw_thermal': 0, 'hw_power_brake': 0}
