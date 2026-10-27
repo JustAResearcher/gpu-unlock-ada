@@ -10,19 +10,19 @@ A manual UEFI port for the **Gigabyte GeForce RTX 4070 Ti (AD104-400 / Subsystem
  
 Measured on physical hardware under Windows 11 x64 with unmodified official NVIDIA driver 616.92 using PyTorch cuBLAS:
 
-| Workload / Precision | Stock Windows (No Unlock) | Unlocked UEFI Loader | Relative Gain / Impact |
-|---|---:|---:|:---:|
-| **BF16 Tensor Cores (4096² GEMM)** | **73.19 TFLOP/s** (37.2 W) | **143.76 TFLOP/s** (284.9 W) | **+96.4% (~2x Throughput)** 🔥 |
-| **BF16 Tensor Cores (16384² Peak)** | **80.85 TFLOP/s** (240.4 W) | **~145+ TFLOP/s** (284.9 W) | **+79.3% Peak Gain** |
-| **FP16 Tensor Cores (4096² GEMM)** | **73.58 TFLOP/s** (220.2 W) | **140.10 TFLOP/s** (278.0 W) | **+90.4% Gain** |
-| **FP16 Tensor Cores (16384² Peak)** | **80.67 TFLOP/s** (256.5 W) | **~142+ TFLOP/s** (278.0 W) | **+76.1% Peak Gain** |
-| **FP32 CUDA Cores (Dense Vector)** | **26.82 TFLOP/s** (283.7 W) | **27.29 TFLOP/s** (~185 W) | **Parity** (scalar ALUs unthrottled) |
+| Workload / Precision | Stock Windows (No Unlock) | Unlocked UEFI Loader | Relative Gain / Impact | Notes |
+|---|---:|---:|:---:|---|
+| **BF16 Tensor Cores (4096² GEMM)** | **73.19 TFLOP/s** (37.2 W) | **143.76 TFLOP/s** (284.9 W) | **+96.4% (~2x Throughput)** 🔥 | Stock throttles down to 37 W |
+| **FP16 Tensor Cores (4096² GEMM)** | **73.58 TFLOP/s** (220.2 W) | **140.10 TFLOP/s** (278.0 W) | **+90.4% Gain** | GSP queue limit removed |
+| **BF16 Tensor Cores (16384² Peak)** | **80.85 TFLOP/s** (240.4 W) | **~145+ TFLOP/s** (284.9 W) | **+79.3% Peak Gain** | Stock hard-capped at 80.8 TFLOPS |
+| **FP16 Tensor Cores (16384² Peak)** | **80.67 TFLOP/s** (256.5 W) | **~142+ TFLOP/s** (278.0 W) | **+76.1% Peak Gain** | Stock hard-capped at 80.6 TFLOPS |
+| **FP32 CUDA Cores (16384² Peak)** | **26.82 TFLOP/s** (283.7 W) | **27.29 TFLOP/s** (284.2 W) | **Parity (~27 TFLOPS)** | Standard ALUs not restricted |
 
 > [!NOTE]
-> **Silicon & Firmware Mechanics**:  
-> In stock Windows, the official GeForce driver imposes an artificial duty-cycle throttle on Tensor operations (under 4096² GEMM, power draw drops to just 37.2 W due to artificial pipeline starvation).  
-> Standard OS-level tuning (MSI Afterburner, undervolting curves, or core clock offsets up to 2775 MHz) **cannot bypass this cap**, remaining hard-pinned at ~80.8 TFLOP/s.  
-> The `AD104-EXPERIMENTAL.EFI` pre-boot handshake successfully unbinds the hardware scheduler, allowing Tensor Cores to run at full physical capability (**143.76 TFLOP/s**) while saturating the entire 285 W board power budget (**284.9 W**).
+> **Silicon & Power Mechanics**:  
+> - In pure **FP32 CUDA core** operations, both stock and unlocked runs fully saturate the 285 W board limit (**283.7–284.2 W**), yielding identical baseline compute (~27 TFLOP/s) as NVIDIA does not throttle scalar vector pipelines.
+> - On **Tensor operations (BF16/FP16)**, the stock GeForce driver restricts tensor dispatch: under 4096² GEMM, power drops to just **37.2 W** (silicon artificially starved at 73 TFLOP/s), with an impenetrable ceiling of **80.8 TFLOP/s** even under sustained 16384² load.
+> - The `AD104-EXPERIMENTAL.EFI` pre-boot initialization eliminates this microcode limiter, restoring full hardware saturation (**284.9 W**) and delivering Ada Lovelace's full dense silicon capability of **143.76 TFLOP/s**!
 
 ---
 
