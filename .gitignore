@@ -31,6 +31,9 @@ Module.symvers
 /windows/ad104-msi/build/
 /windows/ad104-msi/local/
 /windows/ad104-msi/diagnostic/build/
+/windows/ad104-gigabyte-x99/build/
+/windows/ad104-gigabyte-x99/local/
+/windows/ad104-gigabyte-x99/diagnostic/build/
 *.EFI
 *.efi
 *.exe
