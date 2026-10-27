@@ -1,0 +1,16 @@
+# Local application build artifacts and private credentials
+build/
+local/
+diagnostic/build/
+
+# Compiled binaries and libraries
+*.EFI
+*.efi
+*.exe
+*.obj
+*.o
+*.a
+*.log
+*.su
+__pycache__/
+*.pyc

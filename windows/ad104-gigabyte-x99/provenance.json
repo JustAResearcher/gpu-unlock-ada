@@ -1,0 +1,43 @@
+{
+  "brand": "Latence.app",
+  "version": "0.5.4",
+  "ada_commit": "491925c1079435e260137b9f3526066e764de830",
+  "windows_commit": "9352abd27480203ea146f766e7c96957912d148a",
+  "historical_hardware_efi_sha256": "b27709643f57284bf5d1e8941caa8f9b12725d7b32c5a9863e89ebafd456a37f",
+  "hardware_scope": "one successful cold/manual launch and three short Windows GEMM runs on this exact machine; not general or long-duration qualification",
+  "counts": {
+    "core": 90,
+    "admission": 17,
+    "ownership": 47,
+    "application": 15,
+    "io": 8
+  },
+  "publication_changes": [
+    "ESP GUID moved to ignored local configuration; synthetic GUID used only by host I/O tests",
+    "build tool paths configurable/discovered",
+    "public evidence excludes ROM, firmware, loaded driver code, Windows binary, local paths and raw handle addresses"
+  ],
+  "upstream_linux_target_admission_changed": false,
+  "automatic_boot_installation": false,
+  "public_tree_validation": {
+    "validation": "fresh public-tree simulated tests",
+    "counts": {
+      "core": 90,
+      "admission": 17,
+      "ownership_usb": 47,
+      "application": 15,
+      "io": 8
+    },
+    "total": 177,
+    "configured_public_efi_matches_historical_hardware_efi": true,
+    "configured_efi_sha256": "b27709643f57284bf5d1e8941caa8f9b12725d7b32c5a9863e89ebafd456a37f",
+    "diagnostic": {
+      "application_mock_checks": 5530,
+      "platform_checks": 179,
+      "python_tests": 6
+    },
+    "private_inputs_published": false,
+    "hardware_run_after_publication_cleanup": false,
+    "note": "Public tree reconstructs the previously tested EFI byte-for-byte when supplied the excluded original ESP configuration. Building/tests never execute on GPU."
+  }
+}
