@@ -107,14 +107,22 @@ USB_ROOT/
 ---
 
 ## Boot Procedure
+ 
+> [!IMPORTANT]
+> **Strict Cold Boot Required!**  
+> Do not use BIOS `Boot Override` from the graphical setup utility — doing so pre-initializes the GPU and activates PCI Bus Mastering, causing the safety preconditions in `checks.c` to reject the unlock transaction.
 
-1. Disable Secure Boot in your UEFI BIOS.
-2. Completely power off the system (cold shutdown; wait 10 seconds).
-3. Power on and open the UEFI Boot Menu by pressing **`F7`** (or **`F11`** depending on Huananzhi BIOS revision), or enter BIOS setup with **`Del`** $\rightarrow$ `Save & Exit` $\rightarrow$ select your USB drive under `Boot Override`.
-4. The loader opens and performs read-only cold checks. Press **`U`** once to authorize the one-shot unlock transaction.
-   - Pressing **`S`**, **`Esc`**, or waiting 30 seconds boots stock Windows without touching GPU state.
-5. The display will detach, firmware injection and GSP configuration run, and the loader hands execution over to Windows Boot Manager (`bootmgfw.efi`).
-6. Inspect `AD104-UNLOCK/RUNxxxx.TXT` on the USB drive to review the full register and transaction trace.
+**Recommended Procedure:**
+1. Disable **Secure Boot** in your UEFI BIOS.
+2. In the **`Boot`** tab, set your USB flash drive as **Boot Option #1** and save settings (`F10`).
+3. **Perform a complete cold shutdown** (switch off the PSU or disconnect power cord for 10 seconds to allow capacitor discharge and guarantee hardware cold reset).
+4. Power on the PC — the system will automatically cold-boot directly into `BOOTX64.EFI` without keypresses.
+5. The loader menu appears. Press **`U`** once to authorize the one-shot unlock transaction.  
+   *(Pressing `S`, `Esc`, or waiting 30 seconds boots stock Windows without touching GPU state).*
+6. The display will freeze for 2-3 seconds during GOP detachment and GSP handover, followed by standard Windows 11 boot.
+7. The complete trace log is written to `AD104-UNLOCK/RUNxxxx.TXT` on the USB drive.
+
+*(Alternative: If the USB is not set as primary boot drive, power on from cold and tap **`F7`** repeatedly to access the one-time BBS Boot Menu).*
 
 ---
 
