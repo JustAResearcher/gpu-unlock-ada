@@ -1,0 +1,65 @@
+{
+  "date": "2026-10-27",
+  "host": "consumer X99 board, Linux Mint 21.3",
+  "kernel": "5.15.0-190-generic",
+  "driver": "595.99.02",
+  "module": {
+    "name": "gpu-unlock",
+    "version": "1.1.1",
+    "source_commit": "d28c485"
+  },
+  "firmware": "610.43.03 (5 GA102 + 4 AD102 assets)",
+  "boot_options": "gpu_unlock.targets=<target-3060>,<target-4060ti> gpu_unlock.ad106_experimental=1",
+  "cards": [
+    {
+      "model": "RTX 3060 12GB",
+      "device": "10de:2504",
+      "die": "GA106",
+      "sms": 28,
+      "pci": "<target-3060>",
+      "uuid": "GPU-UUID-OMITTED",
+      "role": "boot VGA"
+    },
+    {
+      "model": "RTX 4060 Ti 16GB",
+      "device": "10de:2803",
+      "die": "AD106",
+      "sms": 34,
+      "pci": "<target-4060ti>",
+      "uuid": "GPU-UUID-OMITTED",
+      "role": "compute-only"
+    }
+  ],
+  "cold_starts_observed": 2,
+  "issue_rate_probe": {
+    "source": "diagnostics/bench/tensor_modes_issue.cu",
+    "build": "nvcc -ptx -arch=sm_89 -O3 -std=c++17; ptxas -arch=sm_89 -O3",
+    "cuda_toolkit": "13.0.3",
+    "cubin_sha256": "e90cc66d2af181e1741ab8845bcb192b63e1d1ad37a23d3fca2108d7bb8565ca",
+    "runner": "diagnostics/bench/tensor_modes_driver_runner.py",
+    "iters": 20000,
+    "reps": 3,
+    "cells_checked_per_mode": 270336,
+    "mismatches_all_runs": 0,
+    "caps_w": [
+      150,
+      165
+    ],
+    "host_note": "two-GPU host: runner needs CUDA_VISIBLE_DEVICES=<uuid> and an nvidia-smi wrapper passing -i <uuid>"
+  },
+  "sustained_gemm": {
+    "framework": "torch 2.13.0+cu130, CUDA_DEVICE_ORDER=PCI_BUS_ID",
+    "shape": "8192x8192x8192, fp32 accumulation",
+    "method": "150 warmup reps then 12 batches x 50 reps, median of last 6, min/max spread <1%",
+    "caps_w": {
+      "3060": 120,
+      "4060ti": 150
+    }
+  },
+  "scope_limits": [
+    "one board, one card of each type",
+    "two cold starts; no long-run stability testing",
+    "no application (image/video generation) workload",
+    "the 4060 Ti 8 GB variant and other 2803/2504 boards untested"
+  ]
+}

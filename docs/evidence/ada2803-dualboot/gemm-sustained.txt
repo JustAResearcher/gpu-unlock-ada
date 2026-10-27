@@ -1,0 +1,28 @@
+Sustained cuBLAS GEMM (torch.mm, 8192^3, fp32 accumulation)
+Host: LX1, kernel 5.15.0-190-generic, driver 595.99.02, module gpu-unlock 1.1.1
+Method: 150 warmup reps (~2.5 s), then 12 batches x 50 reps; median of last 6 batches.
+min/max spread < 1% on every arm.
+
+3060 @120 W        stock -> unlocked
+  FP16/FP32acc     24.91 -> 40.18   1.61x
+  BF16/FP32acc     25.20 -> 41.54   1.65x
+  TF32             12.24 -> 20.49   1.67x
+
+4060 Ti @150 W     stock -> unlocked
+  FP16/FP32acc     45.85 -> 73.17   1.60x
+  BF16/FP32acc     45.56 -> 72.10   1.58x
+  TF32             20.97 -> 31.09   1.48x
+
+4060 Ti @165 W (unlocked only; stock 165 W not measured with this harness)
+  FP16/FP32acc     76.13   (stock @165 W with the issue-rate probe reads the same
+                            45.87 as at 150 W, so the stock GEMM value is expected
+                            to be ~45.9, but it was not measured)
+  BF16/FP32acc     75.04
+  TF32             32.23
+
+Control: the 3060 stock figures reproduce the independently measured Ampere
+result (24.86 / 25.30 / 12.41 at 120 W) within 0.6%.
+
+Caveat: a five-repetition 8192^3 run measures ~80 ms of work and reports boost,
+not steady state; it produced 83.3 TF/s for a configuration whose sustained
+value is 68.2. Do not quote short-run GEMM numbers for this card.

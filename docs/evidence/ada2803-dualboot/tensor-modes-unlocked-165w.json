@@ -1,0 +1,67 @@
+{
+  "gpu": "GPU-UUID-OMITTED, NVIDIA GeForce RTX 4060 Ti, <target>, 595.99.02, 165.00",
+  "cubin_sha256": "e90cc66d2af181e1741ab8845bcb192b63e1d1ad37a23d3fca2108d7bb8565ca",
+  "iters": 20000,
+  "reps": 3,
+  "blocks": 1056,
+  "threads": 256,
+  "warps": 8448,
+  "chains": 8,
+  "modes": {
+    "f16_f32": {
+      "instruction": "bench_f16_f32",
+      "k": 16,
+      "times_ms": [
+        63.36000061035156,
+        60.59519958496094,
+        60.59417724609375
+      ],
+      "rates_Top_per_s": [
+        87.3813324915825,
+        91.36831494774206,
+        91.36985650476694
+      ],
+      "best_Top_per_s": 91.36985650476694,
+      "expected_cell": 10240000,
+      "cells_checked": 270336,
+      "mismatches": 0
+    },
+    "tf32": {
+      "instruction": "bench_tf32",
+      "k": 8,
+      "times_ms": [
+        60.59584045410156,
+        60.59519958496094,
+        60.59212875366211
+      ],
+      "rates_Top_per_s": [
+        45.683674312543104,
+        45.68415747387103,
+        45.68647276372001
+      ],
+      "best_Top_per_s": 45.68647276372001,
+      "expected_cell": 5120000,
+      "cells_checked": 270336,
+      "mismatches": 0
+    },
+    "u4_s32": {
+      "instruction": "bench_u4",
+      "k": 64,
+      "times_ms": [
+        60.71295928955078,
+        60.70988845825195,
+        60.71091079711914
+      ],
+      "rates_Top_per_s": [
+        364.76438274705384,
+        364.78283328141794,
+        364.77669053600937
+      ],
+      "best_Top_per_s": 364.78283328141794,
+      "expected_cell": 40960000,
+      "cells_checked": 270336,
+      "mismatches": 0
+    }
+  },
+  "seconds": 1.0839552879333496
+}

@@ -1,0 +1,53 @@
+Command line: BOOT_IMAGE=/boot/vmlinuz-5.15.0-190-generic root=UUID=<root-fs-uuid> ro intel_iommu=off amd_iommu=off pcie_aspm=off quiet splash vt.handoff=7 gpu_unlock.targets=<target-3060>,<target-4060ti> gpu_unlock.ad106_experimental=1
+Kernel command line: BOOT_IMAGE=/boot/vmlinuz-5.15.0-190-generic root=UUID=<root-fs-uuid> ro intel_iommu=off amd_iommu=off pcie_aspm=off quiet splash vt.handoff=7 gpu_unlock.targets=<target-3060>,<target-4060ti> gpu_unlock.ad106_experimental=1
+gpu_unlock: loading out-of-tree module taints kernel.
+gpu_unlock: module verification failed: signature and/or required key missing - tainting kernel
+gpu_unlock: ROM chain: pos=0x0 data=0x52494350 bytes=64512 type=0x0 last=0
+gpu_unlock: ROM chain: pos=0xfc00 data=0x52494350 bytes=86016 type=0x3 last=0
+gpu_unlock: ROM chain: pos=0x24c00 data=0x5344504e bytes=24576 type=0xe0 last=0
+gpu_unlock: ROM chain: pos=0x2ac00 data=0x5344504e bytes=456192 type=0xe0 last=128
+gpu_unlock: ROM expansion: base=0xfc00 ext=0x24c00 adjust=0x15000
+gpu_unlock: ROM BIT: offset=0x1b0 size=12 stride=6 tokens=19 adjust=0x15000
+gpu_unlock: ROM ucode table: offset=0x99fb6 version=1 header=6 stride=6 entries=16
+gpu_unlock: FWSEC descriptor: offset=0x4581c ROM_bytes=1048576 header=0x32c0301
+gpu_unlock: FWSEC geometry: image_off=0x45b48 size=0x10500 imem=0xf700 va=0x0 pa=0x0 dmem=0xd80 pa=0x0 pkc=0xb24 interface=0x1c engine=0x400 ucode=9 signatures=2 versions=0x3 bytes=768
+gpu_unlock: FWSEC interface: offset=0x1c version=1 header=4 stride=8 entries=2 FRTS=0x3ffa00000
+gpu_unlock: FWSEC mapper: version=3 size=64 cmd_offset=0xd40 cmd_size=64
+gpu_unlock: FWSEC signature selection: versions=0x3 fuse_version=1 sig_bytes=384
+gpu_unlock: ROM chain: pos=0x0 data=0x52494350 bytes=65024 type=0x0 last=0
+gpu_unlock: ROM chain: pos=0xfe00 data=0x52494350 bytes=92672 type=0x3 last=0
+gpu_unlock: ROM chain: pos=0x26800 data=0x5344504e bytes=22016 type=0xe0 last=0
+gpu_unlock: ROM chain: pos=0x2be00 data=0x5344504e bytes=383488 type=0xe0 last=128
+gpu_unlock: ROM expansion: base=0xfe00 ext=0x26800 adjust=0x16a00
+gpu_unlock: ROM BIT: offset=0x1b0 size=12 stride=6 tokens=18 adjust=0x16a00
+gpu_unlock: ROM ucode table: offset=0x895ef version=1 header=6 stride=6 entries=16
+gpu_unlock: FWSEC descriptor: offset=0x433b8 ROM_bytes=1048576 header=0x4ac0301
+gpu_unlock: FWSEC geometry: image_off=0x43864 size=0xea00 imem=0xe200 va=0x0 pa=0x0 dmem=0x800 pa=0x0 pkc=0x5a4 interface=0x1c engine=0x400 ucode=9 signatures=3 versions=0x7 bytes=1152
+gpu_unlock: FWSEC interface: offset=0x1c version=1 header=4 stride=8 entries=2 FRTS=0x2ffee0000
+gpu_unlock: FWSEC mapper: version=3 size=64 cmd_offset=0x7c0 cmd_size=64
+gpu_unlock: FWSEC signature selection: versions=0x7 fuse_version=2 sig_bytes=384
+pci <target-4060ti>: AD102 selectors-applied: readout1=0x0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+pci <target-4060ti>: post-FLR BAR ready: chip=0x196000a1
+fb0: switching to gpu_unlock from EFI VGA
+pci <target-3060>: post-FLR BAR ready: chip=0xb76000a1
+pci <target-4060ti>: post-FLR GFW result: error=0 pci=0x280310de plm=0x8b8f boot=0x3ff cpuctl=0x10 budget_us=2050000
+pci <target-4060ti>: engine reset assert: phase=post-FLR base=0x840000 before=0x0 write=0x1
+pci <target-4060ti>: engine reset propagation: phase=post-FLR base=0x840000 first=0x1 tenth=0x1
+pci <target-4060ti>: engine reset asserted: phase=post-FLR base=0x840000 error=0 last=0x1
+pci <target-4060ti>: engine reset release: phase=post-FLR base=0x840000 before=0x1 write=0x0
+pci <target-4060ti>: engine reset released: phase=post-FLR base=0x840000 engine=0x0 hwcfg2=0x67b7
+pci <target-4060ti>: post-FLR SEC2 reset released, GSP halted, BME=0 pending=0 WPR2=1ffffe00:00000000 SS0=88888888 SS1=00000008
+pci <target-4060ti>: AD102 permission post-FLR: WPR_CFG[0x1fa7cc]=0x4cb8f before=0x4cb8f expected=0xfffff0ff required=1 valid=1 pci=0x280310de chip=0x196000a1
+pci <target-4060ti>: AD102 permission post-FLR: FBPA[0x9a0148]=0xffffff0f before=0xffffff0f expected=0xffffffff required=0 valid=1 pci=0x280310de chip=0x196000a1
+pci <target-4060ti>: AD102 permission post-FLR: WPR[0x1fa7c4]=0x4cb8f before=0x4cb8f expected=0xffffffff required=1 valid=1 pci=0x280310de chip=0x196000a1
+pci <target-4060ti>: AD102 permission post-FLR: FEAT[0x823804]=0xffffffff before=0xffffff8f expected=0xffffffff required=1 valid=1 pci=0x280310de chip=0x196000a1
+pci <target-4060ti>: AD102 post-FLR: readout1=0x0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+pci <target-4060ti>: gpu_unlock: unlocked
+pci <target-3060>: post-FLR GFW result: error=0 pci=0x250410de plm=0x8b8f boot=0x3ff cpuctl=0x10 budget_us=2050000
+pci <target-3060>: engine reset assert: phase=post-FLR base=0x840000 before=0x0 write=0x1
+pci <target-3060>: engine reset propagation: phase=post-FLR base=0x840000 first=0x1 tenth=0x1
+pci <target-3060>: engine reset asserted: phase=post-FLR base=0x840000 error=0 last=0x1
+pci <target-3060>: engine reset release: phase=post-FLR base=0x840000 before=0x1 write=0x0
+pci <target-3060>: engine reset released: phase=post-FLR base=0x840000 engine=0x0 hwcfg2=0x67f7
+pci <target-3060>: post-FLR SEC2 reset released, GSP halted, BME=0 pending=0 WPR2=1ffffe00:00000000 SS0=88888888 SS1=00000008
+pci <target-3060>: gpu_unlock: unlocked
