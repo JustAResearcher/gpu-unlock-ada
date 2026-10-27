@@ -2,8 +2,10 @@ post_install() {
   cat <<'EOF'
 ==> gpu_unlock now loads ahead of nvidia on every boot but does nothing until
 ==> you opt in on the kernel command line:
-==>   gpu_unlock.targets=all              every unbound RTX 3090
+==>   gpu_unlock.targets=all              every accepted unbound card
 ==>   gpu_unlock.targets=0000:21:00.0     only these PCI addresses (comma-separated)
+==> Experimental Ada IDs also need their own opt-in flag, and most of them an
+==> exact address, which all never matches. See the README's target table.
 ==> Remove the option in your bootloader to boot without the unlock.
 ==> See /usr/share/doc/gpu-unlock/README.md.
 EOF
