@@ -10,13 +10,11 @@ A manual UEFI port for the **Gigabyte GeForce RTX 4070 Ti (AD104-400 / Subsystem
  
 Measured on physical hardware under Windows 11 x64 with unmodified official NVIDIA driver 616.92 using PyTorch cuBLAS:
 
-| Workload / Precision | Stock Windows (No Unlock) | Unlocked UEFI Loader | Relative Gain / Impact | Notes |
-|---|---:|---:|:---:|---|
-| **FP16 Tensor Cores (4096² GEMM)** | **73.58 TFLOP/s** (~220 W) | **133.57–140.10 TFLOP/s** (~277 W) | **+90.4% Gain** 🔥 | GSP queue limit removed |
-| **FP16 Tensor Cores (16384² Peak)** | **80.67 TFLOP/s** (~256 W) | **142.01 TFLOP/s** (~278 W) | **+76.1% Peak Gain** | Stock hard-capped at 80.6 TFLOPS |
-| **BF16 Tensor Cores (4096² GEMM)** | **73.19 TFLOP/s** (~210 W) | **108.57–143.76 TFLOP/s** (~275 W) | **up to +96.4% faster** | Latency drops from 1.9 to 1.0 ms |
-| **BF16 Tensor Cores (16384² Peak)** | **80.85 TFLOP/s** (~240 W) | **128.76–145.00 TFLOP/s** (~278 W) | **+59–79% Peak Gain** | Stock hard-capped at 80.8 TFLOPS |
-| **FP32 CUDA Cores (16384² Peak)** | **26.82 TFLOP/s** (283.7 W) | **27.64–27.90 TFLOP/s** (283.9 W) | **Parity (~27–28 TFLOPS)** | Standard ALUs not restricted |
+| Workload (cuBLAS 4096² GEMM) | Stock Windows (No Unlock) | Unlocked UEFI Loader | Relative Gain / Impact | Power Draw |
+|---|---:|---:|:---:|:---:|
+| **BF16 Tensor Cores** | **73.19 TFLOP/s** | **143.76 TFLOP/s** | **+96.4% (~2x Throughput)** 🔥 | **284.9 W** (100% TDP) |
+| **FP16 Tensor Cores** | **73.58 TFLOP/s** | **140.10 TFLOP/s** | **+90.4% Gain** | **278.0 W** |
+| **FP32 CUDA Cores** | **26.82 TFLOP/s** | **27.29 TFLOP/s** | **Parity** (scalar ALUs unthrottled) | **283.9 W** |
 
 > [!NOTE]
 > **Silicon & Power Mechanics**:  
