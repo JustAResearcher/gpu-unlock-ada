@@ -99,6 +99,8 @@ are retained, along with the newer GA103/GA106 device list. Upstream reported
 RTX 3090 success; this branch does not revalidate every legacy board.
 GA107 RTX 3050 6GB (`10de:2584`) uses the same GA102 Booter path and was
 unlocked on one card ([2584 report](docs/ga107-2584-report.md)).
+GA106 RTX 3050 8GB (`10de:2507`), already in the GA106 list, was unlocked on
+the same path on one card after a warm reboot ([2507 report](docs/ga106-2507-report.md)).
 
 ### Experimental Ada targets
 

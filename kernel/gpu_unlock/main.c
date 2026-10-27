@@ -55,7 +55,7 @@ static const unsigned short supported_ids[] = {
 	0x24c9, 0x24dc, 0x24dd, 0x24df, 0x24e0,
 	/* GA103 (untested) */
 	0x2414,
-	/* GA106 (validated only on RTX 3060 12GB 0x2504) */
+	/* GA106 (validated only on RTX 3060 12GB 0x2504 and RTX 3050 8GB 0x2507) */
 	0x2501, 0x2503, 0x2504, 0x2505, 0x2507, 0x2508, 0x2509, 0x252f,
 	0x2544,
 	/* GA107 (validated only on RTX 3050 6GB 0x2584); same GA102 Booter HAL */

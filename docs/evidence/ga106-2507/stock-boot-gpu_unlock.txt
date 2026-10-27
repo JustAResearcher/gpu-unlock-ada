@@ -1,0 +1,2 @@
+[    3.305848] gpu_unlock: loading out-of-tree module taints kernel.
+[    3.305854] gpu_unlock: module verification failed: signature and/or required key missing - tainting kernel

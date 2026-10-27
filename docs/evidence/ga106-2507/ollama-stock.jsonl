@@ -1,0 +1,8 @@
+{"warmup": {"run": "warmup", "prompt_tokens": 2020, "prefill_tok_s": 2813.7074914265495, "gen_tokens": 256, "decode_tok_s": 81.37702643895086, "load_s": 6.38162742, "total_s": 10.252172454}}
+{"run": 0, "prompt_tokens": 2020, "prefill_tok_s": 3309.950662072062, "gen_tokens": 102, "decode_tok_s": 81.79709828803485, "load_s": 0.001203875, "total_s": 2.000685016}
+{"run": 1, "prompt_tokens": 2020, "prefill_tok_s": 3318.520465578564, "gen_tokens": 79, "decode_tok_s": 81.89498781941637, "load_s": 0.001192114, "total_s": 1.714993332}
+{"run": 2, "prompt_tokens": 2020, "prefill_tok_s": 3314.5182462588605, "gen_tokens": 79, "decode_tok_s": 81.97478289653226, "load_s": 0.00139993, "total_s": 1.66465318}
+{"run": 3, "prompt_tokens": 2020, "prefill_tok_s": 3311.877178542971, "gen_tokens": 79, "decode_tok_s": 82.00694879133177, "load_s": 0.001135714, "total_s": 1.696499851}
+{"run": 4, "prompt_tokens": 2020, "prefill_tok_s": 3310.3032368866106, "gen_tokens": 127, "decode_tok_s": 81.34867129435985, "load_s": 0.001334227, "total_s": 2.317179093}
+{"model": "llama3.2:3b", "options": {"temperature": 0, "seed": 42, "num_predict": 256, "num_ctx": 4096}, "runs": 5, "median_prefill_tok_s": 3311.88, "median_decode_tok_s": 81.89}
+# start=2026-10-27T04:25:28+01:00 end=2026-10-27T04:25:48+01:00 exit=0 cmd=python3 -I docs/evidence/ga106-2507/ollama_bench.py llama3.2:3b

@@ -1,0 +1,37 @@
+Card: GeForce RTX 3050 8GB, GA106, 10de:2507, subsystem MSI 1462:c978, 20 SMs
+VBIOS: 94.06.37.00.86
+PCI: 0000:01:00.0, the only GPU in the host; no display attached (headless)
+Link: PCIe 3.0 x8 (card x16-capable; CPU root port 8.0 GT/s x8)
+Power cap: 130 W (board default and maximum; minimum 100 W), set with nvidia-smi -pl 130 before each state
+Persistence mode: disabled
+
+Host: Arch Linux, AMD Ryzen 7 5700 (16 threads), Secure Boot disabled
+Kernel: 7.2.6-arch2-1 (all three boots)
+Driver: nvidia-open 615.71.09 (prebuilt package), nvidia-utils 615.71.09
+CUDA: 13.4.2 (nvcc V13.4.92), binaries and cubin built for sm_86
+PyTorch: 2.14.1+cu130 (venv, Python 3.14.7)
+Ollama: 0.34.2 (ollama-cuda), model llama3.2:3b Q4_K_M, blob sha256-dde5aa3fc5ffc17176b5e8bdc82f587b24b2678c6c66101bf7da77af9f7ccdff
+gpu-unlock: d28c485418c3d9d034cd4bac19200bc33dd3453b, module 1.1.1, built with make arch and
+  installed with pacman -U; DKMS module in the default initramfs (mkinitcpio drop-in)
+Boot loader: GRUB; the unlocked boot used a one-shot entry (grub-reboot) identical to the default
+  entry plus gpu_unlock.targets=0000:01:00.0
+
+Boots (all warm reboots, no AC power cut):
+  baseline  stock driver, no module option; CPU regime: tuned, profile realtime-virtual-host
+  unlocked  one-shot entry with gpu_unlock.targets=0000:01:00.0; reboot 37 s after the previous
+            boot's last journal entry; CPU regime: power-profiles-daemon, profile performance
+  stock     next warm reboot, default entry (module loaded, inactive without the option);
+            CPU regime: power-profiles-daemon, profile performance (identical to unlocked)
+  stock-tuned  same boot as stock, Ollama only, after
+            systemctl stop power-profiles-daemon; systemctl start tuned (realtime-virtual-host)
+
+cpufreq in every state: amd-pstate-epp (active), governor performance, EPP performance,
+  min 2383220 kHz, max 4654288 kHz, boost on, cpuidle governor menu.
+Differences under tuned realtime-virtual-host: kernel.sched_rt_runtime_us=-1 (ppd: 1000000),
+  kernel.timer_migration=0 (1), vm.stat_interval=10 (1).
+
+Kernel command line (unlocked boot):
+BOOT_IMAGE=/vmlinuz-linux root=UUID=OMITTED rw rootflags=subvol=@ zswap.enabled=0 rootfstype=btrfs loglevel=3 quiet amd_iommu=on iommu=pt gpu_unlock.targets=0000:01:00.0
+
+GPU clients: three Docker containers and the Ollama service were stopped before every state;
+nvidia-smi listed no compute process before each run. Ollama was started only for its own probe.
