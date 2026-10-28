@@ -1,0 +1,53 @@
+{
+  "brand": "Latence.app",
+  "version": "0.1.0",
+  "derived_from": "windows/ad104-msi v0.5.4 (repository commit d28c485)",
+  "ada_commit": "491925c1079435e260137b9f3526066e764de830",
+  "windows_commit": "9352abd27480203ea146f766e7c96957912d148a",
+  "target": "RTX 4090 Founders Edition 10de:2684 subsystem 10de:16f4 on MSI MAG B650 TOMAHAWK WIFI (MS-7D75)",
+  "profile_captures": {
+    "probe": "windows/ad104-msi/diagnostic, target ad102-fe, schema 4",
+    "cold_boots": 2,
+    "capture_sha256": [
+      "5450fe02582185cbd37acd394eefe48182ba023959095bac3fc283bb449c6953",
+      "081eefc1b1602e999338fa726ec8bb023ff87399ba9fb0ef86204fce75416be8"
+    ],
+    "fixtures": "tests/capture_graph.h, tests/capture_usb_paths.h, tests/captured_config.h from the first capture via tools/make_test_fixtures.py"
+  },
+  "hardware_scope": "one cold manual launch (RUN0001, 2026-10-27): TRANSACTION OK and Windows handoff; one short tensor-probe comparison; not long-duration or application qualification",
+  "host_validation": {
+    "passed": {
+      "core": 90,
+      "admission": 17,
+      "ownership_usb": 47,
+      "application": 15,
+      "io": 8
+    },
+    "inputs": "real PROM, captured driver code, the five assets from make assets at 610.43.03, and the pinned ESP bootmgfw.efi"
+  },
+  "upstream_linux_target_admission_changed": false,
+  "automatic_boot_installation": false,
+  "private_inputs_published": false,
+  "hardware_run": {
+    "log": "RUN0001: selectors SS0=0x88888888 SS1=0x8 matched, post-FLR readout full=1, DMA released",
+    "probe": "diagnostics/bench tensor_modes_issue sm_89 cubin c633e377, WSL CUDA on driver 610.88, 450 W",
+    "best_Top_per_s": {
+      "f16_f32": [
+        149.2,
+        297.6
+      ],
+      "tf32": [
+        81.6,
+        162.3
+      ],
+      "u4_s32_control": [
+        1292.2,
+        1292.5
+      ]
+    },
+    "validate_gemm_failures": [
+      0,
+      0
+    ]
+  }
+}
