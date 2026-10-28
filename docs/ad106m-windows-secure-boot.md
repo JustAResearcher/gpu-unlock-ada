@@ -61,6 +61,38 @@ are deliberately excluded.
 
 ## Failures and limits retained
 
+### Subsequent persistence regression
+
+Later everyday use exposed failures beyond the bounded startup results above.
+With the saved preference still ON, the reviewed entry still first and the
+installed image and Windows loader unchanged, a later Windows session measured
+FP16 46.91, BF16 47.05, TF32 23.10 and FP8 93.51 TFLOP/s; FP32 control was 13.36.
+All five numerical checks passed, but the tensor rates were stock-like. A
+complete READY capture matched that session's startup. READY therefore does
+not establish that acceleration survived Windows initialization or later use.
+
+The same session included Modern Standby and display-engine timeout reports.
+The underlying timeout timestamps preceded the recorded sleep, even though
+Windows reported them afterward. Older watchdog dumps also predate this local
+unlock experiment. These observations do not establish whether sleep, driver
+recovery, the transaction, or another factor caused the performance loss or
+the owner's reported stuttering after waking. No continuous performance trace
+exists between boot and the later measurement.
+
+A different retained startup capture refused an unreviewed initial selector
+state before payload, firmware, selector or reset writes. That refusal is a
+separate startup-admission problem; the existing guard has not been broadened.
+The owner could not identify the corresponding boot-screen message, so it is
+not classified as a cold-start versus warm-restart failure.
+
+**Always-on behavior, restart reliability and sleep/resume remain unresolved.**
+A status tool should show saved preference separately from a fresh performance
+measurement, report busy/error cases as unverified, and never reuse an earlier
+accelerated result after sleep or graphics recovery. This follow-up does not
+change the historical ON/OFF measurements or add a public runtime reapply path.
+
+### Earlier observations
+
 The **first internal attempt reached READY but measured stock speed in two
 independent processes**. A subsequent full boot using the same image and unchanged
 Secure Boot trust accelerated, as did the later default startup. The failed and
