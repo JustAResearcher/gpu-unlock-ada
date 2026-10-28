@@ -95,6 +95,42 @@ measurement, report busy/error cases as unverified, and never reuse an earlier
 accelerated result after sleep or graphics recovery. This follow-up does not
 change the historical ON/OFF measurements or add a public runtime reapply path.
 
+### Controlled Modern Standby comparison
+
+A subsequent full shutdown/start restored acceleration with the same installed
+image, Windows loader and Secure Boot databases. The automatic same-boot report
+passed validation, and the owner reported a working desktop. Acceleration also
+survived more than five minutes without an agent GPU probe while Windows stayed
+awake. No intervening sleep was recorded.
+
+One recorded Modern Standby cycle then provided a direct before/after comparison
+in that same Windows kernel. Sleep lasted approximately four minutes. The
+recorder stopped before the post-wake CUDA check; it reported zero lost buffers
+and events. Both measurements used the same collector, software and arithmetic,
+and all five numerical checks passed.
+
+| Format | Awake after idle, TFLOP/s | After Modern Standby, TFLOP/s |
+|---|---:|---:|
+| FP16 | 72.26 | 46.81 |
+| BF16 | 81.40 | 47.09 |
+| TF32 | 38.16 | 23.07 |
+| FP8 E4M3 | 142.74 | 92.79 |
+| FP32 control | 13.235 | 13.104 |
+
+The tensor rates returned to the retained stock range across sleep, while the
+FP32 control changed by about 1%. The owner reported a normal-feeling desktop
+after this wake: lost acceleration need not be accompanied by visible stutter.
+The saved preference was still ON; resuming Windows does not execute the local
+preboot transaction again. Re-published NPU reports referenced the same older
+failures and are not evidence of new NVIDIA timeouts during this test.
+
+This is one controlled observation of lost acceleration across Modern Standby,
+not a direct post-resume register read or proof of a specific reset mechanism.
+It does not resolve the separate guarded-startup refusal, intermittent desktop
+stutter or warm-restart behavior. **This implementation does not maintain the
+unlock across the tested sleep/wake cycle.** No runtime register writes, driver
+patch, sleep-policy workaround or extra Secure Boot trust was installed.
+
 ### Earlier observations
 
 The **first internal attempt reached READY but measured stock speed in two
