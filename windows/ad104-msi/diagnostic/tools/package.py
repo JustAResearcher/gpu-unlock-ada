@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import shutil
 import zipfile
+import targets
 from verify import validate_pe, validate_source
 
 
@@ -21,10 +22,12 @@ def main():
     archive=destination.parent/(destination.name+'.zip')
     if destination.exists() or archive.exists():
         p.error('Destination or ZIP already exists; use a new output name')
-    manifest=json.loads((root/'build/manifest.json').read_text(encoding='utf-8-sig'))
+    target=targets.selected()
+    build=root/target['build']
+    manifest=json.loads((build/'manifest.json').read_text(encoding='utf-8-sig'))
     if manifest.get('hardware_tested') is not False or manifest.get('gpu_write_capability') is not False:
         p.error('Expected an unvalidated, diagnostic-only build')
-    binary=root/'build/AD104-PROBE.EFI'
+    binary=build/target['binary']
     if digest(binary)!=manifest['sha256']:
         p.error('Binary hash mismatch')
     for name,expected in manifest['source_sha256'].items():
@@ -40,7 +43,7 @@ def main():
     boot=destination/'EFI/BOOT'
     boot.mkdir(parents=True)
     shutil.copyfile(binary,boot/'BOOTX64.EFI')
-    shutil.copyfile(root/'build/manifest.json',destination/'MANIFEST.json')
+    shutil.copyfile(build/'manifest.json',destination/'MANIFEST.json')
     shutil.copyfile(root/'README.md',destination/'README-FIRST.md')
     sources=destination/'sources'
     sources.mkdir()

@@ -1,8 +1,13 @@
 """Reject an unsuitable PE or an unexpected hardware-access call in probe sources."""
 from pathlib import Path
+import importlib.util
 import json
 import re
 import struct
+
+_spec = importlib.util.spec_from_file_location('probe_targets', Path(__file__).with_name('targets.py'))
+targets = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(targets)
 
 def require(condition, message):
     if not condition:
@@ -46,7 +51,9 @@ def validate_source(src):
 
 def main():
     root=Path(__file__).resolve().parents[1]
-    validate_pe((root/'build/AD104-PROBE.EFI').read_bytes())
+    target=targets.selected()
+    build=root/target['build']
+    validate_pe((build/target['binary']).read_bytes())
     validate_source((root/'src/probe.c').read_text())
     validate_source((root/'src/platform.c').read_text())
     sample=(root/'src/sample.c').read_text()
@@ -54,7 +61,7 @@ def main():
     require(sample.count('pci->Mem.Read(')==6,'Expected register and bounded PROM read call sites')
     offsets=[int(x,16) for x in re.findall(r'\{"[A-Z0-9_]+",(0x[0-9a-f]+)\}',sample)]
     require(offsets==[0,0x118128,0x118234,0x110100,0x1fa824,0x1fa828,0x1fa7cc,0x1fa7c4,0x9a0148,0x823804,0x823814,0x823818,0x82381c,0x823820,0x1183a4,0x625f04,0x1fa7c8,0x1fa82c,0x1fa830,0x824148,0x8241e0,0x840100],'Register allowlist changed')
-    capture=json.loads((root/'build/host-capture.json').read_text())
+    capture=json.loads((build/'host-capture.json').read_text())
     require(capture['schema']==4 and not capture['gpu_writes'] and not capture['unlock_attempted'],'Mock flags')
     require(capture['unique_expected_identity_observed'] and len(capture['display_devices'])==2,'Mock identity')
     require(bool(capture['display_devices'][0]['cached_efi_rom']['sha256']),'Mock ROM')

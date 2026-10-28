@@ -2,6 +2,7 @@
 #ifndef AD104_CORE_H
 #define AD104_CORE_H
 #include <Uefi.h>
+#include "target.h"
 
 #define PROBE_VERSION "0.4.0"
 #define PROBE_DP_MAX 4096u

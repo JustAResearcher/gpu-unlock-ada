@@ -3,7 +3,12 @@ import argparse
 import json
 import re
 import hashlib
+import importlib.util
 from pathlib import Path
+
+_spec = importlib.util.spec_from_file_location('probe_targets', Path(__file__).with_name('targets.py'))
+probe_targets = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(probe_targets)
 
 
 def analyze(data, build_id):
@@ -11,6 +16,7 @@ def analyze(data, build_id):
         raise ValueError('Unsupported capture schema/version')
     if data.get('build_id') != build_id:
         raise ValueError('Capture build_id does not match the selected manifest')
+    target_profile = probe_targets.for_capture(data)
     for key in ('gpu_writes', 'unlock_attempted', 'hardware_support_validated'):
         if data.get(key) is not False:
             raise ValueError('Unexpected or missing diagnostic flag: '+key)
@@ -18,9 +24,9 @@ def analyze(data, build_id):
     if not isinstance(displays, list) or len(displays) > 32:
         raise ValueError('Malformed display inventory')
     targets = [(i, d) for i, d in enumerate(displays)
-               if d.get('vendor') == '0x10de' and d.get('device_id') == '0x2782']
+               if d.get('vendor') == '0x10de' and d.get('device_id') == target_profile['device']]
     exact = [(i, d) for i, d in targets
-             if d.get('subsystem_vendor') == '0x1462' and d.get('subsystem_device') == '0x5132'
+             if (d.get('subsystem_vendor'), d.get('subsystem_device')) == target_profile['subsystem']
              and d.get('exact_expected_identity') is True]
     observed = len(targets) == len(exact) == 1 and data.get('pci_enumeration_complete') is True
     if data.get('target_id_count') != len(targets) or data.get('exact_identity_count') != len(exact):
@@ -119,7 +125,7 @@ def analyze(data, build_id):
         raise ValueError('Target location or device path is incomplete')
     result['location'] = target['location']
     config = bytes.fromhex(target.get('config64', ''))
-    if len(config) != 64 or config[:4] != bytes.fromhex('de108227') or config[44:48] != bytes.fromhex('62143251'):
+    if len(config) != 64 or config[:4] != bytes.fromhex(target_profile['config_ids'][0]) or config[44:48] != bytes.fromhex(target_profile['config_ids'][1]):
         raise ValueError('Config header does not match the declared target identity')
     if config[11] != 3 or config[14] & 0x7f:
         raise ValueError('Target is not a type-0 display controller')
@@ -129,7 +135,9 @@ def analyze(data, build_id):
     result['rom_sha256'] = digest
     cached_hex=data.get('cached_rom_hex')
     if cached_hex is not None:
-        if not isinstance(cached_hex,str) or len(cached_hex)!=150016*2:
+        exact_bytes,limit=target_profile['cached_rom_exact'],target_profile['cached_rom_limit']
+        if not isinstance(cached_hex,str) or len(cached_hex)%2 or not 0<len(cached_hex)//2<=limit or \
+                (exact_bytes and len(cached_hex)!=exact_bytes*2):
             raise ValueError('Unexpected cached ROM size')
         cached=bytes.fromhex(cached_hex)
         if hashlib.sha256(cached).hexdigest()!=digest:
@@ -156,10 +164,10 @@ def analyze(data, build_id):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('captures', nargs='+', type=Path)
-    parser.add_argument('--manifest', type=Path, default=Path(__file__).resolve().parents[1]/'build/manifest.json')
+    parser.add_argument('--manifest', type=Path,
+                        help='defaults to the manifest in the build directory of each capture\'s probe target')
     parser.add_argument('--mock', action='store_true', help='explicitly label simulated captures')
     args = parser.parse_args()
-    manifest = json.loads(args.manifest.read_text(encoding='utf-8-sig'))
     rows = []
     for path in args.captures:
         if not args.mock and not re.fullmatch(r'CAP\d{4}\.JSON', path.name, flags=re.I):
@@ -167,7 +175,10 @@ def main():
         if path.stat().st_size > 8 * 1024 * 1024:
             parser.error('Capture exceeds the firmware report limit')
         try:
-            result = analyze(json.loads(path.read_text(encoding='utf-8-sig')), manifest['build_id'])
+            data = json.loads(path.read_text(encoding='utf-8-sig'))
+            manifest_path = args.manifest or Path(__file__).resolve().parents[1]/probe_targets.for_capture(data)['build']/'manifest.json'
+            manifest = json.loads(manifest_path.read_text(encoding='utf-8-sig'))
+            result = analyze(data, manifest['build_id'])
         except (ValueError, KeyError, TypeError) as e:
             parser.error(str(path)+': '+str(e))
         rows.append(result)
