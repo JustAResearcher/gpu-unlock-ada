@@ -71,10 +71,14 @@ All five numerical checks passed, but the tensor rates were stock-like. A
 complete READY capture matched that session's startup. READY therefore does
 not establish that acceleration survived Windows initialization or later use.
 
-The same session included Modern Standby and display-engine timeout reports.
+The same session included Modern Standby and engine-timeout reports.
 The underlying timeout timestamps preceded the recorded sleep, even though
-Windows reported them afterward. Older watchdog dumps also predate this local
-unlock experiment. These observations do not establish whether sleep, driver
+Windows reported them afterward. Local debugger analysis of the three retained
+current-session timeout dumps attributes them to AMD's NPU driver, `ipustack.sys`,
+rather than establishing an NVIDIA-driver timeout. Two older watchdog dumps,
+predating this unlock experiment, are a different graphics-kernel live-dump code
+(`0x193`) in desktop-compositor context; they are not the same NPU failure.
+These observations do not establish whether sleep, driver
 recovery, the transaction, or another factor caused the performance loss or
 the owner's reported stuttering after waking. No continuous performance trace
 exists between boot and the later measurement.
