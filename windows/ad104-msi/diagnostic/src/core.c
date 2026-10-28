@@ -72,8 +72,8 @@ BOOLEAN DpHasUsb(const UINT8 *path, UINTN length) {
     return FALSE;
 }
 BOOLEAN ExactTarget(const UINT8 *c, UINTN length) {
-    return (BOOLEAN)(length>=64 && Read16(c)==0x10de && Read16(c+2)==0x2782 &&
-        (c[14]&0x7f)==0 && c[11]==3 && Read16(c+44)==0x1462 && Read16(c+46)==0x5132);
+    return (BOOLEAN)(length>=64 && Read16(c)==0x10de && Read16(c+2)==PROBE_DEVICE &&
+        (c[14]&0x7f)==0 && c[11]==3 && Read16(c+44)==PROBE_SUBVENDOR && Read16(c+46)==PROBE_SUBDEVICE);
 }
 BOOLEAN RomPcirValid(const UINT8 *rom, UINTN size, UINT16 vendor, UINT16 device) {
     UINTN off=0,image_len,pcir,images=0; UINT8 indicator;

@@ -96,7 +96,7 @@ static void BarJson(TEXT *t,DISPLAY *d,UINTN index,EFI_BOOT_SERVICES *bs) {
     TextPut(t,"}");
 }
 static void DisplayJson(TEXT *t,DISPLAY *d,EFI_BOOT_SERVICES *bs) {
-    UINTN i;UINT8 hash[32];BOOLEAN target=(BOOLEAN)(Read16(d->config)==0x10de&&Read16(d->config+2)==0x2782);
+    UINTN i;UINT8 hash[32];BOOLEAN target=(BOOLEAN)(Read16(d->config)==0x10de&&Read16(d->config+2)==PROBE_DEVICE);
     TextPut(t,"{\"vendor\":");TextHex(t,Read16(d->config),4);
     TextPut(t,",\"device_id\":");TextHex(t,Read16(d->config+2),4);
     TextPut(t,",\"subsystem_vendor\":");TextHex(t,Read16(d->config+44),4);
@@ -121,7 +121,7 @@ static void DisplayJson(TEXT *t,DISPLAY *d,EFI_BOOT_SERVICES *bs) {
     TextPut(t,",\"sha256\":");
     /* Hash only an exact expected card's bounded, structurally checked cached ROM. */
     if(target&&ExactTarget(d->config,64)&&d->pci->RomSize<=PROBE_ROM_MAX&&
-        RomPcirValid(d->pci->RomImage,(UINTN)d->pci->RomSize,0x10de,0x2782)) {
+        RomPcirValid(d->pci->RomImage,(UINTN)d->pci->RomSize,0x10de,PROBE_DEVICE)) {
         Sha256(d->pci->RomImage,(UINTN)d->pci->RomSize,hash);TextBytes(t,hash,32);
     } else TextPut(t,"null");
     TextPut(t,",\"source\":\"EFI_PCI_IO_PROTOCOL.RomImage; not a physical PROM dump\"}}");
@@ -146,7 +146,7 @@ static void EnumerateDisplays(EFI_BOOT_SERVICES *bs,TEXT *t) {
         d->location_valid=(BOOLEAN)(!EFI_ERROR(s)&&d->segment<=65535&&d->bus<=255&&d->device<32&&d->function<8);
         d->path=PathFor(bs,handles[i],&d->path_length,&d->multi);
         if(!d->location_valid||!d->path||d->multi) EnumerationComplete=FALSE;
-        if(Read16(config)==0x10de&&Read16(config+2)==0x2782) ++TargetCount;
+        if(Read16(config)==0x10de&&Read16(config+2)==PROBE_DEVICE) ++TargetCount;
         if(ExactTarget(config,64)) ++ExactCount;
         if(!first) TextPut(t,",");first=FALSE;DisplayJson(t,d,bs);
     }
@@ -205,7 +205,7 @@ static EFI_STATUS OpenLog(EFI_HANDLE image,EFI_SYSTEM_TABLE *st,EFI_FILE_PROTOCO
     s=st->BootServices->HandleProtocol(loaded->DeviceHandle,&FsGuid,(VOID **)&fs);
     if(EFI_ERROR(s)||!fs) return EFI_NOT_FOUND;
     s=fs->OpenVolume(fs,&root);if(EFI_ERROR(s)||!root) return EFI_ERROR(s)?s:EFI_DEVICE_ERROR;
-    s=root->Open(root,&dir,L"AD104-PROBE",EFI_FILE_MODE_READ|EFI_FILE_MODE_WRITE|EFI_FILE_MODE_CREATE,EFI_FILE_DIRECTORY);
+    s=root->Open(root,&dir,PROBE_DIR,EFI_FILE_MODE_READ|EFI_FILE_MODE_WRITE|EFI_FILE_MODE_CREATE,EFI_FILE_DIRECTORY);
     close_status=root->Close(root);if(!EFI_ERROR(s)&&EFI_ERROR(close_status)) s=close_status;
     if(EFI_ERROR(s)||!dir) {if(dir) dir->Close(dir);return EFI_ERROR(s)?s:EFI_DEVICE_ERROR;}
     for(slot=1;slot<=9999;slot++) {
@@ -232,11 +232,11 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE image,EFI_SYSTEM_TABLE *st) {
     TEXT t;EFI_FILE_PROTOCOL *log=NULL;EFI_STATUS s,flush_status,close_status;UINTN size,mmio_attempts=0,index;CHAR16 filename[13];
     DISPLAY *target=NULL;
     if(!st||!st->BootServices||!st->RuntimeServices||RelocationAnchor!=Report) return EFI_INVALID_PARAMETER;
-    Message(st,L"AD104 diagnostic v0.4.0 - no GPU writes or unlock.\r\n");
+    Message(st,PROBE_NAME L" diagnostic v0.4.0 - no GPU writes or unlock.\r\n");
     s=OpenLog(image,st,&log,filename);
     if(EFI_ERROR(s)||!log) {Message(st,L"USB path not confirmed, or log unavailable. Returning to firmware.\r\n");return EFI_ERROR(s)?s:EFI_DEVICE_ERROR;}
     TextInit(&t,Report,sizeof(Report));
-    TextPut(&t,"{\n\"schema\":4,\"probe_version\":\"" PROBE_VERSION "\",\"build_id\":\"" PROBE_BUILD_ID "\",\"gpu_writes\":false,\"unlock_attempted\":false,");
+    TextPut(&t,"{\n" PROBE_TARGET_JSON "\"schema\":4,\"probe_version\":\"" PROBE_VERSION "\",\"build_id\":\"" PROBE_BUILD_ID "\",\"gpu_writes\":false,\"unlock_attempted\":false,");
     TextPut(&t,"\"hardware_support_validated\":false,\"uefi_revision\":");TextHex(&t,st->Hdr.Revision,8);
     TextPut(&t,",\"secure_boot\":");VariableByte(&t,st,L"SecureBoot");
     TextPut(&t,",\"setup_mode\":");VariableByte(&t,st,L"SetupMode");TextPut(&t,",");
@@ -266,8 +266,9 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE image,EFI_SYSTEM_TABLE *st) {
     TextPut(&t,",\"mmio_reads\":");Bool(&t,(BOOLEAN)(mmio_attempts>0));
     /* Export only the already cached ROM, never read the physical ROM aperture. */
     TextPut(&t,",\"cached_rom_hex\":");
-    if(target&&target->pci->RomSize==150016&&
-        RomPcirValid(target->pci->RomImage,(UINTN)target->pci->RomSize,0x10de,0x2782))
+    if(target&&target->pci->RomSize<=PROBE_CACHED_ROM_LIMIT&&
+        (PROBE_CACHED_ROM_EXACT?target->pci->RomSize==PROBE_CACHED_ROM_EXACT:target->pci->RomSize>0)&&
+        RomPcirValid(target->pci->RomImage,(UINTN)target->pci->RomSize,0x10de,PROBE_DEVICE))
         TextBytes(&t,target->pci->RomImage,(UINTN)target->pci->RomSize);
     else TextPut(&t,"null");
     TextPut(&t,",\"platform\":");SamplePlatform(&t,st,target?target->handle:NULL);
@@ -279,7 +280,7 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE image,EFI_SYSTEM_TABLE *st) {
     if(!EFI_ERROR(s)&&EFI_ERROR(flush_status)) s=flush_status;
     if(!EFI_ERROR(s)&&EFI_ERROR(close_status)) s=close_status;
     if(EFI_ERROR(s)) Message(st,L"Log write/flush failed. Do not treat this as a valid capture.\r\n");
-    else {Message(st,L"Saved AD104-PROBE\\");Message(st,filename);Message(st,L"\r\nProbe finished. No unlock performed. Returning to firmware in 8 seconds.\r\n");}
+    else {Message(st,L"Saved " PROBE_DIR L"\\");Message(st,filename);Message(st,L"\r\nProbe finished. No unlock performed. Returning to firmware in 8 seconds.\r\n");}
     if(st->BootServices->Stall) st->BootServices->Stall(8000000);
     return s;
 }

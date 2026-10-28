@@ -41,9 +41,9 @@ static const CHAR8 *CaptureGuard(EFI_PCI_IO_PROTOCOL *pci,EFI_BOOT_SERVICES *bs,
     if((Read16(config+4)&6)!=2) return "memory_decode_or_bus_master_state";
     status=pci->GetLocation(pci,&segment,&bus,&device,&function);
     if(EFI_ERROR(status)||segment!=0||bus!=1||device!=0||function!=0) return "unexpected_pci_location";
-    if(Read32(config+16)!=0x80000000u) return "bar0_relocated_or_invalid";
+    if(Read32(config+16)!=PROBE_BAR0) return "bar0_relocated_or_invalid";
     status=pci->GetBarAttributes(pci,0,&supports,&resource);
-    ok=(BOOLEAN)(!EFI_ERROR(status)&&ResourceMatches(resource,Read32(config+16),0x80000000,&length)&&length==0x01000000);
+    ok=(BOOLEAN)(!EFI_ERROR(status)&&ResourceMatches(resource,Read32(config+16),PROBE_BAR0,&length)&&length==0x01000000);
     if(resource) bs->FreePool(resource);
     if(!ok) return "bar0_descriptor_mismatch";
     return NULL;
@@ -97,7 +97,7 @@ UINTN SampleProm(TEXT *t,EFI_PCI_IO_PROTOCOL *pci,EFI_BOOT_SERVICES *bs) {
     const CHAR8 *reason=CaptureGuard(pci,bs,words);
     if(reason) {Failure(t,reason);return 0;}
     attempts++;status=pci->Mem.Read(pci,EfiPciIoWidthUint32,0,0,1,&chip);
-    if(EFI_ERROR(status)||chip!=0x194000a1u) {FailureCount(t,"unexpected_chip_for_prom",attempts);return attempts;}
+    if(EFI_ERROR(status)||chip!=PROBE_CHIP) {FailureCount(t,"unexpected_chip_for_prom",attempts);return attempts;}
     attempts++;status=pci->Mem.Read(pci,EfiPciIoWidthUint32,0,PROM_START,1,&signature);
     if(EFI_ERROR(status)||(signature&0xffff)!=0xaa55) {FailureCount(t,"prom_signature_unavailable",attempts);return attempts;}
     for(offset=0;offset<PROM_BYTES;offset+=4096) {

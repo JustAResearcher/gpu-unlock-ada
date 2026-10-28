@@ -17,14 +17,16 @@ def load(name):
 
 verify=load('verify')
 analyze=load('analyze')
+target=load('targets').selected()
+BUILD=ROOT/target['build']
 
 
 class ToolTests(unittest.TestCase):
     def test_pe_accepts_built_image(self):
-        verify.validate_pe((ROOT/'build/AD104-PROBE.EFI').read_bytes())
+        verify.validate_pe((BUILD/target['binary']).read_bytes())
 
     def test_pe_rejects_mutations(self):
-        original=(ROOT/'build/AD104-PROBE.EFI').read_bytes()
+        original=(BUILD/target['binary']).read_bytes()
         pe=struct.unpack_from('<I',original,0x3c)[0]
         opt=pe+24
         cases=[(0,b'ZZ'),(pe+4,struct.pack('<H',0x14c)),
@@ -48,7 +50,7 @@ class ToolTests(unittest.TestCase):
                 verify.validate_source(call)
 
     def test_capture_accepts_mock_as_inventory_only(self):
-        data=json.loads((ROOT/'build/host-capture.json').read_text())
+        data=json.loads((BUILD/'host-capture.json').read_text())
         result=analyze.analyze(data,data['build_id'])
         self.assertTrue(result['identity_observed'])
         self.assertEqual(result['target_gops'],1)
@@ -60,7 +62,7 @@ class ToolTests(unittest.TestCase):
         self.assertEqual(len(data['config256']),512)
 
     def test_capture_rejects_mutations(self):
-        data=json.loads((ROOT/'build/host-capture.json').read_text())
+        data=json.loads((BUILD/'host-capture.json').read_text())
         with self.assertRaises(ValueError):
             analyze.analyze(data,'incorrect-build')
         for field in ('gpu_writes','unlock_attempted','hardware_support_validated'):
@@ -85,7 +87,7 @@ class ToolTests(unittest.TestCase):
             analyze.analyze(changed,data['build_id'])
     def test_driver_code_hash(self):
         import hashlib
-        data=json.loads((ROOT/'build/host-capture.json').read_text())
+        data=json.loads((BUILD/'host-capture.json').read_text())
         data['platform']={'available':True,'handles':[], 'handle_count':0,'edge_count':0,
                          'gpu_agents':[{'code':{'length':1,'hex':'00','loaded_sha256':hashlib.sha256(b'\0').hexdigest()}}],
                          'complete':False,'atomic_snapshot':False,'release_authorized':False}
