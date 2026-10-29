@@ -1,0 +1,30 @@
+#!/bin/sh
+# Load gpu_unlock before udev can load nvidia (initramfs-tools only).
+#
+# /init runs the init-top scripts before it loads its module list, and
+# init-top/udev starts coldplug, which autoloads nvidia by its PCI alias and
+# binds the card first: "unlock failed (-16)" on every boot when nvidia.ko is
+# in the image. mkinitramfs orders scripts without prerequisites by name
+# (get_prereq_pairs | tsort; GNU and uutils tsort both sort them), so the
+# "00-" prefix runs this one before udev. The module list loads gpu_unlock on
+# every boot anyway; this only loads it earlier. It does nothing unless
+# targets are set, on the kernel command line or in modprobe.d.
+
+PREREQ=""
+
+prereqs()
+{
+	echo "$PREREQ"
+}
+
+case "$1" in
+prereqs)
+	prereqs
+	exit 0
+	;;
+esac
+
+modprobe gpu_unlock ||
+	echo "gpu_unlock: init-top modprobe failed" >/dev/kmsg 2>/dev/null
+
+exit 0
