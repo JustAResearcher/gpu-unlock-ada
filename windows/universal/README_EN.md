@@ -33,7 +33,7 @@ Testing was conducted on physical hardware under **Windows 11 x64** on a dual-so
 
 - **Motherboard**: Huananzhi X99-F8D Plus (Dual LGA2011-3, Intel C612 / X99 chipset, AMI Aptio V UEFI).
 - **Processors**: 2 × Intel Xeon E5-2696 v3 (Haswell-EP, 36 cores / 72 threads total).
-- **Memory**: 64 GB DDR4 (Quad-Channel per CPU socket).
+- **Memory**: 128 GB DDR4 (8 × 16 GB, Quad-Channel with 64 GB per CPU socket).
 - **GPU 0 (PCIe Slot / Bus 3:00.0, Socket 0)**: Gigabyte GeForce RTX 4070 Ti WINDFORCE OC (AD104-400, `10de:2782`, Subsystem `1458:40e8`, revision A1).
 - **GPU 1 (PCIe Slot / Bus 130:00.0, Socket 1)**: Gigabyte GeForce RTX 3060 EAGLE OC (GA106-300, `10de:2504`, Subsystem `1458:40e2`, revision A1).
 - **OS & Drivers**: Windows 11 Pro x64 (Build 26100), NVIDIA Driver 572.70 / 617.xx (both adapters report «This device is working properly»).

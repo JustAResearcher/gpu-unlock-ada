@@ -33,7 +33,7 @@
 
 - **Платформа**: Huananzhi X99-F8D Plus (Dual LGA2011-3, чипсет Intel C612 / X99, UEFI AMI Aptio V).
 - **Процессоры**: 2 × Intel Xeon E5-2696 v3 (Haswell-EP, суммарно 36 ядер / 72 потока).
-- **Оперативная память**: 64 ГБ DDR4 (4-канальный режим на каждый сокет).
+- **Оперативная память**: 128 ГБ DDR4 (8 × 16 ГБ, 4-канальный режим по 64 ГБ на каждый сокет CPU).
 - **Видеокарта 0 (Слот PCIe / Bus 3:00.0, Socket 0)**: Gigabyte GeForce RTX 4070 Ti WINDFORCE OC (AD104-400, `10de:2782`, Subsystem `1458:40e8`, ревизия A1).
 - **Видеокарта 1 (Слот PCIe / Bus 130:00.0, Socket 1)**: Gigabyte GeForce RTX 3060 EAGLE OC (GA106-300, `10de:2504`, Subsystem `1458:40e2`, ревизия A1).
 - **ОС и драйвер**: Windows 11 Pro x64 (Build 26100), NVIDIA Driver 572.70 / 617.xx (оба устройства функционируют штатно).
