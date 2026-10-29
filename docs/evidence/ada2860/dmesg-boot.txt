@@ -1,0 +1,28 @@
+[    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz-7.0.0-38-generic root=UUID=ROOT-UUID-OMITTED ro quiet splash crashkernel=2G-4G:320M,4G-32G:512M,32G-64G:1024M,64G-128G:2048M,128G-:4096M gpu_unlock.targets=0000:64:00.0 gpu_unlock.ad106_experimental=1 nvidia.NVreg_DynamicPowerManagement=0x00
+[    0.023883] Kernel command line: BOOT_IMAGE=/boot/vmlinuz-7.0.0-38-generic root=UUID=ROOT-UUID-OMITTED ro quiet splash crashkernel=2G-4G:320M,4G-32G:512M,32G-64G:1024M,64G-128G:2048M,128G-:4096M gpu_unlock.targets=0000:64:00.0 gpu_unlock.ad106_experimental=1 nvidia.NVreg_DynamicPowerManagement=0x00
+[    0.385816] pci 0000:64:00.0: vgaarb: setting as boot VGA device
+[    0.385816] pci 0000:64:00.0: vgaarb: bridge control possible
+[    0.385816] pci 0000:64:00.0: vgaarb: VGA device added: decodes=io+mem,owns=none,locks=none
+[    0.385816] vgaarb: loaded
+[    1.751251] gpu_unlock: loading out-of-tree module taints kernel.
+[    1.751264] gpu_unlock: module verification failed: signature and/or required key missing - tainting kernel
+[    2.213364] gpu_unlock: ROM chain: pos=0x0 data=0x52494350 bytes=64512 type=0x0 last=0
+[    2.213365] gpu_unlock: ROM chain: pos=0xfc00 data=0x52494350 bytes=86016 type=0x3 last=0
+[    2.213366] gpu_unlock: ROM chain: pos=0x24c00 data=0x5344504e bytes=24576 type=0xe0 last=0
+[    2.213366] gpu_unlock: ROM chain: pos=0x2ac00 data=0x5344504e bytes=491008 type=0xe0 last=128
+[    2.213367] gpu_unlock: ROM expansion: base=0xfc00 ext=0x24c00 adjust=0x15000
+[    2.213368] gpu_unlock: ROM BIT: offset=0x1b0 size=12 stride=6 tokens=19 adjust=0x15000
+[    2.213369] gpu_unlock: ROM ucode table: offset=0xa2829 version=1 header=6 stride=6 entries=16
+[    2.213370] gpu_unlock: FWSEC descriptor: offset=0x45818 ROM_bytes=1048576 header=0x32c0301
+[    2.213371] gpu_unlock: FWSEC geometry: image_off=0x45b44 size=0x10500 imem=0xf700 va=0x0 pa=0x0 dmem=0xd80 pa=0x0 pkc=0xb24 interface=0x1c engine=0x400 ucode=9 signatures=2 versions=0x3 bytes=768
+[    2.213387] gpu_unlock: FWSEC interface: offset=0x1c version=1 header=4 stride=8 entries=2 FRTS=0x1ffa00000
+[    2.213388] gpu_unlock: FWSEC mapper: version=3 size=64 cmd_offset=0xd40 cmd_size=64
+[    2.213392] gpu_unlock: FWSEC signature selection: versions=0x3 fuse_version=1 sig_bytes=384
+[    2.490173] pci 0000:64:00.0: vgaarb: deactivate vga console
+[    2.858537] pci 0000:64:00.0: gpu_unlock: unlocked
+[    8.256895] nvidia-nvlink: Nvlink Core is being initialized, major device number 506
+[    8.260172] nvidia 0000:64:00.0: vgaarb: VGA decodes changed: olddecodes=io+mem,decodes=none:owns=none
+[   10.119428] [drm] Initialized nvidia-drm 0.0.0 for 0000:64:00.0 on minor 1
+[   10.119451] nvidia 0000:64:00.0: vgaarb: deactivate vga console
+[   10.125357] fbcon: nvidia-drmdrmfb (fb0) is primary device
+[   10.125400] nvidia 0000:64:00.0: [drm] fb0: nvidia-drmdrmfb frame buffer device

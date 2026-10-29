@@ -83,6 +83,7 @@ static const struct experimental_id {
 	{ GU_AD104_RTX_4070, &ad104_experimental, true, "AD104" },
 	{ GU_AD106_RTX_4060_TI, &ad106_experimental, true, "AD106" },
 	{ GU_AD106_RTX_4060_TI_16GB, &ad106_experimental, true, "AD106" },
+	{ GU_AD106M_RTX_4070_MOBILE, &ad106_experimental, true, "AD106" },
 	{ GU_AD107_RTX_4060, &ad107_experimental, true, "AD107" },
 	{ GU_AD107_RTX_4060_LAPTOP, &ad107_experimental, true, "AD107" },
 	{ GU_AD107_RTX_4060_MOBILE, &ad107_experimental, true, "AD107" },

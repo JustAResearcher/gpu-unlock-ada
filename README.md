@@ -123,6 +123,7 @@ other boards, memory configurations and laptop models remain unverified.
 | `2786` | RTX 4070 | AD104 | `ad104_experimental`, exact | one card; three owner reports | [report](docs/ada-2786-report.md), [#11](https://github.com/JustAResearcher/gpu-unlock-ada/pull/11) |
 | `2803` | RTX 4060 Ti | AD106 | `ad106_experimental`, exact | one 16 GB card, matched; two more boards in #34 | [report](docs/ada-2803-report.md), [#34](https://github.com/JustAResearcher/gpu-unlock-ada/pull/34) |
 | `2805` | RTX 4060 Ti 16GB | AD106 | `ad106_experimental`, exact | one card, no matched throughput run | [report](docs/ada-2805-report.md) |
+| `2860` | RTX 4070 Laptop GPU | AD106M | `ad106_experimental`, exact | one laptop, matched | [report](docs/ada-2860-report.md) |
 | `2882` | RTX 4060 | AD107 | `ad107_experimental`, exact | one card, matched cuBLAS; cold boot and warm reboot | [report](docs/ada-2882-report.md) |
 | `28a0` | RTX 4060 Laptop GPU | AD107 | `ad107_experimental`, exact | one card, unlocked state only | [report](docs/ada-28a0-report.md) |
 | `28e0` | RTX 4060 Laptop GPU | AD107 | `ad107_experimental`, exact | one owner report | [#10](https://github.com/JustAResearcher/gpu-unlock-ada/pull/10) |

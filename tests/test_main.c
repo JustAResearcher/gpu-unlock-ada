@@ -22,6 +22,7 @@
 #define RTX_4080_SUPER GU_AD103_RTX_4080_SUPER
 #define RTX_4060TI GU_AD106_RTX_4060_TI
 #define RTX_4060TI_16GB GU_AD106_RTX_4060_TI_16GB
+#define RTX_4070_MOBILE GU_AD106M_RTX_4070_MOBILE
 #define RTX_4060_MOBILE GU_AD107_RTX_4060_MOBILE
 #define RTX_4050_MOBILE GU_AD107_RTX_4050_MOBILE
 #define RTX_4070TI GU_AD104_RTX_4070_TI
@@ -453,7 +454,7 @@ int main(void)
 	puts("ad103 0x2702: gated exact-card dispatch PASS");
 
 	/* The AD106 target needs its own flag and its exact BDF in the list. */
-	const unsigned short ad106_ids[] = { RTX_4060TI_16GB, RTX_4060TI };
+	const unsigned short ad106_ids[] = { RTX_4060TI_16GB, RTX_4060TI, RTX_4070_MOBILE };
 	for (unsigned int i = 0; i < ARRAY_SIZE(ad106_ids); i++) {
 		reset("0000:01:00.0");
 		add("0000:01:00.0", ad106_ids[i], false);
