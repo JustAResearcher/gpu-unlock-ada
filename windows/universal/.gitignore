@@ -1,0 +1,18 @@
+# Build artifacts
+build/
+*.o
+*.su
+
+# Staging and binary dumps
+*.rom
+*.bin
+*.exe
+usb_release_staging/
+dist/EFI/VBIOS/*.rom
+
+# IDE and OS
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
+
