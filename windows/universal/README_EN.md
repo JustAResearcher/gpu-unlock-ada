@@ -102,8 +102,15 @@ USB_ROOT/
 
 ## Performance Verification (Benchmark)
 
-Run the included multi-GPU benchmark to test all installed cards simultaneously:
+The repository includes a truly universal multi-GPU benchmark that automatically discovers and tests any number of installed graphics cards (from 1 to 8+ GPUs):
 ```powershell
-python tools/benchmark_dual_gpu.py
+python tools/benchmark_multi_gpu.py
 ```
-This tool benchmarks BF16, FP16, and FP32 GEMM throughput across all available GPUs and displays a comparative speedup ratio.
+*(Also accessible via the backward-compatible alias `python tools/benchmark_dual_gpu.py`).*
+
+The script automatically:
+1. Detects all installed GPUs, their model names, VRAM capacity, and Compute Capability.
+2. Validates native BF16 hardware support (Compute Capability $\ge$ 8.0).
+3. Measures raw cuBLAS GEMM throughput in BF16, FP16, and FP32 alongside live SM clocks and power consumption.
+4. Dynamically builds a side-by-side comparative speedup matrix when 2 or more GPUs are present.
+5. Supports custom CLI parameters: `--sizes 2048,4096,8192` and `--iters 15`.
