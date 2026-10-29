@@ -207,7 +207,11 @@ The packages support these initramfs generators:
   preset `_config` does not read drop-ins; add `gpu_unlock` before `nvidia` in
   that configuration's `MODULES` yourself.
 - **initramfs-tools:**
-  `/usr/share/initramfs-tools/modules.d/gpu-unlock.conf`.
+  `/usr/share/initramfs-tools/modules.d/gpu-unlock.conf` puts the module in
+  the image, and `/usr/share/initramfs-tools/scripts/init-top/00-gpu-unlock`
+  loads it before `init-top/udev` starts coldplug. The module list alone is
+  read after coldplug, too late when an NVIDIA hook such as Ubuntu's
+  `framebuffer-nvidia` puts `nvidia.ko` in the image.
 - **dracut:** `/usr/lib/dracut/dracut.conf.d/gpu-unlock.conf`.
 
 There is no `softdep nvidia pre:` rule because kmod uses only the first matching

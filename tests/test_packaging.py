@@ -67,6 +67,47 @@ class PackageTests(unittest.TestCase):
                                         capture_output=True, text=True, check=True)
                 self.assertEqual(result.stdout.strip(), after)
 
+    def test_initramfs_tools_loads_before_udev_coldplug(self):
+        # /init runs init-top before its module list, and init-top/udev
+        # coldplugs nvidia; the init-top script must run ahead of udev.
+        with tempfile.TemporaryDirectory() as directory:
+            subprocess.run(["make", "-s", f"DESTDIR={directory}", "install-initramfs-tools"],
+                           cwd=ROOT, check=True)
+            script = Path(directory) / "usr/share/initramfs-tools/scripts/init-top/00-gpu-unlock"
+            self.assertTrue(script.is_file())
+            # mkinitramfs drops scripts that aren't executable or fail sh -n.
+            self.assertTrue(script.stat().st_mode & 0o111)
+            subprocess.run(["sh", "-n", str(script)], check=True)
+            prereqs = subprocess.run(["sh", str(script), "prereqs"], capture_output=True, text=True, check=True)
+            self.assertEqual(prereqs.stdout.strip(), "")
+            # Same pairs mkinitramfs feeds tsort (get_prereq_pairs) for a
+            # typical Ubuntu init-top: scripts without prerequisites come out
+            # in name order, so 00-gpu-unlock precedes udev.
+            pairs = "".join(f"{name} {name}\n" for name in
+                            ("udev", "plymouth", "keymap", "framebuffer", "blacklist",
+                             "all_generic_ide", script.name))
+            order = subprocess.run(["tsort"], input=pairs + "udev plymouth\n", capture_output=True,
+                                   text=True, check=True).stdout.split()
+            self.assertEqual(order[0], script.name)
+            self.assertLess(order.index(script.name), order.index("udev"))
+
+    def test_initramfs_tools_script_loads_the_module(self):
+        # Same as load_modules, only earlier; a failing modprobe must not
+        # stop the boot (init-top runs under set -e via ORDER).
+        script = ROOT / "packaging/boot/initramfs-tools-init-top"
+        with tempfile.TemporaryDirectory() as directory:
+            tmp = Path(directory)
+            log = tmp / "modprobe.log"
+            for status in (0, 1):
+                log.unlink(missing_ok=True)
+                shim = tmp / "modprobe"
+                shim.write_text(f'#!/bin/sh\necho "$@" >> "{log.as_posix()}"\nexit {status}\n')
+                shim.chmod(0o755)
+                env = dict(os.environ, PATH=f"{tmp}{os.pathsep}{os.environ['PATH']}")
+                result = subprocess.run(["sh", str(script)], env=env)
+                self.assertEqual(result.returncode, 0)
+                self.assertEqual(log.read_text().strip(), "gpu_unlock")
+
     def test_pkgbuild_pins_match_manifest(self):
         manifest = json.loads((ROOT / "firmware/artifacts-610.43.03.json").read_text())
         pkgbuild = (ROOT / "packaging/arch/PKGBUILD").read_text()
