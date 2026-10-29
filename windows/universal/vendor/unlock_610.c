@@ -1542,10 +1542,10 @@ static int write_selector(struct unlock_transaction_work *work,
   return GU_RESULT(value == unlock ? 0 : -EIO);
 }
 
-/* AD104: one SS0 and one SS1 write, after all Ada payload checks. */
+/* Apply full-rate selectors only after payload verification (Ada) or execution (Ampere). */
 static int unlock_transaction_selector(struct unlock_transaction_work *work) {
   int ret;
-  if (!work->payload_verified || check_entry_selectors(work))
+  if ((is_ad102(work) && !work->payload_verified) || check_entry_selectors(work))
     return GU_RESULT(-EPROTO);
   ret = write_selector(work, "SS0", GU_FEAT_SS0_OFFSET, GU_SS0_UNLOCK);
   if (ret || !GuSelectorPhase(GU_SELECTOR_PHASE_SS0_WRITTEN) ||
@@ -1554,7 +1554,9 @@ static int unlock_transaction_selector(struct unlock_transaction_work *work) {
   ret = write_selector(work, "SS1", GU_FEAT_SS1_OFFSET, GU_SS1_UNLOCK);
   if (ret || !GuSelectorPhase(GU_SELECTOR_PHASE_TARGET))
     return GU_RESULT(-EIO);
-  return ad102_readout(work, "selectors-applied", true);
+  if (is_ad102(work))
+    return ad102_readout(work, "selectors-applied", true);
+  return 0;
 }
 
 /* Reset SEC2 after FLR and leave it halted with reset released. Do not reset
