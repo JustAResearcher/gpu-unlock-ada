@@ -4,80 +4,74 @@
 
 # Universal Multi-GPU Windows Unlock Port — Ampere & Ada Lovelace
 
-Standalone UEFI bootloader for concurrent volatile in-RAM unlock of NVIDIA graphics cards based on **Ada Lovelace (RTX 40xx)** and **Ampere (RTX 30xx)** architectures running under **Windows 10/11 x64 (NVIDIA Drivers)**.
+Standalone UEFI bootloader for concurrent, volatile in-RAM unlock of NVIDIA graphics cards based on **Ada Lovelace (RTX 40xx)** and **Ampere (RTX 30xx)** architectures running under **Windows 10/11 x64 (NVIDIA Drivers)**.
 
-The project is based on the research and codebase of [JustAResearcher/gpu-unlock-ada](https://github.com/JustAResearcher/gpu-unlock-ada) and [impacifist/Windows-GPU-UNLOCK](https://github.com/impacifist/Windows-GPU-UNLOCK). The bootloader runs during the early UEFI boot phase prior to the Windows display driver initialization, enabling error-free startup without «Code 43» and unlocking full hardware access to Tensor Cores at maximum silicon speed.
+The project is built on research from [JustAResearcher/gpu-unlock-ada](https://github.com/JustAResearcher/gpu-unlock-ada) and [impacifist/Windows-GPU-UNLOCK](https://github.com/impacifist/Windows-GPU-UNLOCK). The bootloader operates during early UEFI boot prior to Windows display driver initialization, eliminating «Code 43» and unlocking full hardware access to Tensor Cores at maximum silicon line rates.
 
-100% Volatile In-RAM — the bootloader **NEVER flashes, modifies, or writes to the physical SPI Flash EEPROM**. All modifications occur strictly within Host RAM and MMIO BAR0. Rebooting without the USB drive leaves all graphics cards in their 100% factory stock condition.
+100% Volatile In-RAM — the bootloader **NEVER flashes, modifies, or writes to physical SPI Flash EEPROMs**. All modifications occur strictly within Host RAM and MMIO BAR0. Rebooting without the USB drive leaves all graphics cards in their 100% factory stock condition.
 
 ---
 
 ## Performance Comparison: Stock vs UEFI-Unlock (cuBLAS GEMM)
 
-Testing was conducted on physical hardware under Windows 11 x64 with official NVIDIA driver 616.92 using PyTorch cuBLAS:
+Testing was conducted on physical hardware under **Windows 11 x64** on a dual-socket **Dual Xeon E5-2696 v3 (X99)** workstation with **both GPUs (Ada Lovelace + Ampere) unlocked and operating simultaneously**, using [`tools/benchmark_dual_gpu.py`](tools/benchmark_dual_gpu.py):
 
-| Test (cuBLAS GEMM) | STOCK (No Unlock) | WITH OUR UEFI UNLOCK | Difference / Gain | Power Draw |
-|---|---:|---:|:---:|:---:|
-| **BF16 Tensor Cores** | **73.19 TFLOP/s** | **143.76 TFLOP/s** | **+96.4% (2x FASTER!)** 🔥 | **284.9 W** (TDP 100%) |
-| **FP16 Tensor Cores** | **73.58 TFLOP/s** | **140.10 TFLOP/s** | **+90.4% gain** | **278.0 W** |
-| **FP32 CUDA Cores** | **26.82 TFLOP/s** | **27.29 TFLOP/s** | **Parity** (CUDA cores are not throttled) | **283.9 W** |
+| GPU & Architecture | Benchmark (cuBLAS GEMM) | STOCK (Factory) | WITH OUR UEFI UNLOCK | Difference / Gain | Latch Status in RAM |
+| :--- | :--- | :---:| :---:| :---:| :---:|
+| **GPU 0: RTX 4070 Ti 12GB** <br>*(Ada Lovelace AD104, 60 SM)* | **BF16 Tensor Cores** <br>**FP16 Tensor Cores** <br>**FP32 CUDA Cores** | 75.0 TFLOPS <br>74.0 TFLOPS <br>28.0 TFLOPS | **146.94 TFLOPS** <br>**142.22 TFLOPS** <br>**28.30 TFLOPS** | **+95.9% (2x FASTER!)** 🔥 <br>**+92.2% gain** 🔥 <br>Parity (CUDA cores not throttled) | `SS0=0x88888888` <br>`SS1=0x8` |
+| **GPU 1: RTX 3060 12GB** <br>*(Ampere GA106, 28 SM)* | **BF16 Tensor Cores** <br>**FP16 Tensor Cores** <br>**FP32 CUDA Cores** | 25.6 TFLOPS <br>25.6 TFLOPS <br>9.6 TFLOPS | **49.57 TFLOPS** <br>**48.07 TFLOPS** <br>**9.65 TFLOPS** | **+93.6% (2x FASTER!)** 🔥 <br>**+87.8% gain** 🔥 <br>Parity (CUDA cores not throttled) | `SS0=0x88888888` <br>`SS1=0x8` |
 
 > [!NOTE]
-> **Physical Mechanics & Power Consumption**:
-> - In **FP32 (CUDA cores)** benchmarks, the GPU hits the board's maximum hardware power limit (**~284 W**) both in stock and unlocked modes, outputting identical rated **~27–28 TFLOP/s** because standard vector shaders are not restricted by NVIDIA firmware.
-> - On **Tensor Cores (FP16/BF16)** in stock mode, the driver artificially throttles the hardware scheduler: the GPU hard-caps at **80.6–80.8 TFLOPS** even with core clocks boosted to 2775 MHz.
-> - Our UEFI bootloader removes this firmware throttle: Tensor Cores reach their full silicon speed of **142+ TFLOP/s** while consuming **276–284 W**, fully saturating the board's hardware power delivery.
+> **Physical Mechanics & Throttle Removal (SS0 / SS1)**:
+> - **On Ada Lovelace (RTX 4070 Ti)**, factory firmware activates a `1/2 Rate` divider (`SS0=0x40145131` / `0x60145131`), artificially halving the issue rate for tensor operations with FP32 accumulation. Our in-RAM unlock (`SS0=0x88888888`) lifts this divider, doubling performance to **146.9 TFLOPS** while consuming up to **284 W** (100% TDP saturation).
+> - **On Ampere (RTX 3060)**, stock firmware (`SS0=0x20111021`) forces `FMLA16 / FMLA32` into `1/2 Rate` (~25.6 TFLOPS dense without sparsity). Unlocking to `0x88888888` transitions all 8 sub-fields to `Full Rate`, unleashing the dense non-sparse potential of GA106 silicon to **49.6 TFLOPS**!
+> - In **FP32 mode (standard CUDA shaders)**, both GPUs run at identical rated speeds before and after the unlock, as standard vector ALUs are unconstrained by NVIDIA firmware.
 
 ---
 
-## Hardware Configuration & Parameters
+## Physically Validated Hardware Testbed
 
-- **Physically Validated Testbed**:
-  - **Motherboard**: Huananzhi X99-F8D Plus (Dual LGA2011-3, Intel C612 / X99 chipset, AMI Aptio V UEFI).
-  - **Processors**: 2 × Intel Xeon E5-2696 v3 (Haswell-EP, 36 cores / 72 threads).
-  - **Graphics Card**: Gigabyte GeForce RTX 4070 Ti WINDFORCE OC (AD104-400, PCI ID `10de:2782`, Subsystem `1458:40e8`, revision A1).
-- **Strict VBIOS Hardware ID Addressing**:
-  - ROM files are mapped strictly by PCI Subsystem ID: `\EFI\VBIOS\<VENDOR>_<DEVICE>_<SUBVENDOR>_<SUBDEVICE>.rom` (e.g., `10de_2782_1458_40e8.rom`). No hardcoded paths.
-  - If multiple identical cards are present, the VBIOS image is staged in RAM once and shared across all matching controllers.
-- **Supported Generations**:
-  - **Ada Lovelace**: AD102, AD103, AD104, AD106, AD107 (RTX 4060 — 4090).
-  - **Ampere**: GA102, GA103, GA104, GA106, GA107 (RTX 3050 — 3090).
-- **Subsystem Selectors**: Initial read `SS0=0x41145131` / `0x60145131`, `SS1=0x4` $\rightarrow$ Latching target: `SS0=0x88888888`, `SS1=0x8`.
-- **Driver**: NVIDIA (clean startup, Windows Device Manager reports «This device is working properly»).
+- **Motherboard**: Huananzhi X99-F8D Plus (Dual LGA2011-3, Intel C612 / X99 chipset, AMI Aptio V UEFI).
+- **Processors**: 2 × Intel Xeon E5-2696 v3 (Haswell-EP, 36 cores / 72 threads total).
+- **Memory**: 64 GB DDR4 (Quad-Channel per CPU socket).
+- **GPU 0 (PCIe Slot / Bus 3:00.0, Socket 0)**: Gigabyte GeForce RTX 4070 Ti WINDFORCE OC (AD104-400, `10de:2782`, Subsystem `1458:40e8`, revision A1).
+- **GPU 1 (PCIe Slot / Bus 130:00.0, Socket 1)**: Gigabyte GeForce RTX 3060 EAGLE OC (GA106-300, `10de:2504`, Subsystem `1458:40e2`, revision A1).
+- **OS & Drivers**: Windows 11 Pro x64 (Build 26100), NVIDIA Driver 572.70 / 617.xx (both adapters report «This device is working properly»).
 
 ---
 
 ## Universal Bootloader Architecture
 
-1. **Motherboard & ACPI Independence**:
-   - Automated dynamic search for `bootmgfw.efi` across all ESP/FAT partitions without hardcoded disk GUIDs.
-   - Clean GOP release via standard `DisconnectController()` with PCI Command register synchronization (IO + Memory Space decode enabled, Bus Master disabled prior to transaction claim).
-2. **Multi-GPU & Role Separation**:
-   - PCIe topology scanning across all segments, root bridges, and CPU sockets (Dual Xeon / EPYC / Threadripper).
-   - Support for homogeneous or heterogeneous GPU setups (e.g., RTX 4070 Ti + RTX 3060).
-   - Clean handling of primary display adapters (active GOP) and dedicated compute accelerators (Headless Compute).
-3. **Direct Physical Page Allocation**:
-   - Large microcode payloads (`gsp_ga10x.bin`, 84.3 MB) are loaded via direct physical page allocation (`gBS->AllocatePages`), preventing failures due to UEFI memory pool fragmentation.
+1. **Simultaneous Multi-GPU & Cross-Architecture Unlock**:
+   - Complete dynamic PCIe bus scan (segments 0..255), independent of CPU sockets (Dual Xeon, Threadripper, EPYC).
+   - Supports heterogeneous pairings (Ada + Ampere in the same machine).
+   - Clean microcode dispatch: dynamically routes Booter/V67 containers (`AD102` for Ada and `GA102` for Ampere).
+2. **Safe GOP Display Release**:
+   - Standard `DisconnectController()` followed by explicit `PCI_COMMAND` restoration (`0x3`: IO + Memory Space decoding enabled, Bus Master disabled prior to claim transaction). Display blanking is reduced to 1–2 seconds before smooth Windows Boot Manager handoff.
+3. **Hardware ID-Based VBIOS Addressing**:
+   - ROM files are mapped strictly by PCI Subsystem ID: `\EFI\VBIOS\<VENDOR>_<DEVICE>_<SUBVENDOR>_<SUBDEVICE>.rom` (e.g., `10de_2782_1458_40e8.rom` and `10de_2504_1458_40e2.rom`). Eliminates filename collisions.
+4. **Direct Physical Page Allocation (`AllocatePages`)**:
+   - The large firmware blob `gsp_ga10x.bin` (84.3 MB) is loaded into contiguous physical memory pages, preventing UEFI pool fragmentation failures.
 
 ---
 
 ## Building from Source
 
-The project builds cleanly using the standalone w64devkit toolchain (GCC 16.2.0):
+Builds cleanly using the standalone w64devkit toolchain (GCC 16.2.0):
 
 ```powershell
 python build.py
 ```
 
-The script compiles all C units with `-O2`, links the executable, and zeroes out the PE Import Directory to eliminate dynamic loading dependencies in UEFI ImageLoader.
+The build script compiles all C units with `-O2`, links the standalone PE32+ executable, and zeroes out the PE Import Directory to eliminate dynamic loading dependencies in UEFI ImageLoader.
 
-Output binary: `dist/EFI/BOOT/BOOTX64.EFI` (~116 KB, clean PE32+).
+Output binary: `dist/EFI/BOOT/BOOTX64.EFI` (~116 KB).
 
 ---
 
-## USB Drive Setup & Cold Boot Procedure
+## USB Setup & Cold Boot Procedure
 
-1. Format a USB flash drive as **FAT32**.
+1. Format a USB drive as **FAT32**.
 2. Organize files according to the structure:
 ```text
 USB_ROOT/
@@ -96,42 +90,20 @@ USB_ROOT/
 │   │   ├── v67-ga102-610.43.03.bin  (64,000 bytes)
 │   │   └── NVIDIA-LICENSE
 │   └── VBIOS/
-│       └── 10de_2782_1458_40e8.rom  <-- Dump of your graphics card
+│       ├── 10de_2782_1458_40e8.rom  <-- Dump of GPU 0 (RTX 4070 Ti)
+│       └── 10de_2504_1458_40e2.rom  <-- Dump of GPU 1 (RTX 3060)
 ├── copy_to_usb.bat                  <-- 1-click quick deploy
-├── dump_vbios.bat                   <-- 1-click Windows VBIOS dumper
-└── nvflashk.exe
 ```
-
-*(Alternatively, run `copy_to_usb.bat`, enter your flash drive letter, and it will deploy everything automatically).*
-
-### Cold Boot Launch Procedure:
-
-> [!IMPORTANT]
-> **Physical Cold Boot is Required!**  
-> Do not use `Boot Override` from the BIOS setup menu — in that case the GPU is already initialized by the motherboard firmware, and bootloader integrity checks will abort the transaction.
-
-**Recommended Boot Sequence:**
-1. Disable **Secure Boot** in BIOS settings.
-2. In the **`Boot`** tab, set your USB flash drive as **Boot Option #1** and save settings (`F10`).
-3. **Shut down the PC** — a standard system shutdown is sufficient (no need to unplug the power cord or flip the PSU switch).
-4. Power on the PC via the power button — the motherboard will cold-boot directly into the USB bootloader.
-5. The bootloader text menu will appear. Press **`U`** (once) to apply the unlock.  
-   *(By default, unlock `[U]` is automatically applied after 30 seconds; pressing `S` boots stock Windows).*
-6. The display will freeze for 2-3 seconds (GOP release, microcode injection, and handover to `bootmgfw.efi`), followed by normal Windows 11 startup.
-7. Transaction execution logs are saved on the flash drive in `UNLOCK-LOGS/RUNxxxx.TXT`.
+3. Dump your card's VBIOS directly from Windows using `dump_vbios.bat`.
+4. Plug the USB drive into your PC and select it from the BIOS Boot Menu (F11 / F12).
+5. The bootloader detects all supported cards and unlocks them in RAM within 30 seconds (or immediately upon pressing `U`), passing control smoothly to Windows.
 
 ---
 
-## Utilities & Scripts
+## Performance Verification (Benchmark)
 
-* **`dump_vbios.bat`** / **`dump_vbios.ps1`** — Automatic discovery of installed GPUs and VBIOS dumping named by PCI Subsystem ID.
-* **`copy_to_usb.bat`** / **`copy_to_usb.ps1`** — Automated deployment of bootloader, firmware assets, and VBIOS to a FAT32 USB drive.
-* **`build.py`** — EFI application build script with PE import directory sanitization.
-* **`tools/package_usb.py`** — Distribution packaging script.
-
----
-
-## License
-
-GPL-2.0-only. All original copyrights, EDK II licenses, and third-party notices are preserved.
-Firmware binary microcodes (`*.bin`) remain the intellectual property of NVIDIA Corporation and are governed by `NVIDIA-LICENSE`.
+Run the included multi-GPU benchmark to test all installed cards simultaneously:
+```powershell
+python tools/benchmark_dual_gpu.py
+```
+This tool benchmarks BF16, FP16, and FP32 GEMM throughput across all available GPUs and displays a comparative speedup ratio.
