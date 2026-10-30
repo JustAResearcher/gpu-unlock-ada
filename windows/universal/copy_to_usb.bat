@@ -50,6 +50,8 @@ if exist "%~dp0UNIVERSAL-ASSETS\*" xcopy /E /I /Y "%~dp0UNIVERSAL-ASSETS\*" "!DR
 if exist "%~dp0EFI\*" xcopy /E /I /Y "%~dp0EFI\*" "!DRIVE!\EFI\" >nul
 if exist "%~dp0dump_vbios.bat" copy /Y "%~dp0dump_vbios.bat" "!DRIVE!\" >nul
 if exist "%~dp0dump_vbios.ps1" copy /Y "%~dp0dump_vbios.ps1" "!DRIVE!\" >nul
+if exist "%~dp0enable_laptop_hybrid.bat" copy /Y "%~dp0enable_laptop_hybrid.bat" "!DRIVE!\" >nul
+if exist "%~dp0enable_laptop_hybrid.ps1" copy /Y "%~dp0enable_laptop_hybrid.ps1" "!DRIVE!\" >nul
 if exist "%~dp0nvflashk.exe" (
     copy /Y "%~dp0nvflashk.exe" "!DRIVE!\" >nul
 ) else if exist "%~dp0..\nvflashk.exe" (
