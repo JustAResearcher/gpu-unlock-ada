@@ -25,7 +25,15 @@ Keep this address for step 3. On a multi-GPU host, identify the exact intended c
 ## 2. Install from open source
 
 Install Git, your running kernel's headers, a C build toolchain, DKMS, Python 3,
-and `zstd` using your distribution's package manager. Then:
+and `zstd` using your distribution's package manager. On Void Linux,
+`linux-headers` matches the default `linux` kernel; for another series install
+`linuxX.Y-headers` matching `uname -r` (for example `linux6.12-headers`):
+
+```sh
+sudo xbps-install -S git python3 zstd xz make gcc dkms linux-headers
+```
+
+Then:
 
 ```sh
 git clone https://github.com/JustAResearcher/gpu-unlock-ada.git
@@ -40,7 +48,16 @@ The build may take several minutes and asks for `sudo` when installing.
 
 If your distribution cannot resolve a build dependency automatically, use
 `make install-arch`, `make install-deb`, `make install-rpm`, or
-`make install-void` as appropriate; the [README](README.md#build-and-install) explains the generated package paths.
+`make install-void` as appropriate; the [README](README.md#build-and-install)
+explains the generated package paths. On Void, `make install-void` installs
+`gpu-unlock-dkms` and `gpu-unlock-firmware` from the local repository
+`build/void/repo`, builds the module for every kernel with headers and rebuilds
+those kernels' initramfs. Check that the running kernel's image has it
+(`lsinitcpio` instead of `lsinitrd` if you use mkinitcpio):
+
+```sh
+sudo lsinitrd /boot/initramfs-$(uname -r).img | grep gpu_unlock
+```
 
 ## 3. Enable one exact card
 
@@ -75,6 +92,8 @@ Use the bootloader method your machine already has:
   then run `sudo update-grub`.
 - **Arch with GRUB:** Make the same edit, then run
   `sudo grub-mkconfig -o /boot/grub/grub.cfg`.
+- **Void Linux with GRUB:** Make the same edit, then run
+  `sudo update-grub`.
 - **Fedora/RHEL with GRUB:** Run
   `sudo grubby --update-kernel=ALL --args="gpu_unlock.targets=0000:01:00.0 gpu_unlock.ad103_experimental=1"`,
   substituting your PCI address and omitting the experimental flag for 4090.
@@ -107,7 +126,14 @@ Success requires the **exact selected card's** `gpu_unlock: unlocked` line,
 healthy `nvidia-smi`, and a workload check. A loaded module alone is not
 proof. The [2705 report](docs/ada-2705-report.md) shows the expected marker,
 permission/selector readbacks, matched performance and numerical checks from
-the tested card. For a single-GPU host, the read-only rate getter is:
+the tested card. Void Linux has no journal by default; read the kernel log
+with `dmesg` instead:
+
+```sh
+sudo dmesg | grep -E 'gpu_unlock: unlocked|gpu_unlock: already unlocked|gpu_unlock: unlock failed|post-FLR SEC2'
+```
+
+For a single-GPU host, the read-only rate getter is:
 
 ```sh
 python3 tools/read_sm_rates.py --expect-uuid GPU-PASTE-YOUR-EXACT-UUID
@@ -137,14 +163,18 @@ entry. With systemd-boot, make the *tested* Ada entry persistent using
 the one shown by `bootctl status`. Keep a separate stock entry in the boot
 menu. `bootctl set-oneshot` selects only the next boot and will not persist.
 After a kernel update, verify that the selected entry points to a rebuilt
-initramfs containing `gpu_unlock` before booting the new kernel.
+initramfs containing `gpu_unlock` before booting the new kernel. On Void the
+kernel package's DKMS and initramfs hooks do this when that kernel's headers
+are installed; `sudo xbps-reconfigure -f linuxX.Y` reruns them.
 
 ## Roll back
 
 Remove the `gpu_unlock.*` kernel-command-line options and boot the normal
 entry. If the firmware transaction did not stop cleanly, power off completely
 before retrying; do not force-unload the module while it may retain DMA buffers.
-Uninstall the generated packages if you no longer want the module or firmware.
+Uninstall the generated packages if you no longer want the module or firmware;
+on Void, `sudo xbps-remove gpu-unlock-dkms gpu-unlock-firmware` also rebuilds
+each installed kernel's initramfs without `gpu_unlock`.
 If you used `bootctl set-default` for a separate Ada entry, run
 `sudo bootctl set-default YOUR-STOCK-ENTRY.conf` and confirm the selected
 default with `bootctl status` before rebooting.
