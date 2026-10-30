@@ -103,7 +103,6 @@ VOID FormatGpuRomFileName(CONST DETECTED_GPU *gpu, CHAR16 *out_path, UINTN max_c
 }
 
 static EFI_GUID DevicePathProtocolGuid = EFI_DEVICE_PATH_PROTOCOL_GUID;
-static EFI_GUID GopGuid = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
 
 static BOOLEAN CompareBytes(CONST VOID *a, CONST VOID *b, UINTN len)
 {
@@ -156,45 +155,33 @@ static BOOLEAN CheckIfDisplayAdapter(EFI_HANDLE handle, BOOLEAN *out_is_console)
 {
     BOOLEAN is_con = CheckIfConsoleDisplay(handle);
     if (out_is_console) *out_is_console = is_con;
-    if (is_con) return TRUE;
 
-    if (!handle) return FALSE;
+    if (!handle) return is_con;
 
-    /* 1. Direct GOP on GPU controller handle */
-    EFI_GRAPHICS_OUTPUT_PROTOCOL *gop = NULL;
-    EFI_STATUS status = gBS->HandleProtocol(handle, &GopGuid, (VOID **)&gop);
-    if (!EFI_ERROR(status) && gop && gop->Mode && gop->Mode->Info) {
-        if (gop->Mode->Info->HorizontalResolution > 0 && gop->Mode->Info->VerticalResolution > 0) {
-            return TRUE;
-        }
-    }
-
-    /* 2. Check child controller handles produced by GOP driver */
+    /*
+     * Primary check: any UEFI driver or child controller bound to PCI IO
+     * indicates a GOP/display driver is managing this GPU.
+     *
+     * This is more reliable than querying EFI_GRAPHICS_OUTPUT_PROTOCOL directly,
+     * because on many firmware implementations (e.g. Gigabyte X99) the GOP handle
+     * is a separate entity not discoverable via child controller relationships
+     * from the PCI IO handle.
+     */
     EFI_OPEN_PROTOCOL_INFORMATION_ENTRY *entries = NULL;
     UINTN count = 0;
-    status = gBS->OpenProtocolInformation(handle, &PciIoProtocolGuid, &entries, &count);
+    EFI_STATUS status = gBS->OpenProtocolInformation(handle, &PciIoProtocolGuid, &entries, &count);
     if (!EFI_ERROR(status) && entries) {
-        BOOLEAN has_display = FALSE;
         for (UINTN i = 0; i < count; i++) {
-            if (entries[i].Attributes & EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER) {
-                EFI_HANDLE child = entries[i].ControllerHandle;
-                if (child) {
-                    gop = NULL;
-                    status = gBS->HandleProtocol(child, &GopGuid, (VOID **)&gop);
-                    if (!EFI_ERROR(status) && gop && gop->Mode && gop->Mode->Info) {
-                        if (gop->Mode->Info->HorizontalResolution > 0 && gop->Mode->Info->VerticalResolution > 0) {
-                            has_display = TRUE;
-                            break;
-                        }
-                    }
-                }
+            if ((entries[i].Attributes & EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER) ||
+                (entries[i].Attributes & EFI_OPEN_PROTOCOL_BY_DRIVER)) {
+                gBS->FreePool(entries);
+                return TRUE;
             }
         }
         gBS->FreePool(entries);
-        if (has_display) return TRUE;
     }
 
-    return FALSE;
+    return is_con;
 }
 
 UINTN ScanSystemGpus(DETECTED_GPU out_gpus[], UINTN max_gpus)
