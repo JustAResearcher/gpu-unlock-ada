@@ -18,3 +18,4 @@ if exist "%~dp0tools\enable_laptop_hybrid.ps1" (
 echo.
 echo Press any key to exit...
 pause >nul
+

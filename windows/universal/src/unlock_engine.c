@@ -28,10 +28,18 @@ EFI_STATUS ExecuteGpuRamUnlock(DETECTED_GPU *gpu) {
 
   UINT32 c[64] = {0};
   GU_CAPS caps = {0};
-  if (!EFI_ERROR(
-          gpu->pci_io->Pci.Read(gpu->pci_io, EfiPciIoWidthUint32, 0, 64, c))) {
-    GuCheckConfig(c, gpu->segment, gpu->bus, gpu->device, gpu->function, &caps);
+  EFI_STATUS pci_st = gpu->pci_io->Pci.Read(gpu->pci_io, EfiPciIoWidthUint32, 0, 64, c);
+  if (EFI_ERROR(pci_st)) {
+    LogWrite("[Unlock] Error: Failed to read PCI config space (%#llx)\n", (unsigned long long)pci_st);
+    return pci_st;
   }
+
+  if (!GuCheckConfig(c, gpu->segment, gpu->bus, gpu->device, gpu->function, &caps)) {
+    LogWrite("[Unlock] Error: GuCheckConfig rejected PCI configuration for GPU on Bus %u:%u.%u\n",
+             (unsigned)gpu->bus, (unsigned)gpu->device, (unsigned)gpu->function);
+    return EFI_SECURITY_VIOLATION;
+  }
+
   Gu.pm_cap = caps.pm ? caps.pm : 0x60;
   Gu.pcie_cap = caps.pcie ? caps.pcie : 0x78;
   Gu.pcie_version = caps.pcie_version ? caps.pcie_version : 2;
@@ -39,13 +47,6 @@ EFI_STATUS ExecuteGpuRamUnlock(DETECTED_GPU *gpu) {
   Gu.msix_cap = caps.msix;
   Gu.board_id = (gpu->device_id << 16) | gpu->vendor_id;
   Gu.board_subsystem = (gpu->subsys_device_id << 16) | gpu->subsys_vendor_id;
-  Gu.owned = TRUE;
-  Gu.armed = TRUE;
-  Gu.display_ok = TRUE;
-  Gu.display_check = UnlockDisplayOk;
-  Gu.profile_verified = TRUE;
-  Gu.prom_verified = TRUE;
-  Gu.transaction_attempted = FALSE;
 
   /* Check and latch initial cold speed selectors */
   UINT32 cold_ss0 = GuRead32(0x82381c);
@@ -59,8 +60,25 @@ EFI_STATUS ExecuteGpuRamUnlock(DETECTED_GPU *gpu) {
   }
 
   if (!GuLatchEntrySelectors(cold_ss0, cold_ss1)) {
-    LogWrite("[Unlock] Warning: GuLatchEntrySelectors returned FALSE (SS0=%#x, SS1=%#x)\n", cold_ss0, cold_ss1);
+    LogWrite("[Unlock] Error: GuLatchEntrySelectors failed to latch valid entry selectors (SS0=%#x, SS1=%#x)\n",
+             cold_ss0, cold_ss1);
+    return EFI_DEVICE_ERROR;
   }
+
+  if (!gpu->vbios_loaded || !gpu->vbios_data || gpu->vbios_size == 0) {
+    LogWrite("[Unlock] Error: VBIOS image missing or invalid for GPU on Bus %u:%u.%u\n",
+             (unsigned)gpu->bus, (unsigned)gpu->device, (unsigned)gpu->function);
+    return EFI_NOT_FOUND;
+  }
+
+  /* Mark profile and ownership as verified only after checks succeed */
+  Gu.prom_verified = TRUE;
+  Gu.profile_verified = TRUE;
+  Gu.owned = TRUE;
+  Gu.armed = TRUE;
+  Gu.display_ok = TRUE;
+  Gu.display_check = UnlockDisplayOk;
+  Gu.transaction_attempted = FALSE;
 
   /* 2. Setup Linux pci_dev structure */
   UINT64 mask = 0xffffffffffffULL;
@@ -74,9 +92,17 @@ EFI_STATUS ExecuteGpuRamUnlock(DETECTED_GPU *gpu) {
 
   /* Ensure IO (0x1) and Memory (0x2) are enabled, and Bus Master (0x4) is 0 before transaction claim */
   UINT16 pci_cmd = 0;
-  gpu->pci_io->Pci.Read(gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &pci_cmd);
+  pci_st = gpu->pci_io->Pci.Read(gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &pci_cmd);
+  if (EFI_ERROR(pci_st)) {
+    LogWrite("[Unlock] Error: Failed to read PCI command register: %#llx\n", (unsigned long long)pci_st);
+    return pci_st;
+  }
   pci_cmd = (pci_cmd & ~0x0004) | 0x0003;
-  gpu->pci_io->Pci.Write(gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &pci_cmd);
+  pci_st = gpu->pci_io->Pci.Write(gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &pci_cmd);
+  if (EFI_ERROR(pci_st)) {
+    LogWrite("[Unlock] Error: Failed to write PCI command register: %#llx\n", (unsigned long long)pci_st);
+    return pci_st;
+  }
   LogWrite("[Unlock] PCI command prepared: %#x (IO/Memory=ENABLED, Bus Master=DISABLED)\n", pci_cmd);
 
   /* 3. Run V67 firmware transaction (FWSEC -> SEC2 Booter -> Selectors -> FLR)

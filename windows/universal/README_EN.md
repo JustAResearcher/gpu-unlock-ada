@@ -114,3 +114,19 @@ The script automatically:
 3. Measures raw cuBLAS GEMM throughput in BF16, FP16, and FP32 alongside live SM clocks and power consumption.
 4. Dynamically builds a side-by-side comparative speedup matrix when 2 or more GPUs are present.
 5. Supports custom CLI parameters: `--sizes 2048,4096,8192` and `--iters 15`.
+
+---
+
+## Gaming Laptops Support (Hybrid / Optimus / MSHybrid)
+
+*(D3cold mechanism discovery and research credit: **Mayhem50** in upstream [JustAResearcher/gpu-unlock-ada#117](https://github.com/JustAResearcher/gpu-unlock-ada/issues/117))*
+
+On laptops utilizing hybrid graphics (where the internal panel is driven by an Intel UHD or AMD Radeon iGPU while the discrete NVIDIA GPU handles 3D/compute), Windows 11 initiates an **RTD3 (D3cold)** power transition ~563 ms after driver start. Waking from D3cold clears volatile MMIO state, resetting speed selectors back to factory defaults (`SS0=0x04003025`).
+
+To solve this, our repository includes an automated registry configurator:
+👉 **`enable_laptop_hybrid.bat`** (Run as Administrator):
+1. Automatically enumerates Windows display class keys (`{4d36e968-e325-11ce-bfc1-08002be10318}`) and locates the exact NVIDIA adapter key (whether `0000`, `0001`, or `0002`).
+2. Sets `EnableRuntimePowerManagement = 0` (DWORD), preventing the driver from triggering D3cold.
+3. Preserves iGPU display driving and physical screen brightness control.
+*(To revert to Windows defaults: `powershell -File tools\enable_laptop_hybrid.ps1 -Restore`).*
+

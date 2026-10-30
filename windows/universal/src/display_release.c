@@ -19,7 +19,8 @@ EFI_STATUS ReleaseGpuDisplay(DETECTED_GPU *gpu)
     /* Standard UEFI DisconnectController - completely board-agnostic */
     EFI_STATUS status = gBS->DisconnectController(gpu->handle, NULL, NULL);
     if (EFI_ERROR(status) && status != EFI_NOT_FOUND) {
-        LogWrite("[Release] DisconnectController status=%#llx (ignoring)\n", (unsigned long long)status);
+        LogWrite("[Release] Error: DisconnectController failed: %#llx\n", (unsigned long long)status);
+        return status;
     }
 
     /* Restore PCI Command register so MMIO / DMA continue functioning */
@@ -54,11 +55,22 @@ EFI_STATUS RestoreGpuPciDecode(DETECTED_GPU *gpu)
     }
 
     UINT16 readback = 0;
-    gpu->pci_io->Pci.Read(gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &readback);
+    status = gpu->pci_io->Pci.Read(gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &readback);
+    if (EFI_ERROR(status)) {
+        LogWrite("[Decode] Failed to read back PCI Command register (%#llx)\n", (unsigned long long)status);
+        return status;
+    }
+
     LogWrite("[Decode] PCI Command after: %#x (IO=%s, Memory=%s, Master=%s)\n",
              readback, (readback & 1) ? "ENABLED" : "DISABLED",
              (readback & 2) ? "ENABLED" : "DISABLED",
              (readback & 4) ? "ENABLED" : "DISABLED");
+
+    /* Validate readback: Memory Space Enable (bit 1) must be set, Bus Master (bit 2) must be cleared */
+    if ((readback & 0x0002) == 0 || (readback & 0x0004) != 0) {
+        LogWrite("[Decode] Error: Contradictory PCI Command readback: %#x (expected Memory=1, Master=0)\n", readback);
+        return EFI_DEVICE_ERROR;
+    }
 
     return EFI_SUCCESS;
 }

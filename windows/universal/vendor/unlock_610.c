@@ -1542,10 +1542,12 @@ static int write_selector(struct unlock_transaction_work *work,
   return GU_RESULT(value == unlock ? 0 : -EIO);
 }
 
-/* Apply full-rate selectors only after payload verification (Ada) or execution (Ampere). */
+/* Apply full-rate selectors only after payload verification (Ada) or execution
+ * (Ampere). */
 static int unlock_transaction_selector(struct unlock_transaction_work *work) {
   int ret;
-  if ((is_ad102(work) && !work->payload_verified) || check_entry_selectors(work))
+  if ((is_ad102(work) && !work->payload_verified) ||
+      check_entry_selectors(work))
     return GU_RESULT(-EPROTO);
   ret = write_selector(work, "SS0", GU_FEAT_SS0_OFFSET, GU_SS0_UNLOCK);
   if (ret || !GuSelectorPhase(GU_SELECTOR_PHASE_SS0_WRITTEN) ||

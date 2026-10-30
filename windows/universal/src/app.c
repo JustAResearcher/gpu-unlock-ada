@@ -8,6 +8,8 @@
 #include "unlock_engine.h"
 #include "logger.h"
 #include "asset_loader.h"
+#include "port.h"
+#include "runtime.h"
 
 EFI_SYSTEM_TABLE        *gST = NULL;
 EFI_BOOT_SERVICES       *gBS = NULL;
@@ -15,8 +17,6 @@ EFI_RUNTIME_SERVICES    *gRT = NULL;
 EFI_HANDLE              gImageHandle = NULL;
 
 static EFI_GUID SimpleFileSystemGuid = EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID;
-static EFI_GUID LoadedImageProtocolGuid = EFI_LOADED_IMAGE_PROTOCOL_GUID;
-static EFI_GUID DevicePathProtocolGuid = EFI_DEVICE_PATH_PROTOCOL_GUID;
 
 static DETECTED_GPU g_gpus[MAX_SYSTEM_GPUS];
 static UINTN g_gpu_count = 0;
@@ -107,32 +107,46 @@ static EFI_STATUS BootWindows(VOID)
         return EFI_NOT_FOUND;
     }
 
-    EFI_DEVICE_PATH_PROTOCOL *vol_dp = NULL;
-    gBS->HandleProtocol(win_vol, &DevicePathProtocolGuid, (VOID **)&vol_dp);
-
-    /* Construct device path for bootmgfw.efi */
+    /* Construct device path for bootmgfw.efi:
+     * StrLen(L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi") = 32 chars.
+     * Including null-terminator: 33 CHAR16 elements (66 bytes).
+     * FilePath Node header: sizeof(EFI_DEVICE_PATH_PROTOCOL) = 4 bytes.
+     * FilePath Node total length: 4 + 66 = 70 bytes.
+     * End Node header: 4 bytes (Type=0x7F, SubType=0xFF, Length=4).
+     * Total Device Path length: 70 + 4 = 74 bytes.
+     */
     CONST CHAR16 *win_path = L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi";
-    UINTN name_bytes = 34 * sizeof(CHAR16);
-    UINTN total_bytes = sizeof(EFI_DEVICE_PATH_PROTOCOL) + name_bytes;
+    CONST UINTN chars_count = 33;
+    CONST UINTN name_bytes = chars_count * sizeof(CHAR16);
+    CONST UINTN file_node_len = sizeof(EFI_DEVICE_PATH_PROTOCOL) + name_bytes;
 
-    UINT8 dp_node[sizeof(EFI_DEVICE_PATH_PROTOCOL) + 128];
-    EFI_DEVICE_PATH_PROTOCOL *file_dp = (EFI_DEVICE_PATH_PROTOCOL *)dp_node;
-    file_dp->Type = MEDIA_DEVICE_PATH;
-    file_dp->SubType = MEDIA_FILEPATH_DP;
-    file_dp->Length[0] = (UINT8)(total_bytes & 0xFF);
-    file_dp->Length[1] = (UINT8)(total_bytes >> 8);
+    UINT8 dp_buffer[128];
+    memset(dp_buffer, 0, sizeof(dp_buffer));
 
-    CHAR16 *dst = (CHAR16 *)(dp_node + sizeof(EFI_DEVICE_PATH_PROTOCOL));
-    for (UINTN i = 0; i < 34; i++) dst[i] = win_path[i];
+    /* 1. File Path Node */
+    EFI_DEVICE_PATH_PROTOCOL *file_node = (EFI_DEVICE_PATH_PROTOCOL *)dp_buffer;
+    file_node->Type = MEDIA_DEVICE_PATH;
+    file_node->SubType = MEDIA_FILEPATH_DP;
+    file_node->Length[0] = (UINT8)(file_node_len & 0xFF);
+    file_node->Length[1] = (UINT8)(file_node_len >> 8);
+
+    CHAR16 *dst = (CHAR16 *)(dp_buffer + sizeof(EFI_DEVICE_PATH_PROTOCOL));
+    for (UINTN i = 0; i < chars_count; i++) dst[i] = win_path[i];
+
+    /* 2. End Entire Device Path Node (Type=0x7F, SubType=0xFF, Length=4) */
+    EFI_DEVICE_PATH_PROTOCOL *end_node = (EFI_DEVICE_PATH_PROTOCOL *)(dp_buffer + file_node_len);
+    end_node->Type = END_DEVICE_PATH_TYPE;
+    end_node->SubType = END_ENTIRE_DEVICE_PATH_SUBTYPE;
+    end_node->Length[0] = 4;
+    end_node->Length[1] = 0;
+
+    EFI_DEVICE_PATH_PROTOCOL *file_dp = (EFI_DEVICE_PATH_PROTOCOL *)dp_buffer;
 
     EFI_HANDLE win_image = NULL;
-    EFI_STATUS s = gBS->LoadImage(FALSE, gImageHandle, file_dp, NULL, 0, &win_image);
+    /* Try loading with win_vol as DeviceHandle first */
+    EFI_STATUS s = gBS->LoadImage(FALSE, win_vol, file_dp, NULL, 0, &win_image);
     if (EFI_ERROR(s)) {
-        EFI_LOADED_IMAGE_PROTOCOL *loaded = NULL;
-        s = gBS->HandleProtocol(gImageHandle, &LoadedImageProtocolGuid, (VOID **)&loaded);
-        if (!EFI_ERROR(s)) {
-            s = gBS->LoadImage(FALSE, win_vol, file_dp, NULL, 0, &win_image);
-        }
+        s = gBS->LoadImage(FALSE, gImageHandle, file_dp, NULL, 0, &win_image);
     }
 
     if (!EFI_ERROR(s) && win_image) {
@@ -263,6 +277,9 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable
         PrintColor(EFI_LIGHTCYAN | EFI_BLACK, L"\r\nApplying In-RAM Unlocks (Zero-Flash)...\r\n");
         LogWrite("Executing In-RAM unlock sequence for %u ready GPU(s)\n", (unsigned)ready_to_unlock);
 
+        BOOLEAN any_failed = FALSE;
+        BOOLEAN unsafe_state = FALSE;
+
         for (UINTN i = 0; i < g_gpu_count; i++) {
             DETECTED_GPU *gpu = &g_gpus[i];
             if (!gpu->vbios_loaded) continue;
@@ -271,7 +288,16 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable
 
             if (gpu->is_display_adapter) {
                 LogWrite("Releasing display on GPU %u...\n", (unsigned)i);
-                ReleaseGpuDisplay(gpu);
+                EFI_STATUS r_stat = ReleaseGpuDisplay(gpu);
+                if (EFI_ERROR(r_stat)) {
+                    PrintColor(EFI_LIGHTRED | EFI_BLACK, L"[GOP RELEASE FAILED]\r\n");
+                    LogWrite("GPU %u GOP release failed: status=%#llx\n", (unsigned)i, (unsigned long long)r_stat);
+                    PrintColor(EFI_LIGHTRED | EFI_BLACK,
+                               L"      Error: Failed to safely disconnect GOP controller or restore PCI decode.\r\n"
+                               L"      Aborting unlock on this GPU to prevent display bus lockup.\r\n");
+                    any_failed = TRUE;
+                    continue;
+                }
             }
 
             EFI_STATUS u_stat = ExecuteGpuRamUnlock(gpu);
@@ -280,7 +306,73 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable
                 LogWrite("GPU %u unlocked successfully! SS0=0x88888888 SS1=0x8\n", (unsigned)i);
             } else {
                 PrintColor(EFI_LIGHTRED | EFI_BLACK, L"[FAILED]\r\n");
-                LogWrite("GPU %u unlock failed: status=%#llx\n", (unsigned)i, (unsigned long long)u_stat);
+                LogWrite("GPU %u unlock failed: status=%#llx (safe_to_return=%u)\n",
+                         (unsigned)i, (unsigned long long)u_stat, GuSafeToReturn());
+                any_failed = TRUE;
+
+                /* Fail-closed check: If GuSafeToReturn() is FALSE, hardware state is unsafe! */
+                if (!GuSafeToReturn()) {
+                    unsafe_state = TRUE;
+                    LogWrite("[FATAL] Hardware safety violation (!GuSafeToReturn) on GPU %u: "
+                             "retained=%u allocs=%u dma=%u started=%u quiesced=%u fault=%u\n",
+                             (unsigned)i, Gu.retained, Gu.allocations, Gu.dma_count,
+                             Gu.started, Gu.quiesced, Gu.fault);
+                    PrintColor(EFI_LIGHTRED | EFI_BLACK,
+                               L"\r\n[FATAL ERROR] GPU hardware left in an unsafe/unquiesced state (!GuSafeToReturn)!\r\n"
+                               L"              Active DMA or retained firmware microcode detected.\r\n"
+                               L"              Boot sequence halted immediately to protect host memory.\r\n");
+                    break;
+                }
+            }
+        }
+
+        if (unsafe_state) {
+            PrintColor(EFI_YELLOW | EFI_BLACK,
+                       L"\r\n[CRITICAL HALT] Cannot boot Windows safely in this hardware state.\r\n"
+                       L"                Press any key to cold reset system...\r\n");
+            LoggerClose();
+            EFI_INPUT_KEY rk;
+            while (EFI_ERROR(gST->ConIn->ReadKeyStroke(gST->ConIn, &rk))) {
+                gBS->Stall(100000);
+            }
+            gRT->ResetSystem(EfiResetCold, EFI_DEVICE_ERROR, 0, NULL);
+            for (;;) { }
+        }
+
+        if (any_failed) {
+            PrintColor(EFI_YELLOW | EFI_BLACK,
+                       L"\r\n[WARNING] One or more GPUs failed to unlock cleanly.\r\n"
+                       L"          Booting Windows in this state may result in driver Code 43.\r\n\r\n");
+            Print(L"Options:\r\n");
+            Print(L"  [R] Cold Reset system (Recommended)\r\n");
+            Print(L"  [B] Proceed to boot Windows anyway\r\n");
+            Print(L"Choice [R/B] (Default [R] in 10s): ");
+
+            EFI_INPUT_KEY fk;
+            BOOLEAN boot_anyway = FALSE;
+            UINTN fsec = 10;
+            while (fsec > 0) {
+                EFI_STATUS fks = gST->ConIn->ReadKeyStroke(gST->ConIn, &fk);
+                if (!EFI_ERROR(fks)) {
+                    if (fk.UnicodeChar == L'b' || fk.UnicodeChar == L'B') {
+                        boot_anyway = TRUE;
+                        PrintColor(EFI_LIGHTCYAN | EFI_BLACK, L"B (Boot Windows anyway selected)\r\n");
+                        break;
+                    }
+                    if (fk.UnicodeChar == L'r' || fk.UnicodeChar == L'R' || fk.UnicodeChar == 13) {
+                        boot_anyway = FALSE;
+                        PrintColor(EFI_LIGHTRED | EFI_BLACK, L"R (Cold Reset selected)\r\n");
+                        break;
+                    }
+                }
+                gBS->Stall(1000000);
+                fsec--;
+            }
+
+            if (!boot_anyway) {
+                LoggerClose();
+                gRT->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
+                for (;;) { }
             }
         }
     } else {
