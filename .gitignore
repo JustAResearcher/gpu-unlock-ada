@@ -36,3 +36,4 @@ Module.symvers
 *.exe
 *.obj
 *.a
+/windows/validation/local/
