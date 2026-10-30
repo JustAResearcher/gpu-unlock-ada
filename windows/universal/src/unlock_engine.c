@@ -5,6 +5,7 @@
 #include "logger.h"
 #include "port.h"
 #include "vendor/unlock_610.h"
+#include "vendor/vbios_610.h"
 
 static DETECTED_GPU *g_current_unlock_gpu = NULL;
 
@@ -55,6 +56,18 @@ static BOOLEAN ValidateVbiosEvidence(DETECTED_GPU *gpu) {
 
   LogWrite("[Unlock] VBIOS evidence verified: Vendor=%#x Dev=%#x Size=%u\n",
            vendor_id, device_id, (unsigned)gpu->vbios_size);
+
+  /* 3. Pre-flight FWSEC structural verification on first 1MB slice */
+  size_t fwsec_len = gpu->vbios_size > (1024 * 1024) ? (1024 * 1024) : gpu->vbios_size;
+  struct gpu_unlock_fwsec fwsec = {0};
+  int fw_err = gpu_unlock_vbios_fwsec(rom, fwsec_len, &fwsec);
+  if (fw_err != 0) {
+    LogWrite("[Unlock] VBIOS evidence notice: FWSEC 1MB slice check returned %d (dynamic eval will verify hardware)\n", fw_err);
+  } else {
+    LogWrite("[Unlock] VBIOS 1MB slice pre-flight FWSEC verified: imem=%#x dmem=%#x sigs=%u\n",
+             fwsec.imem_size, fwsec.dmem_size, fwsec.sig_count);
+  }
+
   return TRUE;
 }
 
