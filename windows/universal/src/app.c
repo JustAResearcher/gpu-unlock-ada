@@ -179,6 +179,10 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable
     gRT = SystemTable->RuntimeServices;
     gImageHandle = ImageHandle;
 
+    if (gST->ConOut) {
+        gST->ConOut->ClearScreen(gST->ConOut);
+    }
+
     /* Initialize persistent file logger on USB: \UNLOCK-LOGS\RUNxxxx.TXT */
     LoggerInit(ImageHandle);
 
@@ -186,10 +190,6 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable
     EFI_STATUS a_status = LoadFirmwareAssets(ImageHandle);
     if (EFI_ERROR(a_status)) {
         LogWrite("[!] LoadFirmwareAssets returned status=%#llx\n", (unsigned long long)a_status);
-    }
-
-    if (gST->ConOut) {
-        gST->ConOut->ClearScreen(gST->ConOut);
     }
 
     LogWrite("UNIVERSAL MULTI-GPU WINDOWS UNLOCK ENGINE v2.0 (Zero-Flash, In-RAM)\n");
@@ -354,17 +354,14 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable
             DETECTED_GPU *gpu = &g_gpus[i];
             if (!gpu->vbios_loaded || !gpu->unlock_selected) continue;
 
-            Print(L"  [+] Unlocking secondary GPU "); PrintDec(i); Print(L" ("); Print(gpu->model_name); Print(L")... ");
-            LogWrite("Unlocking secondary GPU %u (Bus %u:%u.%u, headless/secondary)...\n",
-                     (unsigned)i, (unsigned)gpu->bus, (unsigned)gpu->device, (unsigned)gpu->function);
+            LogWrite("\n>>> [PASS 1] Unlocking Secondary GPU %u (%ls) Bus %u:%u.%u...\n",
+                     (unsigned)i, gpu->model_name, (unsigned)gpu->bus, (unsigned)gpu->device, (unsigned)gpu->function);
 
             EFI_STATUS u_stat = ExecuteGpuRamUnlock(gpu);
             if (!EFI_ERROR(u_stat) && gpu->unlocked_success) {
-                PrintColor(EFI_LIGHTGREEN | EFI_BLACK, L"[SUCCESS: SS0/SS1 LATCHED]\r\n");
-                LogWrite("GPU %u unlocked successfully! SS0=0x88888888 SS1=0x8\n", (unsigned)i);
+                LogWrite("[Unlock] GPU %u unlocked successfully! SS0=0x88888888 SS1=0x8\n", (unsigned)i);
             } else {
-                PrintColor(EFI_LIGHTRED | EFI_BLACK, L"[FAILED]\r\n");
-                LogWrite("GPU %u unlock failed: status=%#llx (safe_to_return=%u)\n",
+                LogWrite("[Unlock] GPU %u unlock failed: status=%#llx (safe_to_return=%u)\n",
                          (unsigned)i, (unsigned long long)u_stat, GuSafeToReturn());
                 any_failed = TRUE;
 
@@ -387,29 +384,23 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable
         if (!unsafe_state && primary_display_idx >= 0) {
             DETECTED_GPU *gpu = &g_gpus[primary_display_idx];
             if (!gpu->vbios_loaded || !gpu->unlock_selected) {
-                Print(L"  [i] Display GPU "); PrintDec((UINTN)primary_display_idx); Print(L" ("); Print(gpu->model_name);
-                PrintColor(EFI_LIGHTGRAY | EFI_BLACK, L") not supported/selected for unlock; leaving display intact.\r\n");
-                LogWrite("Display GPU %u is not supported or not selected for unlock; skipping.\n", (unsigned)primary_display_idx);
+                LogWrite("\n>>> [PASS 2] Primary Display GPU %u (%ls) not selected/supported for unlock; skipping.\n",
+                         (unsigned)primary_display_idx, gpu->model_name);
             } else {
-                Print(L"  [+] Unlocking display GPU "); PrintDec((UINTN)primary_display_idx); Print(L" ("); Print(gpu->model_name); Print(L")... ");
-                LogWrite("Releasing display on GPU %u...\n", (unsigned)primary_display_idx);
+                LogWrite("\n>>> [PASS 2] Unlocking Primary Display GPU %u (%ls) Bus %u:%u.%u...\n",
+                         (unsigned)primary_display_idx, gpu->model_name,
+                         (unsigned)gpu->bus, (unsigned)gpu->device, (unsigned)gpu->function);
 
                 EFI_STATUS r_stat = ReleaseGpuDisplay(gpu);
                 if (EFI_ERROR(r_stat)) {
-                    PrintColor(EFI_LIGHTRED | EFI_BLACK, L"[GOP RELEASE FAILED]\r\n");
-                    LogWrite("GPU %u GOP release failed: status=%#llx\n", (unsigned)primary_display_idx, (unsigned long long)r_stat);
-                    PrintColor(EFI_LIGHTRED | EFI_BLACK,
-                               L"      Error: Failed to safely disconnect GOP controller or restore PCI decode.\r\n"
-                               L"      Aborting unlock on this GPU to prevent display bus lockup.\r\n");
+                    LogWrite("[GOP] GPU %u GOP release failed: status=%#llx\n", (unsigned)primary_display_idx, (unsigned long long)r_stat);
                     any_failed = TRUE;
                 } else {
                     EFI_STATUS u_stat = ExecuteGpuRamUnlock(gpu);
                     if (!EFI_ERROR(u_stat) && gpu->unlocked_success) {
-                        PrintColor(EFI_LIGHTGREEN | EFI_BLACK, L"[SUCCESS: SS0/SS1 LATCHED]\r\n");
-                        LogWrite("GPU %u unlocked successfully! SS0=0x88888888 SS1=0x8\n", (unsigned)primary_display_idx);
+                        LogWrite("[Unlock] GPU %u unlocked successfully! SS0=0x88888888 SS1=0x8\n", (unsigned)primary_display_idx);
                     } else {
-                        PrintColor(EFI_LIGHTRED | EFI_BLACK, L"[FAILED]\r\n");
-                        LogWrite("GPU %u unlock failed: status=%#llx (safe_to_return=%u)\n",
+                        LogWrite("[Unlock] GPU %u unlock failed: status=%#llx (safe_to_return=%u)\n",
                                  (unsigned)primary_display_idx, (unsigned long long)u_stat, GuSafeToReturn());
                         any_failed = TRUE;
 
@@ -420,6 +411,9 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable
                                        L"\r\n[FATAL ERROR] GPU hardware left in an unsafe/unquiesced state (!GuSafeToReturn)!\r\n");
                         }
                     }
+
+                    /* Always reconnect display GOP and restore console after unlock attempt */
+                    ReconnectGpuDisplay(gpu);
                 }
             }
         }
@@ -471,6 +465,47 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable
                 LoggerClose();
                 gRT->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
                 for (;;) { }
+            }
+        }
+
+        if (!unsafe_state && !any_failed) {
+            PrintColor(EFI_LIGHTCYAN | EFI_BLACK, L"\r\n======================================================================\r\n");
+            PrintColor(EFI_LIGHTGREEN | EFI_BLACK, L"              ALL READY GPUS UNLOCKED SUCCESSFULLY!\r\n");
+            PrintColor(EFI_LIGHTCYAN | EFI_BLACK, L"======================================================================\r\n");
+
+            for (UINTN i = 0; i < g_gpu_count; i++) {
+                DETECTED_GPU *g = &g_gpus[i];
+                if (g->unlocked_success) {
+                    Print(L"  [GPU "); PrintDec(i); Print(L"] ");
+                    PrintColor(EFI_WHITE | EFI_BLACK, g->model_name);
+                    Print(L" ("); Print(g->chip_name); Print(L") Bus ");
+                    PrintDec(g->bus); Print(L":"); PrintDec(g->device); Print(L"."); PrintDec(g->function);
+                    PrintColor(EFI_LIGHTGREEN | EFI_BLACK, L" -> UNLOCKED (SS0=0x88888888, SS1=0x8)\r\n");
+                }
+            }
+
+            PrintColor(EFI_LIGHTCYAN | EFI_BLACK, L"----------------------------------------------------------------------\r\n");
+            PrintColor(EFI_LIGHTGREEN | EFI_BLACK, L"  [+] Display GOP reconnected. Windows will boot with full display.\r\n\r\n");
+
+            /* 10-second countdown with instant skip on any keypress */
+            PrintColor(EFI_YELLOW | EFI_BLACK, L"Booting Windows in ");
+            UINTN cd = 10;
+            while (cd > 0) {
+                PrintDec(cd);
+                Print(L"... ");
+
+                EFI_INPUT_KEY k;
+                EFI_STATUS ks = gST->ConIn ? gST->ConIn->ReadKeyStroke(gST->ConIn, &k) : EFI_NOT_READY;
+                if (!EFI_ERROR(ks)) {
+                    PrintColor(EFI_LIGHTGREEN | EFI_BLACK, L"[Boot Now]\r\n");
+                    break;
+                }
+
+                gBS->Stall(1000000);
+                cd--;
+            }
+            if (cd == 0) {
+                Print(L"0\r\n");
             }
         }
     } else {

@@ -70,6 +70,41 @@ EFI_STATUS LoggerInit(EFI_HANDLE image_handle)
     return g_LogFile ? EFI_SUCCESS : EFI_DEVICE_ERROR;
 }
 
+static VOID ConsolePrintAscii(CONST CHAR8 *str, size_t len)
+{
+    if (!gST || !gST->ConOut || !gST->ConOut->OutputString) return;
+
+    CHAR16 wide_buf[256];
+    size_t w_idx = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        CHAR8 c = str[i];
+        if (c == '\r') {
+            continue; /* Normalize \r\n line endings */
+        }
+        if (c == '\n') {
+            if (w_idx + 2 >= ARRAY_SIZE(wide_buf)) {
+                wide_buf[w_idx] = L'\0';
+                gST->ConOut->OutputString(gST->ConOut, wide_buf);
+                w_idx = 0;
+            }
+            wide_buf[w_idx++] = L'\r';
+            wide_buf[w_idx++] = L'\n';
+        } else {
+            if (w_idx + 1 >= ARRAY_SIZE(wide_buf)) {
+                wide_buf[w_idx] = L'\0';
+                gST->ConOut->OutputString(gST->ConOut, wide_buf);
+                w_idx = 0;
+            }
+            wide_buf[w_idx++] = (CHAR16)(UINT8)c;
+        }
+    }
+    if (w_idx > 0) {
+        wide_buf[w_idx] = L'\0';
+        gST->ConOut->OutputString(gST->ConOut, wide_buf);
+    }
+}
+
 VOID LogWrite(CONST CHAR8 *format, ...)
 {
     CHAR8 buffer[2048];
@@ -79,6 +114,9 @@ VOID LogWrite(CONST CHAR8 *format, ...)
     va_end(args);
 
     if (len == (size_t)-1 || len >= sizeof(buffer)) return;
+
+    /* Write full log to screen console in real-time */
+    ConsolePrintAscii(buffer, len);
 
     /* Write to log file on USB */
     if (g_LogFile) {
@@ -97,6 +135,9 @@ VOID GuLog(const char *format, ...)
     va_end(args);
 
     if (len == (size_t)-1 || len >= sizeof(buffer)) return;
+
+    /* Write full log to screen console in real-time */
+    ConsolePrintAscii(buffer, len);
 
     if (g_LogFile) {
         UINTN bytes = len;

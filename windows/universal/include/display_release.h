@@ -21,5 +21,12 @@ EFI_STATUS ReleaseGpuDisplay(DETECTED_GPU *gpu);
  */
 EFI_STATUS RestoreGpuPciDecode(DETECTED_GPU *gpu);
 
+/**
+ * Reconnects UEFI GOP display driver and restores active console.
+ * Called after Falcon in-RAM unlock finishes so Windows Boot Manager
+ * has full display/GOP support to render boot logo and graphics.
+ */
+EFI_STATUS ReconnectGpuDisplay(DETECTED_GPU *gpu);
+
 #endif /* UNIVERSAL_DISPLAY_RELEASE_H */
 

@@ -74,3 +74,46 @@ EFI_STATUS RestoreGpuPciDecode(DETECTED_GPU *gpu)
 
     return EFI_SUCCESS;
 }
+
+EFI_STATUS ReconnectGpuDisplay(DETECTED_GPU *gpu)
+{
+    if (!gpu || !gpu->handle) {
+        return EFI_INVALID_PARAMETER;
+    }
+
+    if (!gpu->is_display_adapter) {
+        return EFI_SUCCESS;
+    }
+
+    LogWrite("[Display] Reconnecting UEFI GOP display driver...\n");
+
+    /* 1. Reconnect GOP driver recursively to the GPU controller handle */
+    EFI_STATUS status = gBS->ConnectController(gpu->handle, NULL, NULL, TRUE);
+    if (EFI_ERROR(status)) {
+        LogWrite("[Display] ConnectController on GPU handle returned %#llx\n", (unsigned long long)status);
+    }
+
+    /* 2. Reconnect system console out handle if present */
+    if (gST && gST->ConsoleOutHandle) {
+        gBS->ConnectController(gST->ConsoleOutHandle, NULL, NULL, TRUE);
+    }
+
+    /* 3. Reset and reinitialize UEFI console */
+    if (gST && gST->ConOut) {
+        gST->ConOut->Reset(gST->ConOut, FALSE);
+        gST->ConOut->SetAttribute(gST->ConOut, EFI_LIGHTGRAY | EFI_BLACK);
+    }
+
+    /* 4. Ensure PCI Command register has Memory and IO space enabled for Windows */
+    if (gpu->pci_io && gpu->pci_io->Pci.Read && gpu->pci_io->Pci.Write) {
+        UINT16 cmd = 0;
+        gpu->pci_io->Pci.Read(gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &cmd);
+        if ((cmd & 0x0003) != 0x0003) {
+            cmd |= 0x0003;
+            gpu->pci_io->Pci.Write(gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &cmd);
+        }
+    }
+
+    LogWrite("[Display] Display GOP and UEFI console reconnected successfully\n");
+    return EFI_SUCCESS;
+}
