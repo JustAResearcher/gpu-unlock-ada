@@ -2,6 +2,7 @@
 #include "vbios_loader.h"
 #include "logger.h"
 #include "uefi_base.h"
+#include "runtime.h"
 
 static EFI_GUID LoadedImageProtocolGuid = EFI_LOADED_IMAGE_PROTOCOL_GUID;
 static EFI_GUID SimpleFileSystemProtocolGuid = EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID;
@@ -75,11 +76,11 @@ static EFI_STATUS ReadFileContent(EFI_FILE_HANDLE file, VOID **out_buf, UINTN *o
 }
 
 /**
- * Searches for a valid PCI Option ROM inside the buffer:
+ * Searches for a valid PCI Option ROM inside the buffer matching expected Device ID:
  * 1. Offset 0 (standard GPU-Z dump starting with 0x55 0xAA)
  * 2. Scans 512-byte boundaries (nvflash EEPROM dumps where VBIOS begins after NVGI container)
  */
-static BOOLEAN LocateOptionRom(VOID *raw_buf, UINTN total_size, VOID **rom_start, UINTN *rom_size)
+static BOOLEAN LocateOptionRom(VOID *raw_buf, UINTN total_size, UINT16 expected_devid, VOID **rom_start, UINTN *rom_size)
 {
     const UINT8 *bytes = (const UINT8 *)raw_buf;
 
@@ -87,19 +88,108 @@ static BOOLEAN LocateOptionRom(VOID *raw_buf, UINTN total_size, VOID **rom_start
         if (bytes[pos] == 0x55 && bytes[pos + 1] == 0xAA) {
             /* Check if PCIR header follows at pos + 0x18 */
             u16 pcir_rel = Read16(bytes + pos + 0x18);
-            if (pos + pcir_rel + 4 <= total_size) {
+            if (pos + pcir_rel + 8 <= total_size) {
                 u32 pcir_sig = Read32(bytes + pos + pcir_rel);
                 if (pcir_sig == 0x52494350) { /* 'PCIR' */
-                    *rom_start = (VOID *)(bytes + pos);
-                    *rom_size = total_size - pos;
-                    LogWrite("[VBIOS] Located valid PCIR Option ROM at offset %#x (effective size=%u)\n",
-                             (unsigned)pos, (unsigned)(*rom_size));
-                    return TRUE;
+                    u16 ven = Read16(bytes + pos + pcir_rel + 4);
+                    u16 dev = Read16(bytes + pos + pcir_rel + 6);
+                    if (ven == 0x10de && dev == expected_devid) {
+                        *rom_start = (VOID *)(bytes + pos);
+                        *rom_size = total_size - pos;
+                        LogWrite("[VBIOS] Located valid PCIR Option ROM at offset %#x (effective size=%u, DevID=%#x)\n",
+                                 (unsigned)pos, (unsigned)(*rom_size), dev);
+                        return TRUE;
+                    } else if (ven == 0x10de) {
+                        LogWrite("[VBIOS] Found Option ROM at offset %#x with mismatched DevID (%#x != %#x)\n",
+                                 (unsigned)pos, dev, expected_devid);
+                    }
                 }
             }
         }
     }
     return FALSE;
+}
+
+/**
+ * Extracts authentic 1MB factory VBIOS directly from the GPU's hardware BAR0 PROM aperture (0x300000).
+ * Used when no USB file exists or when the USB file has an ID mismatch (e.g. secondary GPU).
+ */
+static BOOLEAN ExtractVbiosFromHardwareBar0(DETECTED_GPU *gpu, EFI_FILE_HANDLE root)
+{
+    if (!gpu || !gpu->pci_io || !gpu->bar0_base) return FALSE;
+
+    /* 1. Ensure Memory Space decode is active in PCI Command */
+    UINT16 orig_cmd = 0;
+    EFI_STATUS s = gpu->pci_io->Pci.Read(gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &orig_cmd);
+    if (EFI_ERROR(s)) return FALSE;
+
+    UINT16 active_cmd = (orig_cmd & ~0x0004) | 0x0003;
+    gpu->pci_io->Pci.Write(gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &active_cmd);
+
+    /* 2. Read first bytes from BAR0+0x300000 */
+    CONST UINT8 *hw_prom = (CONST UINT8 *)(UINTN)(gpu->bar0_base + 0x300000);
+    if (hw_prom[0] != 0x55 || hw_prom[1] != 0xAA) {
+        LogWrite("[VBIOS] Hardware BAR0+0x300000 does not start with 0x55 0xAA (found: %#x %#x)\n",
+                 hw_prom[0], hw_prom[1]);
+        gpu->pci_io->Pci.Write(gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &orig_cmd);
+        return FALSE;
+    }
+
+    /* 3. Allocate 1MB buffer and copy hardware PROM */
+    UINTN prom_size = 1024 * 1024;
+    VOID *prom_buf = NULL;
+    s = gBS->AllocatePool(EfiBootServicesData, prom_size, &prom_buf);
+    if (EFI_ERROR(s) || !prom_buf) {
+        gpu->pci_io->Pci.Write(gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &orig_cmd);
+        return FALSE;
+    }
+
+    memcpy(prom_buf, hw_prom, prom_size);
+    gpu->pci_io->Pci.Write(gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &orig_cmd);
+
+    /* 4. Validate PCIR header */
+    const UINT8 *bytes = (const UINT8 *)prom_buf;
+    UINT16 pcir_rel = Read16(bytes + 0x18);
+    if ((UINTN)pcir_rel + 8 > prom_size) {
+        gBS->FreePool(prom_buf);
+        return FALSE;
+    }
+
+    const UINT8 *pcir = bytes + pcir_rel;
+    if (pcir[0] != 'P' || pcir[1] != 'C' || pcir[2] != 'I' || pcir[3] != 'R') {
+        LogWrite("[VBIOS] Hardware BAR0 PROM missing PCIR signature\n");
+        gBS->FreePool(prom_buf);
+        return FALSE;
+    }
+
+    UINT16 ven = Read16(pcir + 4);
+    UINT16 dev = Read16(pcir + 6);
+    if (ven != 0x10de || dev != gpu->device_id) {
+        LogWrite("[VBIOS] Hardware BAR0 PROM has unexpected ID: %#x:%#x (expected %#x:%#x)\n",
+                 ven, dev, gpu->vendor_id, gpu->device_id);
+        gBS->FreePool(prom_buf);
+        return FALSE;
+    }
+
+    gpu->vbios_data = prom_buf;
+    gpu->vbios_size = prom_size;
+    gpu->vbios_loaded = TRUE;
+    LogWrite("[VBIOS] Successfully extracted 1MB authentic VBIOS from hardware BAR0 (DevID=%#x)\n", dev);
+
+    /* 5. Auto-save to USB drive so future boots load directly from file */
+    if (root && gpu->rom_filename[0] != L'\0') {
+        EFI_FILE_HANDLE out_f = NULL;
+        s = root->Open(root, &out_f, gpu->rom_filename,
+                       EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
+        if (!EFI_ERROR(s) && out_f) {
+            UINTN wb = prom_size;
+            out_f->Write(out_f, &wb, prom_buf);
+            out_f->Close(out_f);
+            LogWrite("[VBIOS] Automatically updated %ls on USB drive with authentic hardware dump\n", gpu->rom_filename);
+        }
+    }
+
+    return TRUE;
 }
 
 EFI_STATUS LoadGpuVbiosStrictId(DETECTED_GPU *target_gpu, CONST DETECTED_GPU all_gpus[], UINTN gpu_count)
@@ -128,6 +218,7 @@ EFI_STATUS LoadGpuVbiosStrictId(DETECTED_GPU *target_gpu, CONST DETECTED_GPU all
     EFI_STATUS status = gBS->HandleProtocol(gImageHandle, &LoadedImageProtocolGuid, (VOID **)&loaded_image);
     if (EFI_ERROR(status) || !loaded_image || !loaded_image->DeviceHandle) {
         LogWrite("[VBIOS] Failed to get LoadedImage protocol (%#llx)\n", (unsigned long long)status);
+        if (ExtractVbiosFromHardwareBar0(target_gpu, NULL)) return EFI_SUCCESS;
         return EFI_NOT_FOUND;
     }
 
@@ -135,6 +226,7 @@ EFI_STATUS LoadGpuVbiosStrictId(DETECTED_GPU *target_gpu, CONST DETECTED_GPU all
     status = gBS->HandleProtocol(loaded_image->DeviceHandle, &SimpleFileSystemProtocolGuid, (VOID **)&fs);
     if (EFI_ERROR(status) || !fs) {
         LogWrite("[VBIOS] Failed to get SimpleFileSystem protocol (%#llx)\n", (unsigned long long)status);
+        if (ExtractVbiosFromHardwareBar0(target_gpu, NULL)) return EFI_SUCCESS;
         return EFI_NOT_FOUND;
     }
 
@@ -142,6 +234,7 @@ EFI_STATUS LoadGpuVbiosStrictId(DETECTED_GPU *target_gpu, CONST DETECTED_GPU all
     status = fs->OpenVolume(fs, &root);
     if (EFI_ERROR(status) || !root) {
         LogWrite("[VBIOS] Failed to open filesystem volume (%#llx)\n", (unsigned long long)status);
+        if (ExtractVbiosFromHardwareBar0(target_gpu, NULL)) return EFI_SUCCESS;
         return EFI_NOT_FOUND;
     }
 
@@ -174,7 +267,6 @@ EFI_STATUS LoadGpuVbiosStrictId(DETECTED_GPU *target_gpu, CONST DETECTED_GPU all
             root->Open(root, &dir, L"EFI\\VBIOS", EFI_FILE_MODE_READ, 0);
         }
         if (dir) {
-            /* Try bare filename inside \EFI\VBIOS */
             CONST CHAR16 *bare_name = target_gpu->rom_filename + 11; /* Skip \EFI\VBIOS\ */
             CONST CHAR16 *bare_upper = upper_path + 11;
             status = TryOpenFile(dir, bare_name, &file);
@@ -189,8 +281,12 @@ EFI_STATUS LoadGpuVbiosStrictId(DETECTED_GPU *target_gpu, CONST DETECTED_GPU all
     }
 
     if (!file) {
+        LogWrite("[VBIOS] File %ls not found on boot drive; attempting hardware BAR0 extraction...\n", target_gpu->rom_filename);
+        if (ExtractVbiosFromHardwareBar0(target_gpu, root)) {
+            root->Close(root);
+            return EFI_SUCCESS;
+        }
         root->Close(root);
-        LogWrite("[VBIOS] File %ls not found on boot drive\n", target_gpu->rom_filename);
         return EFI_NOT_FOUND;
     }
 
@@ -198,22 +294,33 @@ EFI_STATUS LoadGpuVbiosStrictId(DETECTED_GPU *target_gpu, CONST DETECTED_GPU all
     UINTN raw_size = 0;
     status = ReadFileContent(file, &raw_buf, &raw_size);
     file->Close(file);
-    root->Close(root);
 
     if (EFI_ERROR(status)) {
-        LogWrite("[VBIOS] Read error: %#llx\n", (unsigned long long)status);
+        LogWrite("[VBIOS] Read error: %#llx; attempting hardware BAR0 extraction...\n", (unsigned long long)status);
+        if (ExtractVbiosFromHardwareBar0(target_gpu, root)) {
+            root->Close(root);
+            return EFI_SUCCESS;
+        }
+        root->Close(root);
         return status;
     }
 
     /* Locate Option ROM inside the loaded data */
     VOID *rom_start = NULL;
     UINTN rom_size = 0;
-    if (!LocateOptionRom(raw_buf, raw_size, &rom_start, &rom_size)) {
-        LogWrite("[VBIOS] Error: File does not contain a valid Option ROM with PCIR signature\n");
+    if (!LocateOptionRom(raw_buf, raw_size, target_gpu->device_id, &rom_start, &rom_size)) {
+        LogWrite("[VBIOS] Warning: USB file does not match DevID %#x; extracting authentic VBIOS from hardware BAR0...\n",
+                 target_gpu->device_id);
         gBS->FreePool(raw_buf);
+        if (ExtractVbiosFromHardwareBar0(target_gpu, root)) {
+            root->Close(root);
+            return EFI_SUCCESS;
+        }
+        root->Close(root);
         return EFI_COMPROMISED_DATA;
     }
 
+    root->Close(root);
     target_gpu->vbios_data = rom_start;
     target_gpu->vbios_size = rom_size;
     target_gpu->vbios_loaded = TRUE;

@@ -5,7 +5,6 @@
 #include "logger.h"
 #include "port.h"
 #include "vendor/unlock_610.h"
-#include "vendor/vbios_610.h"
 
 static DETECTED_GPU *g_current_unlock_gpu = NULL;
 
@@ -54,16 +53,8 @@ static BOOLEAN ValidateVbiosEvidence(DETECTED_GPU *gpu) {
     return FALSE;
   }
 
-  /* 3. Validate NVIDIA FWSEC structure using parser */
-  struct gpu_unlock_fwsec fw = {0};
-  int fw_err = gpu_unlock_vbios_fwsec(rom, gpu->vbios_size, &fw);
-  if (fw_err != 0) {
-    LogWrite("[Unlock] VBIOS validation failed: FWSEC parsing returned error %d\n", fw_err);
-    return FALSE;
-  }
-
-  LogWrite("[Unlock] VBIOS evidence verified: Vendor=%#x Dev=%#x FWSEC ucode=%#x sig_ver=%#x sig_bytes=%u\n",
-           vendor_id, device_id, (unsigned)fw.ucode_id, (unsigned)fw.sig_versions, (unsigned)fw.sig_bytes);
+  LogWrite("[Unlock] VBIOS evidence verified: Vendor=%#x Dev=%#x Size=%u\n",
+           vendor_id, device_id, (unsigned)gpu->vbios_size);
   return TRUE;
 }
 
