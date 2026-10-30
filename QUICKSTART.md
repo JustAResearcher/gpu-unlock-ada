@@ -33,14 +33,14 @@ cd gpu-unlock-ada
 make install
 ```
 
-`make install` selects the Arch, Debian/Ubuntu, or Fedora/RHEL package path.
+`make install` selects the Arch, Debian/Ubuntu, Fedora/RHEL, or Void package path.
 The build downloads **SHA-pinned NVIDIA 610.43.03 inputs** and generates the
 firmware locally. The downloadable source contains no NVIDIA firmware binary.
 The build may take several minutes and asks for `sudo` when installing.
 
 If your distribution cannot resolve a build dependency automatically, use
-`make install-arch`, `make install-deb`, or `make install-rpm` as appropriate;
-the [README](README.md#build-and-install) explains the generated package paths.
+`make install-arch`, `make install-deb`, `make install-rpm`, or
+`make install-void` as appropriate; the [README](README.md#build-and-install) explains the generated package paths.
 
 ## 3. Enable one exact card
 

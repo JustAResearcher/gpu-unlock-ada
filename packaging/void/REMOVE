@@ -1,0 +1,30 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-2.0-only
+# xbps REMOVE script for gpu-unlock-dkms; `make void` fills in @VERSION@.
+# xbps runs it from the root directory with:
+#   ACTION PKGNAME VERSION UPDATE CONF_FILE ARCH
+ACTION="$1"
+PKGNAME="$2"
+VERSION="$3"
+UPDATE="$4"
+export PATH="usr/sbin:usr/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+case "$ACTION" in
+pre)
+    # Also on an update, while this version's source is still on disk; the
+    # new version's INSTALL adds itself again.
+    dkms_modules="gpu-unlock @VERSION@" \
+        usr/libexec/xbps-triggers/dkms run pre-remove "$PKGNAME" "$VERSION" "$UPDATE"
+    ;;
+post)
+    # The module and the initramfs drop-ins are gone now; rebuild every
+    # installed kernel's image so that none still loads gpu_unlock.
+    [ "$UPDATE" = no ] && [ -x etc/kernel.d/post-install/20-initramfs ] || exit 0
+    for d in usr/lib/modules/*/kernel/; do
+        [ -d "$d" ] || continue
+        k=${d%/kernel/}; k=${k##*/}
+        etc/kernel.d/post-install/20-initramfs "linux${k%.*}" "$k" || :
+    done
+    ;;
+esac
+exit 0
