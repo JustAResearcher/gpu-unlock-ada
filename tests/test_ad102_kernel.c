@@ -55,6 +55,22 @@ int main(int argc, char **argv)
         assert(unlock_transaction_unwind(&w)==-EBUSY && w.retained && fake.live==1 && !fake.frees);
         free_coherent(&w); /* harness disposal only */
     }
+    /* Dedicated 27e0 routing and payload gates without real assets. These
+     * synthetic registers exercise host logic, not AD104M silicon behavior. */
+    static const int laptop_modes[]={0,1,4,10};
+    for(unsigned i=0;i<ARRAY_SIZE(laptop_modes);i++) {
+        ad102_setup(&w);dev.device=GU_AD104M_RTX_4080_MOBILE;regs[0]=0x194000a1;
+        regs[GU_FEAT_SS0_OFFSET/4]=0x10763075;regs[GU_FEAT_SS1_OFFSET/4]=4;
+        prepare_boot(&w);fake.ad_mode=laptop_modes[i];
+        int ret=unlock_transaction_boot(&w);
+        bool success=laptop_modes[i]==0;
+        assert((!ret)==success && w.payload_verified==success && fake.starts==1);
+        assert(!fake.selector_writes && !fake.ss1_writes && !fake.flrs);
+        if(!success)assert(unlock_transaction_selector(&w)==-EPROTO);
+        if(laptop_modes[i]==10)assert(ret==-ETIMEDOUT && !w.sec2_halt_verified);
+        assert(unlock_transaction_unwind(&w)==-EBUSY && w.retained && fake.live==1 && !fake.frees);
+        free_coherent(&w); /* harness disposal only */
+    }
     /* Rejected cold permission/readout views never start firmware. */
     for(int mode=0;mode<5;mode++) {
         ad102_setup(&w);
@@ -142,6 +158,42 @@ int main(int argc, char **argv)
             assert(!fake.live && !fake.fw_live && dev.refs==1);
             assert(!fake.regions && !fake.group_live && list_empty(&dev.dev.devres_head));
             printf("AD102 full mode=%d result=%d PASS\n",cases[i],ret);
+        }
+        /* HP AD104/A1 cold inputs and FWSEC WPR2 from the measured 12 GiB
+         * board (12282 MiB visible). Register transitions and the supplied ROM
+         * remain synthetic host fixtures, not another silicon validation. */
+        static const int laptop_cases[]={0,1,4,7,8,10};
+        for(unsigned i=0;i<ARRAY_SIZE(laptop_cases);i++) {
+            ad102_setup(&w);dev.device=GU_AD104M_RTX_4080_MOBILE;regs[0]=0x194000a1;
+            regs[GU_FEAT_SS0_OFFSET/4]=0x10763075;regs[GU_FEAT_SS1_OFFSET/4]=4;
+            fake.ad_mode=laptop_cases[i];load_rom(argv[1]);
+            regs[0x1183a4/4]=0x2ffa;regs[0x625f04/4]=1;regs[0x1fa7c8/4]=0x45cb8f;
+            regs[0x1fa82c/4]=0x100000;regs[0x1fa830/4]=0x2ef9ff0;
+            regs[(GU_FUSE_SEC2_UCODE1+2*4)/4]=1;
+            fake.fwsec_wpr=1;fake.fwsec_wpr_lo=0x2ff8000;fake.fwsec_wpr_hi=0x2ff8e00;
+            struct gpu_unlock_610_shared laptop_shared={0};last_work=NULL;
+            assert(!gpu_unlock_610_load_shared(&dev,&laptop_shared));
+            int laptop_ret=gpu_unlock_610_unlock(&dev,&laptop_shared);
+            gpu_unlock_610_release_shared(&laptop_shared);
+            assert((!laptop_ret)==(laptop_cases[i]==0));
+            assert(fake.starts==1 && fake.gsp_starts==1);
+            if(laptop_cases[i]==0 || laptop_cases[i]==8)assert(fake.flrs==1);
+            if(laptop_cases[i]==1 || laptop_cases[i]==4 || laptop_cases[i]==10)
+                assert(!fake.selector_writes && !fake.ss1_writes && !fake.flrs);
+            if(laptop_cases[i]==7)assert(!fake.flrs);
+            if(laptop_cases[i]==10) {
+                assert(fake.pins && last_work->signature_calls==1);
+                assert(strstr(fake.log,"stock signature restore deferred"));
+            }
+            if(fake.pins) {
+                assert(fake.live && !fake.frees && last_work->retained && !last_work->quiesced);
+                last_work->firmware_started=false; /* harness disposal only */
+                assert(!unlock_transaction_unwind(last_work));
+                pci_dev_put(last_work->pdev);free(last_work);
+            }
+            assert(!fake.live && !fake.fw_live && dev.refs==1);
+            assert(!fake.regions && !fake.group_live && list_empty(&dev.dev.devres_head));
+            printf("AD104M 0x27e0 synthetic full mode=%d result=%d PASS\n",laptop_cases[i],laptop_ret);
         }
         /* Dispatch the same published AD102-family payload through the exact
          * 0x2705 profile under mocked registers. This is not silicon proof. */

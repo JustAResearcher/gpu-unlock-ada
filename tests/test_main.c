@@ -222,7 +222,8 @@ static void reset(char *list)
 	rtx4070tis_ad102_experimental = false;
 	ad107_experimental = false;
 	ad103m_experimental = false;
-	ad107_experimental = false;
+	ad104m_experimental = false;
+	rtx4090d_experimental = false;
 }
 
 /* Runs init, then checks what holds for every case. */
@@ -391,6 +392,50 @@ int main(void)
 	run();
 	assert(!fake.started && logged("unlock failed (-16)"));
 	puts("ad104: experimental flag, single-BDF and bound-driver guards PASS");
+
+	/* The 27e0 laptop has its own opt-in; desktop and other mobile flags
+	 * cannot admit it. Keep the separate 27a0 variant unsupported. */
+	char *ad104m_targets[] = {"all", "0000:02:00.0", "0000:01:00.0",
+		"0000:02:00.0,0000:01:00.0"};
+	for (unsigned int flag = 0; flag < 2; flag++) {
+		for (unsigned int t = 0; t < ARRAY_SIZE(ad104m_targets); t++) {
+			reset(ad104m_targets[t]);
+			ad104m_experimental = flag;
+			add("0000:01:00.0", GU_AD104M_RTX_4080_MOBILE, false);
+			bool expected = flag && t >= 2;
+			fake.expected_concurrent = expected;
+			run();
+			assert(fake.loads == expected && fake.started == expected);
+			assert(fake.unlocks[0] == expected);
+		}
+	}
+	bool *other_flags[] = { &ad104_experimental, &ad103m_experimental,
+		&rtx4080_experimental, &ad103_experimental, &ad106_experimental,
+		&ad107_experimental, &rtx4070tis_ad102_experimental, &rtx4090d_experimental };
+	for (unsigned int other = 0; other < ARRAY_SIZE(other_flags); other++) {
+		reset("0000:01:00.0");
+		*other_flags[other] = true;
+		add("0000:01:00.0", GU_AD104M_RTX_4080_MOBILE, false);
+		run();
+		assert(!fake.loads && !fake.started);
+	}
+	reset("0000:01:00.0");
+	ad104m_experimental = true;
+	add("0000:01:00.0", GU_AD104M_RTX_4080_MOBILE, true);
+	run();
+	assert(!fake.started && !fake.unlocks[0] && logged("unlock failed (-16)"));
+	reset("0000:01:00.0");
+	ad104m_experimental = true;
+	add("0000:01:00.0", 0x27a0, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	assert(logged("no supported card at \"0000:01:00.0\""));
+	reset("all");
+	ad104m_experimental = true;
+	add("0000:01:00.0", 0x27a0, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	puts("AD104M 27e0: separate opt-in, exact BDF, bound-driver and 27a0 guards PASS");
 
 	/* The AD103 RTX 4070 (0x2709) shares the 2705 flag and exact-BDF gate. */
 	reset("0000:01:00.0");
