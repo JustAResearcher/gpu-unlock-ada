@@ -1,5 +1,6 @@
 # Universal Multi-GPU VBIOS Dumper for Windows
 # Formats ROM filenames strictly by hardware ID: <vendor>_<device>_<subvendor>_<subdevice>.rom
+# Validates dumped VBIOS headers dynamically to ensure 100% correct Device ID matching
 
 $ErrorActionPreference = "Continue"
 Write-Host "======================================================================" -ForegroundColor Cyan
@@ -19,6 +20,30 @@ if (-not (Test-Path $Nvflash)) {
 }
 if (-not (Test-Path $Nvflash)) {
     $Nvflash = "nvflashk.exe"
+}
+
+function Get-VbiosDevId($filePath) {
+    if (-not (Test-Path $filePath)) { return $null }
+    try {
+        $bytes = [System.IO.File]::ReadAllBytes($filePath)
+        for ($pos = 0; $pos -lt [Math]::Min($bytes.Length - 0x20, 0x100000); $pos += 512) {
+            if ($bytes[$pos] -eq 0x55 -and $bytes[$pos+1] -eq 0xAA) {
+                $pcirRel = [BitConverter]::ToUInt16($bytes, $pos + 0x18)
+                $pcir = $pos + $pcirRel
+                if ($pcir + 8 -le $bytes.Length) {
+                    $sig = [System.Text.Encoding]::ASCII.GetString($bytes, $pcir, 4)
+                    if ($sig -eq 'PCIR') {
+                        $ven = [BitConverter]::ToUInt16($bytes, $pcir + 4)
+                        $dev = [BitConverter]::ToUInt16($bytes, $pcir + 6)
+                        if ($ven -eq 0x10DE) {
+                            return ("{0:x4}" -f $dev).ToLower()
+                        }
+                    }
+                }
+            }
+        }
+    } catch {}
+    return $null
 }
 
 # Query installed NVIDIA Display Controllers
@@ -48,34 +73,48 @@ foreach ($gpu in $gpus) {
         $romName = "10de_${devId}_${subVenId}_${subDevId}.rom"
         $targetPath = Join-Path $VbiosDir $romName
 
-        Write-Host "      Strict ROM Target: $romName" -ForegroundColor Cyan
+        Write-Host "      Strict ROM Target: $romName (Expected DevID=0x$devId)" -ForegroundColor Cyan
 
         if ($processedIds.ContainsKey($romName)) {
             Write-Host "      [INFO] Identical hardware ID already dumped by sibling card." -ForegroundColor Green
             Write-Host "             The same file covers both cards automatically in UEFI loader!" -ForegroundColor Green
         } else {
             $processedIds[$romName] = $true
-            Write-Host "      Dumping VBIOS via nvflashk (index $index)..."
-            
-            # Run nvflashk to save VBIOS by GPU index
+            $dumpSuccess = $false
+
+            # Check candidate nvflashk adapter indices
+            $candidateIndices = @($index) + (0..([Math]::Max(7, $gpus.Count * 2)) | Where-Object { $_ -ne $index })
+
             if (Test-Path $Nvflash) {
-                & $Nvflash -i$index --save "$targetPath"
-                if ($LASTEXITCODE -eq 0 -and (Test-Path $targetPath)) {
-                    $sizeKb = [math]::Round((Get-Item $targetPath).Length / 1KB, 1)
-                    Write-Host "      [SUCCESS] Dumped to $targetPath ($sizeKb KB)" -ForegroundColor Green
-                } else {
-                    Write-Host "      [TRY 2] Retrying with -b flag..."
-                    & $Nvflash -i$index -b "$targetPath"
-                    if ($LASTEXITCODE -eq 0 -and (Test-Path $targetPath)) {
-                        Write-Host "      [SUCCESS] Dumped to $targetPath" -ForegroundColor Green
-                    } else {
-                        Write-Host "      [MANUAL NOTICE] If nvflashk failed, save VBIOS from GPU-Z as:" -ForegroundColor Yellow
-                        Write-Host "                      $targetPath" -ForegroundColor Yellow
+                foreach ($candidateIdx in $candidateIndices) {
+                    Write-Host "      Attempting nvflashk with --index=$candidateIdx ..."
+                    
+                    # Try --save
+                    & $Nvflash "--index=$candidateIdx" --save "$targetPath" 2>$null | Out-Null
+                    if (-not (Test-Path $targetPath)) {
+                        # Retry with -b
+                        & $Nvflash "--index=$candidateIdx" -b "$targetPath" 2>$null | Out-Null
+                    }
+
+                    if (Test-Path $targetPath) {
+                        $foundDev = Get-VbiosDevId $targetPath
+                        if ($foundDev -eq $devId) {
+                            $sizeKb = [math]::Round((Get-Item $targetPath).Length / 1KB, 1)
+                            Write-Host "      [SUCCESS] Verified VBIOS dump for DevID 0x$devId via nvflashk --index=$candidateIdx ($sizeKb KB)" -ForegroundColor Green
+                            $dumpSuccess = $true
+                            break
+                        } else {
+                            Write-Host "      [MISMATCH] nvflashk index $candidateIdx returned DevID 0x$foundDev (expected 0x$devId). Discarding..." -ForegroundColor Yellow
+                            Remove-Item $targetPath -Force -ErrorAction SilentlyContinue
+                        }
                     }
                 }
-            } else {
-                Write-Host "      [MANUAL] nvflashk not found. Save VBIOS from GPU-Z as:" -ForegroundColor Yellow
-                Write-Host "               $targetPath" -ForegroundColor Yellow
+            }
+
+            if (-not $dumpSuccess) {
+                Write-Host "      [MANUAL NOTICE] Could not auto-dump via nvflashk." -ForegroundColor Yellow
+                Write-Host "                      Please save VBIOS from GPU-Z as:" -ForegroundColor Yellow
+                Write-Host "                      $targetPath" -ForegroundColor Yellow
             }
         }
     } else {
@@ -84,8 +123,23 @@ foreach ($gpu in $gpus) {
     $index++
 }
 
+# Auto-sync dumps to FAT32 USB drive if connected
+$usbDrives = Get-Volume | Where-Object { $_.DriveType -eq 'Removable' -or $_.FileSystemLabel -match 'UNLOCK' }
+foreach ($usb in $usbDrives) {
+    if ($usb.DriveLetter) {
+        $usbVbiosDir = "$($usb.DriveLetter):\EFI\VBIOS"
+        if (Test-Path "$($usb.DriveLetter):\EFI\BOOT\BOOTX64.EFI") {
+            if (-not (Test-Path $usbVbiosDir)) {
+                New-Item -ItemType Directory -Path $usbVbiosDir -Force | Out-Null
+            }
+            Get-ChildItem -Path $VbiosDir -Filter "*.rom" | ForEach-Object {
+                Copy-Item -Path $_.FullName -Destination $usbVbiosDir -Force
+                Write-Host "`n[USB SYNC] Copied $($_.Name) to $usbVbiosDir" -ForegroundColor Green
+            }
+        }
+    }
+}
+
 Write-Host "`n======================================================================" -ForegroundColor Cyan
 Write-Host "All VBIOS dumps are located in: $VbiosDir" -ForegroundColor Green
-Write-Host "Copy this 'EFI' folder directly to your FAT32 USB drive to use with BOOTX64.EFI!"
 Write-Host "======================================================================" -ForegroundColor Cyan
-

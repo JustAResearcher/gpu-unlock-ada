@@ -220,11 +220,11 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable
     for (UINTN i = 0; i < g_gpu_count; i++) {
         DETECTED_GPU *gpu = &g_gpus[i];
 
-        LogWrite("[GPU %u] %ls (%ls) Bus=%u:%u.%u Vendor=%#x Dev=%#x SubVen=%#x SubDev=%#x BAR0=%#llx Display=%u\n",
+        LogWrite("[GPU %u] %ls (%ls) Bus=%u:%u.%u Vendor=%#x Dev=%#x SubVen=%#x SubDev=%#x BAR0=%#llx Display=%u Console=%u\n",
                  (unsigned)i, gpu->model_name, gpu->chip_name,
                  (unsigned)gpu->bus, (unsigned)gpu->device, (unsigned)gpu->function,
                  gpu->vendor_id, gpu->device_id, gpu->subsys_vendor_id, gpu->subsys_device_id,
-                 (unsigned long long)gpu->bar0_base, gpu->is_display_adapter);
+                 (unsigned long long)gpu->bar0_base, gpu->is_display_adapter, gpu->is_console_display);
 
         Print(L"[GPU "); PrintDec(i); Print(L"] ");
         PrintColor(EFI_WHITE | EFI_BLACK, gpu->model_name);
@@ -233,8 +233,10 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable
         Print(L"\r\n        ID: "); Print(gpu->rom_filename + 10);
         Print(L" | BAR0: "); PrintHex32((UINT32)gpu->bar0_base);
 
-        if (gpu->is_display_adapter) {
-            PrintColor(EFI_LIGHTMAGENTA | EFI_BLACK, L" [Display Adapter (GOP)]\r\n");
+        if (gpu->is_console_display) {
+            PrintColor(EFI_LIGHTMAGENTA | EFI_BLACK, L" [Active Console Display]\r\n");
+        } else if (gpu->is_display_adapter) {
+            PrintColor(EFI_CYAN | EFI_BLACK, L" [Secondary Video Output]\r\n");
         } else {
             PrintColor(EFI_LIGHTGREEN | EFI_BLACK, L" [Headless Compute Accelerator]\r\n");
         }
@@ -295,25 +297,39 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable
         BOOLEAN any_failed = FALSE;
         BOOLEAN unsafe_state = FALSE;
 
+        /*
+         * Multi-GPU Ordered Unlock Strategy:
+         * 1. Pass 1: Unlock headless / secondary GPUs (WITHOUT active video output).
+         *    The screen stays completely live and all progress and diagnostics are printed.
+         * 2. Pass 2: Unlock the primary display GPU (WITH video output), only if supported!
+         */
+
+        /* Determine which GPU index is the primary display adapter (to defer to Pass 2) */
+        INTN primary_display_idx = -1;
         for (UINTN i = 0; i < g_gpu_count; i++) {
-            DETECTED_GPU *gpu = &g_gpus[i];
-            if (!gpu->vbios_loaded) continue;
-
-            Print(L"  [+] Unlocking GPU "); PrintDec(i); Print(L" ("); Print(gpu->model_name); Print(L")... ");
-
-            if (gpu->is_display_adapter) {
-                LogWrite("Releasing display on GPU %u...\n", (unsigned)i);
-                EFI_STATUS r_stat = ReleaseGpuDisplay(gpu);
-                if (EFI_ERROR(r_stat)) {
-                    PrintColor(EFI_LIGHTRED | EFI_BLACK, L"[GOP RELEASE FAILED]\r\n");
-                    LogWrite("GPU %u GOP release failed: status=%#llx\n", (unsigned)i, (unsigned long long)r_stat);
-                    PrintColor(EFI_LIGHTRED | EFI_BLACK,
-                               L"      Error: Failed to safely disconnect GOP controller or restore PCI decode.\r\n"
-                               L"      Aborting unlock on this GPU to prevent display bus lockup.\r\n");
-                    any_failed = TRUE;
-                    continue;
+            if (g_gpus[i].is_console_display) {
+                primary_display_idx = (INTN)i;
+                break;
+            }
+        }
+        if (primary_display_idx < 0) {
+            for (UINTN i = 0; i < g_gpu_count; i++) {
+                if (g_gpus[i].is_display_adapter) {
+                    primary_display_idx = (INTN)i;
+                    break;
                 }
             }
+        }
+
+        /* PASS 1: Unlock all GPUs WITHOUT active display output first */
+        for (UINTN i = 0; i < g_gpu_count; i++) {
+            if ((INTN)i == primary_display_idx) continue; /* Defer primary display to Pass 2 */
+            DETECTED_GPU *gpu = &g_gpus[i];
+            if (!gpu->vbios_loaded || !gpu->unlock_selected) continue;
+
+            Print(L"  [+] Unlocking secondary GPU "); PrintDec(i); Print(L" ("); Print(gpu->model_name); Print(L")... ");
+            LogWrite("Unlocking secondary GPU %u (Bus %u:%u.%u, headless/secondary)...\n",
+                     (unsigned)i, (unsigned)gpu->bus, (unsigned)gpu->device, (unsigned)gpu->function);
 
             EFI_STATUS u_stat = ExecuteGpuRamUnlock(gpu);
             if (!EFI_ERROR(u_stat) && gpu->unlocked_success) {
@@ -325,7 +341,6 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable
                          (unsigned)i, (unsigned long long)u_stat, GuSafeToReturn());
                 any_failed = TRUE;
 
-                /* Fail-closed check: If GuSafeToReturn() is FALSE, hardware state is unsafe! */
                 if (!GuSafeToReturn()) {
                     unsafe_state = TRUE;
                     LogWrite("[FATAL] Hardware safety violation (!GuSafeToReturn) on GPU %u: "
@@ -337,6 +352,47 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable
                                L"              Active DMA or retained firmware microcode detected.\r\n"
                                L"              Boot sequence halted immediately to protect host memory.\r\n");
                     break;
+                }
+            }
+        }
+
+        /* PASS 2: Unlock the primary display GPU, only if supported */
+        if (!unsafe_state && primary_display_idx >= 0) {
+            DETECTED_GPU *gpu = &g_gpus[primary_display_idx];
+            if (!gpu->vbios_loaded || !gpu->unlock_selected) {
+                Print(L"  [i] Display GPU "); PrintDec((UINTN)primary_display_idx); Print(L" ("); Print(gpu->model_name);
+                PrintColor(EFI_LIGHTGRAY | EFI_BLACK, L") not supported/selected for unlock; leaving display intact.\r\n");
+                LogWrite("Display GPU %u is not supported or not selected for unlock; skipping.\n", (unsigned)primary_display_idx);
+            } else {
+                Print(L"  [+] Unlocking display GPU "); PrintDec((UINTN)primary_display_idx); Print(L" ("); Print(gpu->model_name); Print(L")... ");
+                LogWrite("Releasing display on GPU %u...\n", (unsigned)primary_display_idx);
+
+                EFI_STATUS r_stat = ReleaseGpuDisplay(gpu);
+                if (EFI_ERROR(r_stat)) {
+                    PrintColor(EFI_LIGHTRED | EFI_BLACK, L"[GOP RELEASE FAILED]\r\n");
+                    LogWrite("GPU %u GOP release failed: status=%#llx\n", (unsigned)primary_display_idx, (unsigned long long)r_stat);
+                    PrintColor(EFI_LIGHTRED | EFI_BLACK,
+                               L"      Error: Failed to safely disconnect GOP controller or restore PCI decode.\r\n"
+                               L"      Aborting unlock on this GPU to prevent display bus lockup.\r\n");
+                    any_failed = TRUE;
+                } else {
+                    EFI_STATUS u_stat = ExecuteGpuRamUnlock(gpu);
+                    if (!EFI_ERROR(u_stat) && gpu->unlocked_success) {
+                        PrintColor(EFI_LIGHTGREEN | EFI_BLACK, L"[SUCCESS: SS0/SS1 LATCHED]\r\n");
+                        LogWrite("GPU %u unlocked successfully! SS0=0x88888888 SS1=0x8\n", (unsigned)primary_display_idx);
+                    } else {
+                        PrintColor(EFI_LIGHTRED | EFI_BLACK, L"[FAILED]\r\n");
+                        LogWrite("GPU %u unlock failed: status=%#llx (safe_to_return=%u)\n",
+                                 (unsigned)primary_display_idx, (unsigned long long)u_stat, GuSafeToReturn());
+                        any_failed = TRUE;
+
+                        if (!GuSafeToReturn()) {
+                            unsafe_state = TRUE;
+                            LogWrite("[FATAL] Hardware safety violation (!GuSafeToReturn) on GPU %u\n", (unsigned)primary_display_idx);
+                            PrintColor(EFI_LIGHTRED | EFI_BLACK,
+                                       L"\r\n[FATAL ERROR] GPU hardware left in an unsafe/unquiesced state (!GuSafeToReturn)!\r\n");
+                        }
+                    }
                 }
             }
         }

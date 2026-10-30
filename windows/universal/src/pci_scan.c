@@ -102,24 +102,99 @@ VOID FormatGpuRomFileName(CONST DETECTED_GPU *gpu, CHAR16 *out_path, UINTN max_c
     out_path[idx] = L'\0';
 }
 
-static BOOLEAN CheckIfDisplayAdapter(EFI_HANDLE handle)
+static EFI_GUID DevicePathProtocolGuid = EFI_DEVICE_PATH_PROTOCOL_GUID;
+static EFI_GUID GopGuid = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
+
+static BOOLEAN CompareBytes(CONST VOID *a, CONST VOID *b, UINTN len)
 {
+    CONST UINT8 *p1 = (CONST UINT8 *)a;
+    CONST UINT8 *p2 = (CONST UINT8 *)b;
+    for (UINTN i = 0; i < len; i++) {
+        if (p1[i] != p2[i]) return FALSE;
+    }
+    return TRUE;
+}
+
+static UINTN GetDevicePathLengthExcludingEnd(CONST EFI_DEVICE_PATH_PROTOCOL *dp)
+{
+    if (!dp) return 0;
+    CONST EFI_DEVICE_PATH_PROTOCOL *curr = dp;
+    UINTN size = 0;
+    /* 0x7F = End of Hardware Device Path, 0xFF = End Entire Device Path */
+    while (!(curr->Type == 0x7F && curr->SubType == 0xFF)) {
+        UINT16 len = (UINT16)curr->Length[0] | ((UINT16)curr->Length[1] << 8);
+        if (len < 4) break;
+        size += len;
+        curr = (CONST EFI_DEVICE_PATH_PROTOCOL *)((CONST UINT8 *)curr + len);
+    }
+    return size;
+}
+
+static BOOLEAN CheckIfConsoleDisplay(EFI_HANDLE gpu_handle)
+{
+    if (!gpu_handle || !gST || !gST->ConsoleOutHandle) return FALSE;
+
+    EFI_DEVICE_PATH_PROTOCOL *gpu_dp = NULL;
+    EFI_STATUS s = gBS->HandleProtocol(gpu_handle, &DevicePathProtocolGuid, (VOID **)&gpu_dp);
+    if (EFI_ERROR(s) || !gpu_dp) return FALSE;
+
+    EFI_DEVICE_PATH_PROTOCOL *con_dp = NULL;
+    s = gBS->HandleProtocol(gST->ConsoleOutHandle, &DevicePathProtocolGuid, (VOID **)&con_dp);
+    if (EFI_ERROR(s) || !con_dp) return FALSE;
+
+    UINTN gpu_len = GetDevicePathLengthExcludingEnd(gpu_dp);
+    UINTN con_len = GetDevicePathLengthExcludingEnd(con_dp);
+    if (gpu_len > 0 && con_len >= gpu_len) {
+        if (CompareBytes(gpu_dp, con_dp, gpu_len)) {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+static BOOLEAN CheckIfDisplayAdapter(EFI_HANDLE handle, BOOLEAN *out_is_console)
+{
+    BOOLEAN is_con = CheckIfConsoleDisplay(handle);
+    if (out_is_console) *out_is_console = is_con;
+    if (is_con) return TRUE;
+
+    if (!handle) return FALSE;
+
+    /* 1. Direct GOP on GPU controller handle */
+    EFI_GRAPHICS_OUTPUT_PROTOCOL *gop = NULL;
+    EFI_STATUS status = gBS->HandleProtocol(handle, &GopGuid, (VOID **)&gop);
+    if (!EFI_ERROR(status) && gop && gop->Mode && gop->Mode->Info) {
+        if (gop->Mode->Info->HorizontalResolution > 0 && gop->Mode->Info->VerticalResolution > 0) {
+            return TRUE;
+        }
+    }
+
+    /* 2. Check child controller handles produced by GOP driver */
     EFI_OPEN_PROTOCOL_INFORMATION_ENTRY *entries = NULL;
     UINTN count = 0;
-    BOOLEAN is_display = FALSE;
-
-    EFI_STATUS status = gBS->OpenProtocolInformation(handle, &PciIoProtocolGuid, &entries, &count);
+    status = gBS->OpenProtocolInformation(handle, &PciIoProtocolGuid, &entries, &count);
     if (!EFI_ERROR(status) && entries) {
+        BOOLEAN has_display = FALSE;
         for (UINTN i = 0; i < count; i++) {
-            if ((entries[i].Attributes & EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER) ||
-                (entries[i].Attributes & EFI_OPEN_PROTOCOL_BY_DRIVER)) {
-                is_display = TRUE;
-                break;
+            if (entries[i].Attributes & EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER) {
+                EFI_HANDLE child = entries[i].ControllerHandle;
+                if (child) {
+                    gop = NULL;
+                    status = gBS->HandleProtocol(child, &GopGuid, (VOID **)&gop);
+                    if (!EFI_ERROR(status) && gop && gop->Mode && gop->Mode->Info) {
+                        if (gop->Mode->Info->HorizontalResolution > 0 && gop->Mode->Info->VerticalResolution > 0) {
+                            has_display = TRUE;
+                            break;
+                        }
+                    }
+                }
             }
         }
         gBS->FreePool(entries);
+        if (has_display) return TRUE;
     }
-    return is_display;
+
+    return FALSE;
 }
 
 UINTN ScanSystemGpus(DETECTED_GPU out_gpus[], UINTN max_gpus)
@@ -206,7 +281,9 @@ UINTN ScanSystemGpus(DETECTED_GPU out_gpus[], UINTN max_gpus)
         gpu->model_name = model;
         gpu->handle = handles[i];
         gpu->pci_io = pci;
-        gpu->is_display_adapter = CheckIfDisplayAdapter(handles[i]);
+        BOOLEAN is_con = FALSE;
+        gpu->is_display_adapter = CheckIfDisplayAdapter(handles[i], &is_con);
+        gpu->is_console_display = is_con;
         gpu->vbios_data = NULL;
         gpu->vbios_size = 0;
         gpu->vbios_loaded = FALSE;
