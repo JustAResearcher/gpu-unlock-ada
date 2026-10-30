@@ -7,7 +7,11 @@ ACTION="$1"
 PKGNAME="$2"
 VERSION="$3"
 UPDATE="$4"
-export PATH="usr/sbin:usr/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+# The PATH xbps-src gives package scripts. A relative entry breaks dkms:
+# bash would hash grep as usr/bin/grep, which fails once dkms changes into
+# its build directory, so dkms 3.3 takes BUILD_EXCLUSIVE_CONFIG as unmet
+# and stores no module, yet reports the build as done.
+export PATH="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin"
 
 [ "$ACTION" = post ] || exit 0
 

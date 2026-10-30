@@ -3,6 +3,7 @@
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -72,10 +73,8 @@ class PackageTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             log = root / "log"
-            # Only 6.12 has the module; 6.6 is another installed kernel.
             stubs = {"usr/libexec/xbps-triggers/dkms": f"echo trigger $dkms_modules $* >> {log}",
-                     "etc/kernel.d/post-install/20-initramfs": f"echo initramfs $* >> {log}",
-                     "usr/bin/modinfo": '[ "$2" = 6.12.10_1 ]'}
+                     "etc/kernel.d/post-install/20-initramfs": f"echo initramfs $* >> {log}"}
             for path, body in stubs.items():
                 stub = root / path
                 stub.parent.mkdir(parents=True, exist_ok=True)
@@ -87,7 +86,11 @@ class PackageTests(unittest.TestCase):
                                            ("REMOVE", "post", "no")):
                 text = (ROOT / "packaging/void" / script).read_text()
                 self.assertIn("@VERSION@", text)
-                text = text.replace("@VERSION@", version)
+                # dkms changes directory, so every PATH entry must be absolute.
+                path = re.search(r'^export PATH="([^"]*)"$', text, re.M).group(1)
+                self.assertTrue(all(entry.startswith("/") for entry in path.split(":")), path)
+                # Only 6.12 has the module; 6.6 is another installed kernel.
+                text = 'modinfo() { [ "$2" = 6.12.10_1 ]; }\n' + text.replace("@VERSION@", version)
                 subprocess.run(["sh", "-c", text, script, action, "gpu-unlock-dkms",
                                 f"{version}_1", update, "no", "x86_64"],
                                cwd=root, check=True)
