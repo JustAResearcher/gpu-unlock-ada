@@ -1,0 +1,293 @@
+{
+  "stock": {
+    "state": "stock",
+    "identity": "<gpu-uuid>, NVIDIA GeForce RTX 4080 Laptop GPU, <target>, 590.48.01, [N/A]",
+    "head": "568d915074e4cd9fc90bf3452903738baf6c9dfb",
+    "desktop_active": true,
+    "power_cap_fixed": false,
+    "note": "Compute-only benchmark. Dynamic Boost, desktop and OEM power policy remain active; no clocks/power controls written.",
+    "runs": [
+      {
+        "name": "mma-1",
+        "command": [
+          "<lab>/artifacts/cuda128/mma_bench",
+          "20000",
+          "5"
+        ],
+        "exit": 0,
+        "seconds": 7.3934834949996
+      },
+      {
+        "name": "tensor-1",
+        "command": [
+          "python3",
+          "diagnostics/bench/tensor_modes_driver_runner.py",
+          "<lab>/artifacts/cuda128/tensor_modes_issue_sm89.cubin",
+          "--sha256",
+          "b7e23c0d7922311c4319352640255e84caad02642fcdc901270c97a0cee4eac1",
+          "--expect-uuid",
+          "<gpu-uuid>",
+          "--expect-power-limit",
+          "N/A"
+        ],
+        "exit": 0,
+        "seconds": 1.3389505059999465
+      },
+      {
+        "name": "gemm-1",
+        "command": [
+          "<lab>/artifacts/cuda128/gemm_bench"
+        ],
+        "exit": 0,
+        "seconds": 6.9958575189998555
+      },
+      {
+        "name": "mma-2",
+        "command": [
+          "<lab>/artifacts/cuda128/mma_bench",
+          "20000",
+          "5"
+        ],
+        "exit": 0,
+        "seconds": 7.3340091420000135
+      },
+      {
+        "name": "tensor-2",
+        "command": [
+          "python3",
+          "diagnostics/bench/tensor_modes_driver_runner.py",
+          "<lab>/artifacts/cuda128/tensor_modes_issue_sm89.cubin",
+          "--sha256",
+          "b7e23c0d7922311c4319352640255e84caad02642fcdc901270c97a0cee4eac1",
+          "--expect-uuid",
+          "<gpu-uuid>",
+          "--expect-power-limit",
+          "N/A"
+        ],
+        "exit": 0,
+        "seconds": 1.3762981949998903
+      },
+      {
+        "name": "gemm-2",
+        "command": [
+          "<lab>/artifacts/cuda128/gemm_bench"
+        ],
+        "exit": 0,
+        "seconds": 7.035582410000188
+      },
+      {
+        "name": "mma-3",
+        "command": [
+          "<lab>/artifacts/cuda128/mma_bench",
+          "20000",
+          "5"
+        ],
+        "exit": 0,
+        "seconds": 7.306057060000057
+      },
+      {
+        "name": "tensor-3",
+        "command": [
+          "python3",
+          "diagnostics/bench/tensor_modes_driver_runner.py",
+          "<lab>/artifacts/cuda128/tensor_modes_issue_sm89.cubin",
+          "--sha256",
+          "b7e23c0d7922311c4319352640255e84caad02642fcdc901270c97a0cee4eac1",
+          "--expect-uuid",
+          "<gpu-uuid>",
+          "--expect-power-limit",
+          "N/A"
+        ],
+        "exit": 0,
+        "seconds": 1.3441401370000676
+      },
+      {
+        "name": "gemm-3",
+        "command": [
+          "<lab>/artifacts/cuda128/gemm_bench"
+        ],
+        "exit": 0,
+        "seconds": 7.11800399599997
+      }
+    ],
+    "seconds": 49.140817403793335,
+    "complete": true
+  },
+  "unlocked": {
+    "state": "candidate",
+    "identity": "<gpu-uuid>, NVIDIA GeForce RTX 4080 Laptop GPU, <target>, 590.48.01, [N/A]",
+    "head": "568d915074e4cd9fc90bf3452903738baf6c9dfb",
+    "desktop_active": true,
+    "power_cap_fixed": false,
+    "note": "Compute-only benchmark. Dynamic Boost, desktop and OEM power policy remain active; no clocks/power controls written.",
+    "runs": [
+      {
+        "name": "mma-1",
+        "command": [
+          "<lab>/artifacts/cuda128/mma_bench",
+          "20000",
+          "5"
+        ],
+        "exit": 0,
+        "seconds": 4.790401748000022
+      },
+      {
+        "name": "tensor-1",
+        "command": [
+          "python3",
+          "diagnostics/bench/tensor_modes_driver_runner.py",
+          "<lab>/artifacts/cuda128/tensor_modes_issue_sm89.cubin",
+          "--sha256",
+          "b7e23c0d7922311c4319352640255e84caad02642fcdc901270c97a0cee4eac1",
+          "--expect-uuid",
+          "<gpu-uuid>",
+          "--expect-power-limit",
+          "N/A"
+        ],
+        "exit": 0,
+        "seconds": 0.9260656020000511
+      },
+      {
+        "name": "gemm-1",
+        "command": [
+          "<lab>/artifacts/cuda128/gemm_bench"
+        ],
+        "exit": 0,
+        "seconds": 4.826403064000033
+      },
+      {
+        "name": "mma-2",
+        "command": [
+          "<lab>/artifacts/cuda128/mma_bench",
+          "20000",
+          "5"
+        ],
+        "exit": 0,
+        "seconds": 4.742268602000024
+      },
+      {
+        "name": "tensor-2",
+        "command": [
+          "python3",
+          "diagnostics/bench/tensor_modes_driver_runner.py",
+          "<lab>/artifacts/cuda128/tensor_modes_issue_sm89.cubin",
+          "--sha256",
+          "b7e23c0d7922311c4319352640255e84caad02642fcdc901270c97a0cee4eac1",
+          "--expect-uuid",
+          "<gpu-uuid>",
+          "--expect-power-limit",
+          "N/A"
+        ],
+        "exit": 0,
+        "seconds": 0.9365976710000155
+      },
+      {
+        "name": "gemm-2",
+        "command": [
+          "<lab>/artifacts/cuda128/gemm_bench"
+        ],
+        "exit": 0,
+        "seconds": 4.871197520999999
+      },
+      {
+        "name": "mma-3",
+        "command": [
+          "<lab>/artifacts/cuda128/mma_bench",
+          "20000",
+          "5"
+        ],
+        "exit": 0,
+        "seconds": 4.765077136999992
+      },
+      {
+        "name": "tensor-3",
+        "command": [
+          "python3",
+          "diagnostics/bench/tensor_modes_driver_runner.py",
+          "<lab>/artifacts/cuda128/tensor_modes_issue_sm89.cubin",
+          "--sha256",
+          "b7e23c0d7922311c4319352640255e84caad02642fcdc901270c97a0cee4eac1",
+          "--expect-uuid",
+          "<gpu-uuid>",
+          "--expect-power-limit",
+          "N/A"
+        ],
+        "exit": 0,
+        "seconds": 0.930377362999991
+      },
+      {
+        "name": "gemm-3",
+        "command": [
+          "<lab>/artifacts/cuda128/gemm_bench"
+        ],
+        "exit": 0,
+        "seconds": 4.93491925699999
+      }
+    ],
+    "seconds": 33.66541910171509,
+    "complete": true
+  },
+  "unlocked_post_health": {
+    "health_after": {
+      "exit": 1,
+      "stdout": "-- No entries --\n",
+      "stderr": ""
+    },
+    "profile": {
+      "exit": 0,
+      "stdout": "performance\n",
+      "stderr": ""
+    },
+    "powerd": {
+      "exit": 0,
+      "stdout": "active\n",
+      "stderr": ""
+    },
+    "gpu_apps": {
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    "gpu_identity": {
+      "exit": 0,
+      "stdout": "<gpu-uuid>, NVIDIA GeForce RTX 4080 Laptop GPU, <target>, 590.48.01\n",
+      "stderr": ""
+    }
+  },
+  "unlocked_power_settings": {
+    "sysfs": {
+      "/sys/firmware/acpi/platform_profile": "performance",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_driver": "intel_pstate",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor": "powersave",
+      "/sys/devices/system/cpu/cpu0/cpufreq/energy_performance_preference": "performance",
+      "/sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq": "5200000",
+      "/sys/class/power_supply/ADP1/online": "1",
+      "/sys/class/power_supply/BAT0/status": "Full",
+      "/sys/class/power_supply/BAT0/capacity": "100"
+    },
+    "services": {
+      "powerprofiles": {
+        "exit": 0,
+        "stdout": "performance\n",
+        "stderr": ""
+      },
+      "powerd_enabled": {
+        "exit": 0,
+        "stdout": "enabled\n",
+        "stderr": ""
+      },
+      "powerd_active": {
+        "exit": 0,
+        "stdout": "active\n",
+        "stderr": ""
+      }
+    },
+    "display_status": {
+      "/sys/class/drm/card0-HDMI-A-1/status": "disconnected",
+      "/sys/class/drm/card0-eDP-1/status": "connected",
+      "/sys/class/drm/card0-DP-2/status": "disconnected",
+      "/sys/class/drm/card0-DP-3/status": "connected",
+      "/sys/class/drm/card0-DP-1/status": "disconnected"
+    }
+  }
+}

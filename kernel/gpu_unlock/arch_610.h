@@ -16,6 +16,7 @@ enum gpu_unlock_booter_arch {
 #define GU_AD103_RTX_4070_TI_SUPER 0x2705u
 #define GU_AD103_RTX_4070 0x2709u
 #define GU_AD103M_RTX_4090_MOBILE 0x2757u
+#define GU_AD104M_RTX_4080_MOBILE 0x27e0u /* experimental mobile target */
 #define GU_AD104_RTX_4070_TI 0x2782u
 #define GU_AD104_RTX_4070_SUPER 0x2783u
 #define GU_AD104_RTX_4070 0x2786u

@@ -118,6 +118,7 @@ other boards, memory configurations and laptop models remain unverified.
 | `2705` | RTX 4070 Ti SUPER | AD103 | `ad103_experimental`, exact | one card, matched stock/unlocked | [report](docs/ada-2705-report.md) |
 | `2709` | RTX 4070 | AD103 | `ad103_experimental`, exact | one card, matched | [report](docs/ada-2709-report.md) |
 | `2757` | RTX 4090 Laptop GPU | AD103M | `ad103m_experimental`, exact | Clevo: unlocked, no throughput change; Lenovo: 2× on two cold boots | [report](docs/ada-2757-report.md), [Lenovo](https://github.com/JustAResearcher/gpu-unlock-ada/issues/4#issuecomment-6397961415) |
+| `27e0` | RTX 4080 Laptop GPU | AD104M | `ad104m_experimental`, exact | one HP laptop, one cold-entry boot; 2.01x FP16/BF16 issue, same-policy GEMM comparison | [report](docs/ada-27e0-report.md) |
 | `2782` | RTX 4070 Ti | AD104 | `ad104_experimental`, exact | one card in a VFIO guest, matched; one bare-metal owner report | [report](docs/ada-2782-report.md), [#15](https://github.com/JustAResearcher/gpu-unlock-ada/pull/15) |
 | `2783` | RTX 4070 SUPER | AD104 | `ad104_experimental`, exact | one card, matched | [report](docs/ada-2783-report.md) |
 | `2786` | RTX 4070 | AD104 | `ad104_experimental`, exact | one card; three owner reports | [report](docs/ada-2786-report.md), [#11](https://github.com/JustAResearcher/gpu-unlock-ada/pull/11) |

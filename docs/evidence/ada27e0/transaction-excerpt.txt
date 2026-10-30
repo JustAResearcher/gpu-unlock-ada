@@ -1,0 +1,81 @@
+# Selected target transaction: entry through unlocked, unbroken order.
+[    2.326946] pci <target>: entry: plm=0xffffff8f ss0=0x10763075 ss1=0x4 wpr2_hi=0x0
+[    2.327316] pci <target>: AD102 permission before-firmware: WPR_CFG[0x1fa7cc]=0x4cb8f before=0x4cb8f expected=0xfffff0ff required=1 valid=1 pci=0x27e010de chip=0x194000a1
+[    2.327771] pci <target>: AD102 permission before-firmware: FBPA[0x9a0148]=0xffffff0f before=0xffffff0f expected=0xffffffff required=0 valid=1 pci=0x27e010de chip=0x194000a1
+[    2.328112] pci <target>: AD102 permission before-firmware: WPR[0x1fa7c4]=0x4cb8f before=0x4cb8f expected=0xffffffff required=1 valid=1 pci=0x27e010de chip=0x194000a1
+[    2.328491] pci <target>: AD102 permission before-firmware: FEAT[0x823804]=0xffffff8f before=0xffffff8f expected=0xffffffff required=1 valid=1 pci=0x27e010de chip=0x194000a1
+[    2.328833] pci <target>: AD102 before-firmware: readout1=0x410080 fields=0 0 2 0 0 2 0 2 0 valid=1 full=0
+[    2.329176] pci <target>: FWSEC: reading PROM at 0x300000
+[    2.626563] pci <target>: FWSEC: PROM bytes=1048576 signature=0xaa55
+[    2.627101] gpu_unlock: ROM chain: pos=0x0 data=0x52494350 bytes=65024 type=0x0 last=0
+[    2.627647] gpu_unlock: ROM chain: pos=0xfe00 data=0x52494350 bytes=85504 type=0x3 last=0
+[    2.628188] gpu_unlock: ROM chain: pos=0x24c00 data=0x5344504e bytes=24576 type=0xe0 last=0
+[    2.628728] gpu_unlock: ROM chain: pos=0x2ac00 data=0x5344504e bytes=486912 type=0xe0 last=128
+[    2.629269] gpu_unlock: ROM expansion: base=0xfe00 ext=0x24c00 adjust=0x14e00
+[    2.629806] gpu_unlock: ROM BIT: offset=0x1b0 size=12 stride=6 tokens=19 adjust=0x14e00
+[    2.630346] gpu_unlock: ROM ucode table: offset=0xa184f version=1 header=6 stride=6 entries=16
+[    2.630883] gpu_unlock: FWSEC descriptor: offset=0x4545c ROM_bytes=1048576 header=0x32c0301
+[    2.631426] gpu_unlock: FWSEC geometry: image_off=0x45788 size=0x10300 imem=0xf500 va=0x0 pa=0x0 dmem=0xd80 pa=0x0 pkc=0xb24 interface=0x1c engine=0x400 ucode=9 signatures=2 versions=0x3 bytes=768
+[    2.632078] gpu_unlock: FWSEC interface: offset=0x1c version=1 header=4 stride=8 entries=2 FRTS=0x2ff800000
+[    2.632482] gpu_unlock: FWSEC mapper: version=3 size=64 cmd_offset=0xd40 cmd_size=64
+[    2.632840] pci <target>: FWSEC fuse: raw=0x1 version=1
+[    2.633207] gpu_unlock: FWSEC signature selection: versions=0x3 fuse_version=1 sig_bytes=384
+[    2.633999] pci <target>: Falcon reset begin: base=0x110000
+[    2.635897] pci <target>: poll timeout tolerated: reg=0x1100f4 last=0x47b7 mask=0x80000000 expected=0x80000000 budget_us=1000
+[    2.636690] pci <target>: Falcon pre-reset timeout tolerated per HW bug 3419321
+[    2.637611] pci <target>: Falcon reset done: base=0x110000 hwcfg=0x67b7 chip=0x194000a1
+[    2.638362] pci <target>: Falcon DMA: base=0x110000 dest=0x0 offset=0x0 src=0xfae20000 size=0xf500 cmd=0x614
+[    2.639149] pci <target>: Falcon DMA: base=0x110000 dest=0x0 offset=0x0 src=0xfae2f500 size=0xd80 cmd=0x600
+[    2.639954] pci <target>: Falcon start: base=0x110000 cpuctl=0x10 code_va=0x0 sig_dmem=0xb24 engine_mask=0x400 ucode=9 mailbox=0x0:0x0
+[    2.768179] pci <target>: FWSEC result: scratch=0x0 expected_hi16=0
+[    2.768640] pci <target>: FWSEC WPR2: low=0x2ff8000 high=0x2ff8e00 expected_page=0x2ff800 end=0x2ff900000
+[    2.769020] pci <target>: Falcon reset begin: base=0x840000
+[    2.770440] pci <target>: poll timeout tolerated: reg=0x8400f4 last=0x67b7 mask=0x80000000 expected=0x80000000 budget_us=1000
+[    2.771487] pci <target>: Falcon pre-reset timeout tolerated per HW bug 3419321
+[    2.772565] pci <target>: Falcon reset done: base=0x840000 hwcfg=0x67b7 chip=0x194000a1
+[    2.773586] pci <target>: Falcon DMA: base=0x840000 dest=0x0 offset=0x100 src=0xffff0000 size=0x7d00 cmd=0x614
+[    2.775360] pci <target>: Falcon DMA: base=0x840000 dest=0x0 offset=0x0 src=0xffff7e00 size=0x6000 cmd=0x600
+[    2.776014] pci <target>: Falcon start: base=0x840000 cpuctl=0x10 code_va=0x100 sig_dmem=0x10 engine_mask=0x1 ucode=3 mailbox=0x0:0xfffdf000
+[    2.886371] pci <target>: AD102 permission after-payload: WPR_CFG[0x1fa7cc]=0xfffff0ff before=0x4cb8f expected=0xfffff0ff required=1 valid=1 pci=0x27e010de chip=0x194000a1
+[    2.887824] pci <target>: AD102 permission after-payload: FBPA[0x9a0148]=0xffffff0f before=0xffffff0f expected=0xffffffff required=0 valid=1 pci=0x27e010de chip=0x194000a1
+[    2.889308] pci <target>: AD102 permission after-payload: WPR[0x1fa7c4]=0xffffffff before=0x4cb8f expected=0xffffffff required=1 valid=1 pci=0x27e010de chip=0x194000a1
+[    2.890784] pci <target>: AD102 permission after-payload: FEAT[0x823804]=0xffffffff before=0xffffff8f expected=0xffffffff required=1 valid=1 pci=0x27e010de chip=0x194000a1
+[    2.891953] pci <target>: AD102 after-payload: readout1=0x410080 fields=0 0 2 0 0 2 0 2 0 valid=1 full=0
+[    2.893066] pci <target>: AD102 payload result: boot=0 halt=0 marker=0x67b00001 expected=0x67b00001 marker_ok=1 required_permissions=1 cpuctl=0x10 halted=1 debug=0xda550000 ss0=0x10763075 ss1=0x4
+[    2.894173] pci <target>: selector read: SS0=0x10763075 expected_unlock=0x88888888
+[    2.895260] pci <target>: selector write: SS0=0x88888888
+[    2.896299] pci <target>: selector result: SS0=0x88888888 expected=0x88888888 matched=1
+[    2.897311] pci <target>: selector read: SS1=0x4 expected_unlock=0x8
+[    2.898258] pci <target>: selector write: SS1=0x8
+[    2.899156] pci <target>: selector result: SS1=0x8 expected=0x8 matched=1
+[    2.899983] pci <target>: AD102 selectors-applied: readout1=0x0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+[    2.900720] pci <target>: pre-FLR selectors: ss0=0x88888888 expected=0x88888888 ss1=0x8 expected=0x8
+[    2.901331] pci <target>: AD102 pre-FLR: readout1=0x0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+[    2.917760] pci <target>: vgaarb: deactivate vga console
+[    2.917770] pci <target>: PCIe FLR begin: BME=0 DMA retained, chip=0x194000a1
+[    3.022458] pci <target>: PCIe FLR returned: result=0
+[    3.022624] pci <target>: post-FLR BAR ready: chip=0x194000a1
+[    3.254502] pci <target>: post-FLR GFW result: error=0 pci=0x27e010de plm=0x8b8f boot=0x3ff cpuctl=0x10 budget_us=2050000
+[    3.254524] pci <target>: engine reset assert: phase=post-FLR base=0x840000 before=0x0 write=0x1
+[    3.254545] pci <target>: engine reset propagation: phase=post-FLR base=0x840000 first=0x1 tenth=0x1
+[    3.254552] pci <target>: engine reset asserted: phase=post-FLR base=0x840000 error=0 last=0x1
+[    3.254560] pci <target>: engine reset release: phase=post-FLR base=0x840000 before=0x1 write=0x0
+[    3.254688] pci <target>: engine reset released: phase=post-FLR base=0x840000 engine=0x0 hwcfg2=0x67b7
+[    3.254706] pci <target>: post-FLR SEC2 reset released, GSP halted, BME=0 pending=0 WPR2=1ffffe00:00000000 SS0=88888888 SS1=00000008
+[    3.254719] pci <target>: AD102 permission post-FLR: WPR_CFG[0x1fa7cc]=0x4cb8f before=0x4cb8f expected=0xfffff0ff required=1 valid=1 pci=0x27e010de chip=0x194000a1
+[    3.254740] pci <target>: AD102 permission post-FLR: FBPA[0x9a0148]=0xffffff0f before=0xffffff0f expected=0xffffffff required=0 valid=1 pci=0x27e010de chip=0x194000a1
+[    3.254754] pci <target>: AD102 permission post-FLR: WPR[0x1fa7c4]=0x4cb8f before=0x4cb8f expected=0xffffffff required=1 valid=1 pci=0x27e010de chip=0x194000a1
+[    3.254764] pci <target>: AD102 permission post-FLR: FEAT[0x823804]=0xffffffff before=0xffffff8f expected=0xffffffff required=1 valid=1 pci=0x27e010de chip=0x194000a1
+[    3.254775] pci <target>: AD102 post-FLR: readout1=0x0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+[    3.274355] pci <target>: driver probe resources: phase=handoff empty=1
+[    3.274362] pci <target>: restore streaming mask: actual=0xffffffff expected=0xffffffff
+[    3.274365] pci <target>: restore coherent mask: actual=0xffffffff expected=0xffffffff
+[    3.274370] pci <target>: restore PCI command: actual=0x3 original=0x3 mask=0x6
+[    3.274373] pci <target>: gpu_unlock: unlocked
+
+# Postboot lspci -nnk target excerpt:
+<target> VGA compatible controller [0300]: NVIDIA Corporation AD104M [GeForce RTX 4080 Max-Q / Mobile] [10de:27e0] (rev a1)
+	DeviceName: NVIDIA Graphics Device
+	Subsystem: Hewlett-Packard Company AD104M [GeForce RTX 4080 Max-Q / Mobile] [103c:8bad]
+	Kernel driver in use: nvidia
+	Kernel modules: nvidiafb, nouveau, nvidia_drm, nvidia

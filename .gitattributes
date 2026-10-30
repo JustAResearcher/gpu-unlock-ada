@@ -42,3 +42,6 @@
 
 # Preserve exact native RTX 4070 evidence bytes across platforms.
 /docs/evidence/ada2786/* -text
+
+# Preserve sanitized RTX 4080 Laptop evidence and checksums verbatim.
+/docs/evidence/ada27e0/* -text

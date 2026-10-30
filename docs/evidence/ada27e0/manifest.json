@@ -1,0 +1,133 @@
+{
+  "head": "568d915074e4cd9fc90bf3452903738baf6c9dfb",
+  "cuda_toolkit": "12.8.1",
+  "nvcc": "12.8.93",
+  "commands": [
+    [
+      "lab/toolchains/cuda-12.8.1/bin/nvcc",
+      "-ccbin",
+      "system/bin/g++-12",
+      "-O3",
+      "-arch=sm_89",
+      "-std=c++17",
+      "--cudart=shared",
+      "-Llab/toolchains/cuda-12.8.1/lib",
+      "-Xlinker",
+      "-rpath",
+      "-Xlinker",
+      "lab/toolchains/cuda-12.8.1/lib",
+      "-o",
+      "lab/artifacts/cuda128/mma_bench",
+      "diagnostics/bench/mma_bench.cu"
+    ],
+    [
+      "lab/toolchains/cuda-12.8.1/bin/nvcc",
+      "-ccbin",
+      "system/bin/g++-12",
+      "-O3",
+      "-arch=sm_89",
+      "-std=c++17",
+      "--cudart=shared",
+      "-Llab/toolchains/cuda-12.8.1/lib",
+      "-Xlinker",
+      "-rpath",
+      "-Xlinker",
+      "lab/toolchains/cuda-12.8.1/lib",
+      "-o",
+      "lab/artifacts/cuda128/validate_gemm",
+      "diagnostics/bench/validate_gemm.cu",
+      "-lcublas"
+    ],
+    [
+      "lab/toolchains/cuda-12.8.1/bin/nvcc",
+      "-ccbin",
+      "system/bin/g++-12",
+      "-O3",
+      "-arch=sm_89",
+      "-std=c++17",
+      "--cudart=shared",
+      "-Llab/toolchains/cuda-12.8.1/lib",
+      "-Xlinker",
+      "-rpath",
+      "-Xlinker",
+      "lab/toolchains/cuda-12.8.1/lib",
+      "-o",
+      "lab/artifacts/cuda128/gemm_bench",
+      "docs/evidence/rtx4090-pr1-stock/gemm_bench.cu",
+      "-lcublas"
+    ],
+    [
+      "lab/toolchains/cuda-12.8.1/bin/nvcc",
+      "-ccbin",
+      "system/bin/g++-12",
+      "-ptx",
+      "-arch=sm_89",
+      "-O3",
+      "-std=c++17",
+      "-o",
+      "lab/artifacts/cuda128/tensor_modes_issue_sm89.ptx",
+      "diagnostics/bench/tensor_modes_issue.cu"
+    ],
+    [
+      "lab/toolchains/cuda-12.8.1/bin/ptxas",
+      "-arch=sm_89",
+      "-O3",
+      "-o",
+      "lab/artifacts/cuda128/tensor_modes_issue_sm89.cubin",
+      "lab/artifacts/cuda128/tensor_modes_issue_sm89.ptx"
+    ]
+  ],
+  "redist": {
+    "cuda_nvcc": {
+      "relative_path": "cuda_nvcc/linux-x86_64/cuda_nvcc-linux-x86_64-12.8.93-archive.tar.xz",
+      "sha256": "9961b3484b6b71314063709a4f9529654f96782ad39e72bf1e00f070db8210d3",
+      "md5": "5d7d11d3c8713fe8f19a2228b2b2b4bf",
+      "size": "79015464"
+    },
+    "cuda_cudart": {
+      "relative_path": "cuda_cudart/linux-x86_64/cuda_cudart-linux-x86_64-12.8.90-archive.tar.xz",
+      "sha256": "8d566b5fe745c46842dc16945cf36686227536decd2302c372be86da37faca68",
+      "md5": "4c374fabd7d36cac110ada9aea3c0743",
+      "size": "1354240"
+    },
+    "cuda_cccl": {
+      "relative_path": "cuda_cccl/linux-x86_64/cuda_cccl-linux-x86_64-12.8.90-archive.tar.xz",
+      "sha256": "0740e9e01e4f15e17c5ab8d68bba4f8ec0eb6b84edccba4ac45112d2d2174e4b",
+      "md5": "97f6ad8c8717cc555974d03483200f43",
+      "size": "928524"
+    },
+    "cuda_cuobjdump": {
+      "relative_path": "cuda_cuobjdump/linux-x86_64/cuda_cuobjdump-linux-x86_64-12.8.90-archive.tar.xz",
+      "sha256": "dbf41355a0f7a8aa491c1839a6c6ff8df02cdb6c6eefd66360543616c1b4980f",
+      "md5": "2c99dff93966540faabdc06bfd077d7b",
+      "size": "207644"
+    }
+  },
+  "sha256": {
+    "lab/artifacts/cuda128/tensor_modes_issue_sm89.cubin": "b7e23c0d7922311c4319352640255e84caad02642fcdc901270c97a0cee4eac1",
+    "lab/artifacts/cuda128/tensor_modes_issue_sm89.ptx": "f2c36449a48e98d4d30a9c2500425b37c1eaf8da884f0eca9878ed4840740f5d",
+    "lab/artifacts/cuda128/gemm_bench": "29a7d06f89a2297c2a530612fab7b6f1214b27dc729bfda7b0d2fdb370a32281",
+    "lab/artifacts/cuda128/mma_bench": "dba6fa000706df09fc7e8ed3bbcfd227d1185ea87f906fba6bd237f456fe873f",
+    "lab/artifacts/cuda128/validate_gemm": "a464f42d78da40bd6154a078eafd3f88e413847ff3ac35c4cc15e09e8add1aeb",
+    "lab/gpu-unlock-ada/diagnostics/bench/mma_bench.cu": "7a02decd30c017ec05b61d25c34cf46958242ceeed65852c31ea0736dbdefca4",
+    "lab/gpu-unlock-ada/diagnostics/bench/validate_gemm.cu": "9bebdbd5fc0975ec6f48c0356f51c4218dd6768cc81eff107dfb5448f10e3c69",
+    "lab/gpu-unlock-ada/docs/evidence/rtx4090-pr1-stock/gemm_bench.cu": "c35ec706f9587b9749bf369a35d4dfca9e88c666c4582726490e0138cdd6e240",
+    "lab/gpu-unlock-ada/diagnostics/bench/tensor_modes_issue.cu": "46cc852ec15ba2d12a259d7698e8fcd2104dfb07a5947a38d46c7bd6b5f5462f",
+    "lab/gpu-unlock-ada/diagnostics/bench/bench_args.h": "bd548217d69e262df0dc682b142bbda7f32fb6061fcdbe448fa3882ddfb13400",
+    "lab/gpu-unlock-ada/diagnostics/bench/gemm_inputs.h": "c6005990cbc8ebc584e46ceca6b04a86213bd8399bb59bad3881a9c3b86a436d",
+    "lab/gpu-unlock-ada/diagnostics/bench/tensor_modes_driver_runner.py": "b8dc74765959a9102f5bda7c396ea7457b5669dcefa4fbaf326bc3046d2920aa",
+    "lab/gpu-unlock-ada/tools/read_sm_rates.py": "1e5ef78dfcbe8ce5960fd81c81eb1ede86f08babbb8715d7e40ac1e8f9329421",
+    "lab/plans/run-benchmark.py": "f33571ceb776630fbb65597f23222dc126561727b522ca6497c072a4e8921538",
+    "lab/toolchains/cuda-12.8.1/lib/libcudart.so.12.8.90": "c3a75b33af334a3486d197dbd1584a2985183ba4688d237a2be5f2f679329920",
+    "system/lib/x86_64-linux-gnu/libcuda.so.590.48.01": "e24ade728a7b2280b60f5603855db23ca137d87d342ecac4219157d2cc5c3694",
+    "system/cuda-12.8/targets/x86_64-linux/lib/libcublas.so.12.8.3.14": "f6c022dc5fd4583164c5a964f3b470c5170eecd647820831dffe008d8441de99",
+    "system/cuda-12.8/targets/x86_64-linux/lib/libcublasLt.so.12.8.3.14": "4ef47ce60325811dfce57acbc2ced3000dbb6c50ce65f4ec34340b1897d6911a"
+  },
+  "provenance": {
+    "benchmark_manifest_identical_in_both_states": true,
+    "matched_sha256_entries": 18,
+    "experimental_module_head": "568d915074e4cd9fc90bf3452903738baf6c9dfb",
+    "ad104m_adaptation_commit": "7a9c81f23f397baa223d9913b282e8244ce06f7d",
+    "path_labels": "lab/ and system/ are normalized relative locations, not literal reproduction paths; binaries and libraries are not redistributed."
+  }
+}

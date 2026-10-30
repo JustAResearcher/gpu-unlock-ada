@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-2.0-only
-"""Print exact, supported NVIDIA PCI boot options without changing the host."""
+"""Print exact NVIDIA PCI boot options, including experimental targets."""
 import re
 import subprocess
 import sys
@@ -15,6 +15,7 @@ TARGETS = {
     "2705": ("RTX 4070 Ti SUPER (experimental)", "ad103_experimental"),
     "2709": ("RTX 4070 AD103 (experimental)", "ad103_experimental"),
     "2757": ("RTX 4090 Laptop GPU (experimental)", "ad103m_experimental"),
+    "27e0": ("RTX 4080 Laptop GPU (experimental)", "ad104m_experimental"),
     "2782": ("RTX 4070 Ti (experimental)", "ad104_experimental"),
     "2783": ("RTX 4070 SUPER (experimental)", "ad104_experimental"),
     "2786": ("RTX 4070 (experimental)", "ad104_experimental"),

@@ -44,7 +44,8 @@ void test_device_log(const char *format, ...) {
 static u64 mask;
 static struct pci_dev dev;
 static bool fake_ada_id(void) {
-    return dev.device==GU_AD102_RTX_4090 ||
+    return dev.device==GU_AD104M_RTX_4080_MOBILE ||
+           dev.device==GU_AD102_RTX_4090 ||
            dev.device==GU_AD103_RTX_4080_SUPER ||
            dev.device==GU_AD103_RTX_4080 ||
            dev.device==GU_AD103_RTX_4070_TI_SUPER ||
@@ -298,6 +299,13 @@ static void check_published_image(void) {
         assert(!memcmp((u8 *)w->booter_cpu+w->booter_hdr.patch_loc,
                        w->booter_fw->data+72+w->booter_image_size,384));
         assert(w->booter_image_size==0xde00 && w->boot_desc.image_size==36864);
+        if(dev.device==GU_AD104M_RTX_4080_MOBILE) {
+            assert(w->chip_entry==0x194000a1);
+            assert(get64(meta+176)==(0x2ffaull<<20));
+            assert(get64(meta+184)==0x2ff900000ull);
+            assert(get64(meta+152)==0x2ff800000ull);
+            assert(get64(meta+168)==0x2ff900000ull);
+        }
         if(dev.device==GU_AD103_RTX_4080) {
             assert(get64(meta+176)==(32ull<<30));
             assert(get64(meta+184)==0x7fff00000ull);
@@ -390,6 +398,17 @@ int main(int argc, char **argv) {
     assert(!strcmp(unlock_assets(&dev)->signature_section, ".fwsignature_ad10x"));
     assert(unlock_assets(&dev)->boot_image_size==36864);
     assert(is_ad102(&w));
+    dev.device=GU_AD104M_RTX_4080_MOBILE;
+    assert(!strcmp(unlock_assets(&dev)->booter, BOOTER_FILE_AD102));
+    assert(!strcmp(unlock_assets(&dev)->gsp, GSP_FILE));
+    assert(!strcmp(unlock_assets(&dev)->boot, BOOT_FILE_AD102));
+    assert(!strcmp(unlock_assets(&dev)->desc, BOOT_DESC_FILE_AD102));
+    assert(!strcmp(unlock_assets(&dev)->payload, V67_FILE_AD102));
+    assert(!strcmp(unlock_assets(&dev)->signature_section, ".fwsignature_ad10x"));
+    assert(unlock_assets(&dev)->arch==GU_BOOTER_AD10X);
+    assert(unlock_assets(&dev)->boot_image_size==36864);
+    assert(is_ad102(&w));
+    assert(unlock_transaction_selector(&w)==-EPROTO && !fake.writes);
     dev.device=GU_AD104_RTX_4070;
     assert(!strcmp(unlock_assets(&dev)->booter, BOOTER_FILE_AD102));
     assert(!strcmp(unlock_assets(&dev)->payload, V67_FILE_AD102));
