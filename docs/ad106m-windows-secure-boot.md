@@ -131,6 +131,44 @@ stutter or warm-restart behavior. **This implementation does not maintain the
 unlock across the tested sleep/wake cycle.** No runtime register writes, driver
 patch, sleep-policy workaround or extra Secure Boot trust was installed.
 
+### Loss during normal use without a recorded system sleep
+
+A later same-kernel observation broadens the persistence problem. Three fresh
+checks showed accelerated rates during normal use; roughly six hours after the
+last successful check, two fresh checks showed stock-like rates. The owner
+reported normal use without a noticed power, lid, display or GPU-mode change.
+
+| Format | Earlier successful check, TFLOP/s | Later stock-like check, TFLOP/s |
+|---|---:|---:|
+| FP16 | 67.48 | 46.74 |
+| BF16 | 70.81 | 47.00 |
+| TF32 | 39.76 | 23.08 |
+| FP8 E4M3 | 141.57 | 92.64 |
+| FP32 control | 13.111 | 13.163 |
+
+All numerical checks passed. Driver, workload and Status component identity
+matched the retained reference. The bounded System-log query contained no
+sleep/wake, Display 4101 or NVIDIA-provider events between those measurements.
+Three error-report publications matched the already analyzed historical NPU
+reports. The exact loss time is unknown; this was not a continuous GPU-power
+trace and does not exclude an unlogged device-level transition or recovery.
+
+Preventing automatic system sleep is therefore not established as sufficient.
+[Issue #117](https://github.com/JustAResearcher/gpu-unlock-ada/issues/117) reports
+a targeted NVIDIA runtime-power workaround on a different laptop and driver.
+That is an experimental lead, not validation for this AD106M/621.01 case, and
+does not establish persistence across system sleep.
+
+The owner authorized a reversible NVIDIA-only policy trial after considering
+the possible idle/battery cost. The actual adapter class key was resolved
+dynamically, the installed signed driver was pinned, the absent original value
+was backed up, and DWORD `EnableRuntimePowerManagement=0` passed readback while
+the other adapter's value stayed unchanged. Static inspection found the option
+name and a code reference in 621.01; that does not establish runtime behavior.
+**The trial has not yet been validated after startup or prolonged use.** No
+driver binary, EFI, Secure Boot configuration or system sleep policy was changed,
+and no GPU reset or automatic restart was performed.
+
 ### Earlier observations
 
 The **first internal attempt reached READY but measured stock speed in two
