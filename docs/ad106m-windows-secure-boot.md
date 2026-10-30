@@ -165,9 +165,16 @@ dynamically, the installed signed driver was pinned, the absent original value
 was backed up, and DWORD `EnableRuntimePowerManagement=0` passed readback while
 the other adapter's value stayed unchanged. Static inspection found the option
 name and a code reference in 621.01; that does not establish runtime behavior.
-**The trial has not yet been validated after startup or prolonged use.** No
-driver binary, EFI, Secure Boot configuration or system sleep policy was changed,
-and no GPU reset or automatic restart was performed.
+The first subsequent full startup completed with the same driver hash, the
+NVIDIA policy still DWORD 0, the other adapters' values unchanged and Secure
+Boot reported enabled. A fresh five-format check passed all numerical checks:
+FP16 72.86, BF16 77.45, TF32 38.37, FP8 141.64 and FP32 13.145 TFLOP/s. The owner
+confirmed normal taskbar/menu interaction, app switching and screen brightness.
+**This is startup success, not evidence that the trial prevents later loss:**
+full startup already restored acceleration without the policy. Prolonged normal
+use and sleep/resume remain unvalidated. No driver binary, EFI, Secure Boot
+configuration or system sleep policy was changed, and no GPU reset or automatic
+restart was performed.
 
 ### Earlier observations
 
