@@ -220,11 +220,11 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable
     for (UINTN i = 0; i < g_gpu_count; i++) {
         DETECTED_GPU *gpu = &g_gpus[i];
 
-        LogWrite("[GPU %u] %ls (%ls) Bus=%u:%u.%u Vendor=%#x Dev=%#x SubVen=%#x SubDev=%#x BAR0=%#llx Display=%u Console=%u\n",
+        LogWrite("[GPU %u] %ls (%ls) Bus=%u:%u.%u Vendor=%#x Dev=%#x SubVen=%#x SubDev=%#x BAR0=%#llx Display=%u GOP=%u Console=%u\n",
                  (unsigned)i, gpu->model_name, gpu->chip_name,
                  (unsigned)gpu->bus, (unsigned)gpu->device, (unsigned)gpu->function,
                  gpu->vendor_id, gpu->device_id, gpu->subsys_vendor_id, gpu->subsys_device_id,
-                 (unsigned long long)gpu->bar0_base, gpu->is_display_adapter, gpu->is_console_display);
+                 (unsigned long long)gpu->bar0_base, gpu->is_display_adapter, gpu->has_active_gop, gpu->is_console_display);
 
         Print(L"[GPU "); PrintDec(i); Print(L"] ");
         PrintColor(EFI_WHITE | EFI_BLACK, gpu->model_name);
@@ -235,6 +235,8 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable
 
         if (gpu->is_console_display) {
             PrintColor(EFI_LIGHTMAGENTA | EFI_BLACK, L" [Active Console Display]\r\n");
+        } else if (gpu->has_active_gop) {
+            PrintColor(EFI_LIGHTCYAN | EFI_BLACK, L" [Active GOP Display]\r\n");
         } else if (gpu->is_display_adapter) {
             PrintColor(EFI_CYAN | EFI_BLACK, L" [Secondary Video Output]\r\n");
         } else {
@@ -298,20 +300,40 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable
         BOOLEAN unsafe_state = FALSE;
 
         /*
-         * Multi-GPU Ordered Unlock Strategy:
+         * Multi-GPU Ordered Unlock Strategy (3-tier display priority):
          * 1. Pass 1: Unlock headless / secondary GPUs (WITHOUT active video output).
          *    The screen stays completely live and all progress and diagnostics are printed.
          * 2. Pass 2: Unlock the primary display GPU (WITH video output), only if supported!
+         *
+         * Primary GPU detection priority:
+         *   Tier 1: is_console_display (DevicePath matches ConOut — strongest signal)
+         *   Tier 2: has_active_gop (GOP protocol with nonzero resolution found)
+         *   Tier 3: is_display_adapter (any UEFI driver bound — weakest, most universal)
+         *   Fallback: first detected GPU by PCI enumeration order
          */
 
         /* Determine which GPU index is the primary display adapter (to defer to Pass 2) */
         INTN primary_display_idx = -1;
+
+        /* Tier 1: Console display (strongest — exact match with UEFI ConOut) */
         for (UINTN i = 0; i < g_gpu_count; i++) {
             if (g_gpus[i].is_console_display) {
                 primary_display_idx = (INTN)i;
                 break;
             }
         }
+
+        /* Tier 2: Active GOP (GOP with active resolution → likely has a monitor) */
+        if (primary_display_idx < 0) {
+            for (UINTN i = 0; i < g_gpu_count; i++) {
+                if (g_gpus[i].has_active_gop) {
+                    primary_display_idx = (INTN)i;
+                    break;
+                }
+            }
+        }
+
+        /* Tier 3: Display adapter (UEFI driver bound — may or may not have a monitor) */
         if (primary_display_idx < 0) {
             for (UINTN i = 0; i < g_gpu_count; i++) {
                 if (g_gpus[i].is_display_adapter) {
@@ -319,6 +341,11 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable
                     break;
                 }
             }
+        }
+
+        /* Ultimate fallback: if nothing detected, first GPU is assumed primary */
+        if (primary_display_idx < 0 && g_gpu_count > 0) {
+            primary_display_idx = 0;
         }
 
         /* PASS 1: Unlock all GPUs WITHOUT active display output first */

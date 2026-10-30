@@ -46,7 +46,8 @@ typedef struct {
     /* State */
     EFI_HANDLE handle;
     EFI_PCI_IO_PROTOCOL *pci_io;
-    BOOLEAN is_display_adapter;  /* Has UEFI GOP driver bound (outputs display) */
+    BOOLEAN is_display_adapter;  /* Has any UEFI driver bound (BY_DRIVER/BY_CHILD_CONTROLLER) */
+    BOOLEAN has_active_gop;      /* Has EFI_GRAPHICS_OUTPUT_PROTOCOL with nonzero resolution */
     BOOLEAN is_console_display;  /* Specifically driving active UEFI text/graphics console */
     BOOLEAN unlock_selected;
     BOOLEAN unlocked_success;
