@@ -1,0 +1,36 @@
+{
+  "before": {
+    "gpu": "<gpu-uuid>, NVIDIA GeForce RTX 4080 Laptop GPU, <target>, 590.48.01, [N/A], 840, 6001",
+    "command": "0x20801230",
+    "rates": {
+      "imla0": 0,
+      "fmla16": 0,
+      "dp": 0,
+      "fmla32": 0,
+      "ffma": 0,
+      "imla1": 0,
+      "imla2": 0,
+      "imla3": 0,
+      "imla4": 0
+    },
+    "meaning": "0=full; 1=half; 2=quarter; higher values are further reductions",
+    "hardware_changes": false
+  },
+  "after": {
+    "gpu": "<gpu-uuid>, NVIDIA GeForce RTX 4080 Laptop GPU, <target>, 590.48.01, [N/A], 2430, 9001",
+    "command": "0x20801230",
+    "rates": {
+      "imla0": 0,
+      "fmla16": 0,
+      "dp": 0,
+      "fmla32": 0,
+      "ffma": 0,
+      "imla1": 0,
+      "imla2": 0,
+      "imla3": 0,
+      "imla4": 0
+    },
+    "meaning": "0=full; 1=half; 2=quarter; higher values are further reductions",
+    "hardware_changes": false
+  }
+}

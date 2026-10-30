@@ -1,0 +1,525 @@
+{
+  "schema": 1,
+  "kind": "offline-derived-summary",
+  "states": {
+    "stock": {
+      "mma": {
+        "f16/f16": {
+          "samples": 15,
+          "median": 106.1,
+          "min": 100.1,
+          "max": 107.6
+        },
+        "f16/f32": {
+          "samples": 15,
+          "median": 53.9,
+          "min": 53.0,
+          "max": 54.4
+        },
+        "bf16/f32": {
+          "samples": 15,
+          "median": 53.9,
+          "min": 53.5,
+          "max": 54.2
+        },
+        "s8/s32": {
+          "samples": 15,
+          "median": 216.9,
+          "min": 214.2,
+          "max": 221.9
+        },
+        "fp8/e4m3": {
+          "samples": 15,
+          "median": 107.0,
+          "min": 105.6,
+          "max": 107.8
+        },
+        "dp4a": {
+          "samples": 15,
+          "median": 54.6,
+          "min": 52.0,
+          "max": 56.5
+        },
+        "ffma": {
+          "samples": 15,
+          "median": 25.6,
+          "min": 24.9,
+          "max": 27.4
+        }
+      },
+      "checked_tensor": {
+        "f16_f32": {
+          "samples": 9,
+          "median": 53.76664250529885,
+          "min": 53.34545344715517,
+          "max": 54.56696576019904
+        },
+        "tf32": {
+          "samples": 9,
+          "median": 26.80389143503297,
+          "min": 26.541674502821508,
+          "max": 27.157983728516296
+        },
+        "u4_s32": {
+          "samples": 9,
+          "median": 427.2068706845786,
+          "min": 422.1196908328424,
+          "max": 438.67910686862524
+        }
+      },
+      "gemm": [
+        {
+          "mode": "BF16/FP32",
+          "n": 1024,
+          "samples": 15,
+          "median": 46.86373184357542,
+          "min": 43.42070072142603,
+          "max": 47.12701123595506
+        },
+        {
+          "mode": "BF16/FP32",
+          "n": 4096,
+          "samples": 15,
+          "median": 48.990830040908115,
+          "min": 46.86127815600394,
+          "max": 51.48421015574085
+        },
+        {
+          "mode": "BF16/FP32",
+          "n": 8192,
+          "samples": 15,
+          "median": 49.0360241206129,
+          "min": 48.00026142320482,
+          "max": 49.81092786180914
+        },
+        {
+          "mode": "FP16/FP32",
+          "n": 1024,
+          "samples": 15,
+          "median": 46.34910145728296,
+          "min": 44.337251585623676,
+          "max": 47.12701123595506
+        },
+        {
+          "mode": "FP16/FP32",
+          "n": 4096,
+          "samples": 15,
+          "median": 49.81820799917019,
+          "min": 46.66847408958236,
+          "max": 51.1480980161026
+        },
+        {
+          "mode": "FP16/FP32",
+          "n": 8192,
+          "samples": 15,
+          "median": 49.726961178938296,
+          "min": 49.08141537098807,
+          "max": 51.348059137304645
+        }
+      ],
+      "seeded_cases": 6,
+      "seeded_failures": 0,
+      "FP8_numerical_validation": false,
+      "telemetry": {
+        "samples": 239,
+        "duration_seconds": 47.813,
+        "temperature.gpu": {
+          "samples": 239,
+          "median": 63.0,
+          "min": 50.0,
+          "max": 69.0
+        },
+        "power.draw [W]": {
+          "samples": 239,
+          "median": 79.83,
+          "min": 23.51,
+          "max": 115.57
+        },
+        "clocks.current.graphics [MHz]": {
+          "samples": 239,
+          "median": 2445.0,
+          "min": 885.0,
+          "max": 2445.0
+        },
+        "clocks.current.sm [MHz]": {
+          "samples": 239,
+          "median": 2445.0,
+          "min": 885.0,
+          "max": 2445.0
+        },
+        "clocks.current.memory [MHz]": {
+          "samples": 239,
+          "median": 9001.0,
+          "min": 6001.0,
+          "max": 9001.0
+        },
+        "utilization.gpu [%]": {
+          "samples": 239,
+          "median": 100.0,
+          "min": 20.0,
+          "max": 100.0
+        },
+        "clocks_event_reasons.sw_power_cap": {
+          "active_samples": 92
+        },
+        "clocks_event_reasons.hw_thermal_slowdown": {
+          "active_samples": 0
+        }
+      },
+      "power-limits": {
+        "samples": 94,
+        "duration_seconds": 48.654629,
+        "current_limit_W": {
+          "samples": 94,
+          "median": 114.18,
+          "min": 113.01,
+          "max": 118.35
+        },
+        "requested_limit_W": {
+          "samples": 94,
+          "median": 114.18,
+          "min": 113.01,
+          "max": 118.35
+        },
+        "instantaneous_draw_W": {
+          "samples": 94,
+          "median": 76.43,
+          "min": 23.43,
+          "max": 118.99
+        },
+        "average_draw_W": {
+          "samples": 94,
+          "median": 78.70500000000001,
+          "min": 1.0,
+          "max": 115.57
+        },
+        "query_exit": {
+          "samples": 94,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        }
+      }
+    },
+    "unlocked": {
+      "mma": {
+        "f16/f16": {
+          "samples": 15,
+          "median": 107.0,
+          "min": 96.7,
+          "max": 107.5
+        },
+        "f16/f32": {
+          "samples": 15,
+          "median": 108.3,
+          "min": 107.2,
+          "max": 109.5
+        },
+        "bf16/f32": {
+          "samples": 15,
+          "median": 108.3,
+          "min": 107.0,
+          "max": 109.5
+        },
+        "s8/s32": {
+          "samples": 15,
+          "median": 216.7,
+          "min": 213.3,
+          "max": 220.8
+        },
+        "fp8/e4m3": {
+          "samples": 15,
+          "median": 214.8,
+          "min": 210.2,
+          "max": 217.2
+        },
+        "dp4a": {
+          "samples": 15,
+          "median": 52.9,
+          "min": 51.4,
+          "max": 57.6
+        },
+        "ffma": {
+          "samples": 15,
+          "median": 25.4,
+          "min": 23.9,
+          "max": 27.6
+        }
+      },
+      "checked_tensor": {
+        "f16_f32": {
+          "samples": 9,
+          "median": 107.00019468119685,
+          "min": 101.10365119576613,
+          "max": 108.00910988678565
+        },
+        "tf32": {
+          "samples": 9,
+          "median": 53.769319656929774,
+          "min": 53.433479039740575,
+          "max": 54.10588664599689
+        },
+        "u4_s32": {
+          "samples": 9,
+          "median": 424.7811087070426,
+          "min": 386.3460633932418,
+          "max": 433.4565162419621
+        }
+      },
+      "gemm": [
+        {
+          "mode": "BF16/FP32",
+          "n": 1024,
+          "samples": 15,
+          "median": 70.61117845117845,
+          "min": 63.74322188449848,
+          "max": 71.71665936414641
+        },
+        {
+          "mode": "BF16/FP32",
+          "n": 4096,
+          "samples": 15,
+          "median": 74.45785461396177,
+          "min": 71.61477843899792,
+          "max": 98.74032527253442
+        },
+        {
+          "mode": "BF16/FP32",
+          "n": 8192,
+          "samples": 15,
+          "median": 79.0812506776902,
+          "min": 74.6190341426038,
+          "max": 80.9405980241417
+        },
+        {
+          "mode": "FP16/FP32",
+          "n": 1024,
+          "samples": 15,
+          "median": 71.57515358361775,
+          "min": 65.2334036452005,
+          "max": 71.94346483704975
+        },
+        {
+          "mode": "FP16/FP32",
+          "n": 4096,
+          "samples": 15,
+          "median": 76.39463187776272,
+          "min": 73.52986050470331,
+          "max": 91.92050802679343
+        },
+        {
+          "mode": "FP16/FP32",
+          "n": 8192,
+          "samples": 15,
+          "median": 81.14275933307155,
+          "min": 76.11190791897532,
+          "max": 83.00485539871025
+        }
+      ],
+      "seeded_cases": 6,
+      "seeded_failures": 0,
+      "FP8_numerical_validation": false,
+      "telemetry": {
+        "samples": 162,
+        "duration_seconds": 32.379,
+        "temperature.gpu": {
+          "samples": 162,
+          "median": 69.0,
+          "min": 54.0,
+          "max": 77.0
+        },
+        "power.draw [W]": {
+          "samples": 162,
+          "median": 93.355,
+          "min": 23.79,
+          "max": 121.78
+        },
+        "clocks.current.graphics [MHz]": {
+          "samples": 162,
+          "median": 2445.0,
+          "min": 840.0,
+          "max": 2445.0
+        },
+        "clocks.current.sm [MHz]": {
+          "samples": 162,
+          "median": 2445.0,
+          "min": 840.0,
+          "max": 2445.0
+        },
+        "clocks.current.memory [MHz]": {
+          "samples": 162,
+          "median": 9001.0,
+          "min": 6001.0,
+          "max": 9001.0
+        },
+        "utilization.gpu [%]": {
+          "samples": 162,
+          "median": 100.0,
+          "min": 18.0,
+          "max": 100.0
+        },
+        "clocks_event_reasons.sw_power_cap": {
+          "active_samples": 59
+        },
+        "clocks_event_reasons.hw_thermal_slowdown": {
+          "active_samples": 0
+        }
+      },
+      "power-limits": {
+        "samples": 68,
+        "duration_seconds": 33.505628,
+        "current_limit_W": {
+          "samples": 68,
+          "median": 119.42,
+          "min": 118.07,
+          "max": 133.73
+        },
+        "requested_limit_W": {
+          "samples": 68,
+          "median": 119.42,
+          "min": 118.07,
+          "max": 133.73
+        },
+        "instantaneous_draw_W": {
+          "samples": 68,
+          "median": 91.08,
+          "min": 23.67,
+          "max": 132.46
+        },
+        "average_draw_W": {
+          "samples": 68,
+          "median": 93.0,
+          "min": 23.79,
+          "max": 121.78
+        },
+        "query_exit": {
+          "samples": 68,
+          "median": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        }
+      }
+    }
+  },
+  "matched_manifest_entries": 18,
+  "comparison": [
+    {
+      "family": "mma",
+      "mode": "f16/f16",
+      "before": 106.1,
+      "after": 107.0,
+      "change_percent": 0.8482563619227168
+    },
+    {
+      "family": "mma",
+      "mode": "f16/f32",
+      "before": 53.9,
+      "after": 108.3,
+      "change_percent": 100.92764378478662
+    },
+    {
+      "family": "mma",
+      "mode": "bf16/f32",
+      "before": 53.9,
+      "after": 108.3,
+      "change_percent": 100.92764378478662
+    },
+    {
+      "family": "mma",
+      "mode": "s8/s32",
+      "before": 216.9,
+      "after": 216.7,
+      "change_percent": -0.09220839096358846
+    },
+    {
+      "family": "mma",
+      "mode": "fp8/e4m3",
+      "before": 107.0,
+      "after": 214.8,
+      "change_percent": 100.74766355140187
+    },
+    {
+      "family": "mma",
+      "mode": "dp4a",
+      "before": 54.6,
+      "after": 52.9,
+      "change_percent": -3.1135531135531136
+    },
+    {
+      "family": "mma",
+      "mode": "ffma",
+      "before": 25.6,
+      "after": 25.4,
+      "change_percent": -0.7812500000000111
+    },
+    {
+      "family": "checked_tensor",
+      "mode": "f16_f32",
+      "before": 53.76664250529885,
+      "after": 107.00019468119685,
+      "change_percent": 99.00851103107597
+    },
+    {
+      "family": "checked_tensor",
+      "mode": "tf32",
+      "before": 26.80389143503297,
+      "after": 53.769319656929774,
+      "change_percent": 100.60266169655017
+    },
+    {
+      "family": "checked_tensor",
+      "mode": "u4_s32",
+      "before": 427.2068706845786,
+      "after": 424.7811087070426,
+      "change_percent": -0.5678190459925903
+    },
+    {
+      "family": "gemm",
+      "mode": "BF16/FP32",
+      "n": 1024,
+      "before": 46.86373184357542,
+      "after": 70.61117845117845,
+      "change_percent": 50.67340067340065
+    },
+    {
+      "family": "gemm",
+      "mode": "BF16/FP32",
+      "n": 4096,
+      "before": 48.990830040908115,
+      "after": 74.45785461396177,
+      "change_percent": 51.98324778695991
+    },
+    {
+      "family": "gemm",
+      "mode": "BF16/FP32",
+      "n": 8192,
+      "before": 49.0360241206129,
+      "after": 79.0812506776902,
+      "change_percent": 61.27174275625544
+    },
+    {
+      "family": "gemm",
+      "mode": "FP16/FP32",
+      "n": 1024,
+      "before": 46.34910145728296,
+      "after": 71.57515358361775,
+      "change_percent": 54.42619453924915
+    },
+    {
+      "family": "gemm",
+      "mode": "FP16/FP32",
+      "n": 4096,
+      "before": 49.81820799917019,
+      "after": 76.39463187776272,
+      "change_percent": 53.34680821725905
+    },
+    {
+      "family": "gemm",
+      "mode": "FP16/FP32",
+      "n": 8192,
+      "before": 49.726961178938296,
+      "after": 81.14275933307155,
+      "change_percent": 63.17658953879395
+    }
+  ]
+}

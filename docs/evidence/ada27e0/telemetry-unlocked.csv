@@ -1,0 +1,163 @@
+relative_seconds, pstate, temperature.gpu, power.draw [W], power.limit [W], clocks.current.graphics [MHz], clocks.current.sm [MHz], clocks.current.memory [MHz], utilization.gpu [%], clocks_event_reasons.sw_power_cap, clocks_event_reasons.hw_thermal_slowdown
+0.000000, P4, 54, 23.79, [N/A], 840, 840, 6001, 39, Not Active, Not Active
+0.203000, P4, 54, 23.79, [N/A], 840, 840, 6001, 39, Not Active, Not Active
+0.405000, P4, 54, 23.79, [N/A], 840, 840, 6001, 39, Not Active, Not Active
+0.606000, P3, 55, 36.79, [N/A], 840, 840, 6001, 27, Not Active, Not Active
+0.807000, P3, 55, 36.79, [N/A], 840, 840, 6001, 27, Not Active, Not Active
+1.008000, P2, 60, 48.71, [N/A], 2445, 2445, 8001, 100, Not Active, Not Active
+1.208000, P2, 60, 48.71, [N/A], 2445, 2445, 8001, 100, Not Active, Not Active
+1.409000, P2, 60, 48.71, [N/A], 2445, 2445, 8001, 100, Not Active, Not Active
+1.610000, P0, 61, 79.20, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+1.810000, P0, 61, 79.20, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+2.011000, P0, 63, 80.16, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+2.212000, P0, 63, 80.16, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+2.412000, P0, 63, 80.16, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+2.613000, P0, 63, 83.19, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+2.814000, P0, 63, 83.19, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+3.014000, P0, 65, 87.34, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+3.215000, P0, 65, 87.34, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+3.416000, P0, 65, 87.34, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+3.617000, P0, 66, 92.37, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+3.817000, P0, 66, 92.37, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+4.018000, P0, 65, 96.46, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+4.219000, P0, 65, 96.46, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+4.420000, P0, 65, 96.46, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+4.620000, P0, 65, 93.67, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+4.821000, P0, 65, 93.67, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+5.021000, P0, 68, 91.77, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+5.222000, P0, 68, 91.77, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+5.423000, P0, 68, 91.77, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+5.626000, P0, 62, 92.92, [N/A], 2445, 2445, 9001, 18, Not Active, Not Active
+5.827000, P0, 62, 92.92, [N/A], 2445, 2445, 9001, 18, Not Active, Not Active
+6.027000, P0, 65, 87.25, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+6.228000, P0, 65, 87.25, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+6.429000, P0, 65, 87.25, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+6.630000, P0, 61, 71.80, [N/A], 2445, 2445, 9001, 19, Not Active, Not Active
+6.831000, P0, 61, 71.80, [N/A], 2445, 2445, 9001, 19, Not Active, Not Active
+7.031000, P0, 62, 77.70, [N/A], 2445, 2445, 9001, 77, Active, Not Active
+7.233000, P0, 62, 77.70, [N/A], 2445, 2445, 9001, 77, Active, Not Active
+7.433000, P0, 62, 77.70, [N/A], 2445, 2445, 9001, 77, Active, Not Active
+7.634000, P0, 61, 53.19, [N/A], 2445, 2445, 9001, 20, Not Active, Not Active
+7.835000, P0, 61, 53.19, [N/A], 2445, 2445, 9001, 20, Not Active, Not Active
+8.036000, P0, 67, 97.99, [N/A], 2025, 2025, 9001, 100, Active, Not Active
+8.237000, P0, 67, 97.99, [N/A], 2025, 2025, 9001, 100, Active, Not Active
+8.438000, P0, 67, 97.99, [N/A], 2025, 2025, 9001, 100, Active, Not Active
+8.638000, P0, 67, 109.75, [N/A], 1965, 1965, 9001, 100, Active, Not Active
+8.839000, P0, 67, 109.75, [N/A], 1965, 1965, 9001, 100, Active, Not Active
+9.040000, P0, 68, 121.17, [N/A], 2055, 2055, 9001, 100, Active, Not Active
+9.241000, P0, 68, 121.17, [N/A], 2055, 2055, 9001, 100, Active, Not Active
+9.442000, P0, 68, 121.17, [N/A], 2055, 2055, 9001, 100, Active, Not Active
+9.644000, P0, 64, 52.67, [N/A], 1980, 1980, 9001, 19, Not Active, Not Active
+9.845000, P0, 64, 52.67, [N/A], 1980, 1980, 9001, 19, Not Active, Not Active
+10.046000, P0, 68, 109.92, [N/A], 1980, 1980, 9001, 100, Active, Not Active
+10.246000, P0, 68, 109.92, [N/A], 1980, 1980, 9001, 100, Active, Not Active
+10.447000, P0, 68, 114.80, [N/A], 1920, 1920, 9001, 100, Active, Not Active
+10.649000, P0, 68, 114.80, [N/A], 1920, 1920, 9001, 100, Active, Not Active
+10.850000, P0, 68, 114.80, [N/A], 1920, 1920, 9001, 100, Active, Not Active
+11.051000, P0, 69, 119.43, [N/A], 2100, 2100, 9001, 100, Active, Not Active
+11.251000, P0, 69, 119.43, [N/A], 2100, 2100, 9001, 100, Active, Not Active
+11.452000, P0, 66, 94.11, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+11.653000, P0, 66, 94.11, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+11.853000, P0, 66, 94.11, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+12.054000, P0, 66, 77.72, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+12.254000, P0, 66, 77.72, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+12.455000, P0, 67, 81.24, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+12.656000, P0, 67, 81.24, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+12.856000, P0, 67, 81.24, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+13.057000, P0, 68, 84.29, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+13.258000, P0, 68, 84.29, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+13.458000, P0, 69, 87.85, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+13.659000, P0, 69, 87.85, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+13.860000, P0, 69, 87.85, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+14.061000, P0, 70, 93.04, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+14.261000, P0, 70, 93.04, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+14.462000, P0, 69, 98.10, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+14.663000, P0, 69, 98.10, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+14.863000, P0, 69, 98.10, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+15.064000, P0, 69, 96.19, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+15.265000, P0, 69, 96.19, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+15.466000, P0, 69, 92.96, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+15.666000, P0, 69, 92.96, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+15.867000, P0, 69, 92.96, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+16.068000, P0, 67, 95.20, [N/A], 2445, 2445, 9001, 19, Not Active, Not Active
+16.268000, P0, 67, 95.20, [N/A], 2445, 2445, 9001, 19, Not Active, Not Active
+16.469000, P0, 68, 89.67, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+16.670000, P0, 68, 89.67, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+16.871000, P0, 68, 89.67, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+17.071000, P0, 65, 73.40, [N/A], 2445, 2445, 9001, 19, Not Active, Not Active
+17.272000, P0, 65, 73.40, [N/A], 2445, 2445, 9001, 19, Not Active, Not Active
+17.473000, P0, 70, 109.12, [N/A], 2295, 2295, 9001, 72, Active, Not Active
+17.674000, P0, 70, 109.12, [N/A], 2295, 2295, 9001, 72, Active, Not Active
+17.874000, P0, 70, 109.12, [N/A], 2295, 2295, 9001, 72, Active, Not Active
+18.075000, P0, 65, 91.75, [N/A], 2445, 2445, 9001, 20, Not Active, Not Active
+18.276000, P0, 65, 91.75, [N/A], 2445, 2445, 9001, 20, Not Active, Not Active
+18.477000, P0, 70, 94.93, [N/A], 1980, 1980, 9001, 100, Active, Not Active
+18.677000, P0, 70, 94.93, [N/A], 1980, 1980, 9001, 100, Active, Not Active
+18.878000, P0, 70, 94.93, [N/A], 1980, 1980, 9001, 100, Active, Not Active
+19.079000, P0, 71, 108.66, [N/A], 1935, 1935, 9001, 100, Active, Not Active
+19.280000, P0, 71, 108.66, [N/A], 1935, 1935, 9001, 100, Active, Not Active
+19.481000, P0, 71, 120.45, [N/A], 2010, 2010, 9001, 100, Active, Not Active
+19.681000, P0, 71, 120.45, [N/A], 2010, 2010, 9001, 100, Active, Not Active
+19.882000, P0, 71, 120.45, [N/A], 2010, 2010, 9001, 100, Active, Not Active
+20.083000, P0, 66, 98.74, [N/A], 2445, 2445, 9001, 20, Not Active, Not Active
+20.284000, P0, 66, 98.74, [N/A], 2445, 2445, 9001, 20, Not Active, Not Active
+20.484000, P0, 71, 99.56, [N/A], 1980, 1980, 9001, 100, Active, Not Active
+20.685000, P0, 71, 99.56, [N/A], 1980, 1980, 9001, 100, Active, Not Active
+20.887000, P0, 71, 99.56, [N/A], 1980, 1980, 9001, 100, Active, Not Active
+21.088000, P0, 71, 114.00, [N/A], 1860, 1860, 9001, 100, Active, Not Active
+21.290000, P0, 71, 114.00, [N/A], 1860, 1860, 9001, 100, Active, Not Active
+21.492000, P0, 72, 120.86, [N/A], 1980, 1980, 9001, 100, Active, Not Active
+21.694000, P0, 72, 120.86, [N/A], 1980, 1980, 9001, 100, Active, Not Active
+21.907000, P0, 72, 120.86, [N/A], 1980, 1980, 9001, 100, Active, Not Active
+22.109000, P0, 66, 82.24, [N/A], 2445, 2445, 9001, 64, Not Active, Not Active
+22.311000, P0, 66, 82.24, [N/A], 2445, 2445, 9001, 64, Not Active, Not Active
+22.512000, P0, 69, 79.15, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+22.714000, P0, 69, 79.15, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+22.915000, P0, 69, 79.15, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+23.115000, P0, 70, 81.88, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+23.318000, P0, 70, 81.88, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+23.518000, P0, 71, 86.35, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+23.720000, P0, 71, 86.35, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+23.921000, P0, 71, 86.35, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+24.122000, P0, 71, 89.70, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+24.322000, P0, 71, 89.70, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+24.523000, P0, 73, 94.77, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+24.725000, P0, 73, 94.77, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+24.927000, P0, 73, 94.77, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+25.129000, P0, 73, 99.55, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+25.330000, P0, 73, 99.55, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+25.532000, P0, 72, 98.33, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+25.733000, P0, 72, 98.33, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+25.935000, P0, 72, 98.33, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+26.137000, P0, 72, 94.83, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+26.337000, P0, 72, 94.83, [N/A], 2445, 2445, 9001, 100, Not Active, Not Active
+26.539000, P0, 77, 101.80, [N/A], 2400, 2400, 9001, 87, Active, Not Active
+26.740000, P0, 77, 101.80, [N/A], 2400, 2400, 9001, 87, Active, Not Active
+26.941000, P0, 77, 101.80, [N/A], 2400, 2400, 9001, 87, Active, Not Active
+27.142000, P0, 71, 91.55, [N/A], 2445, 2445, 9001, 86, Not Active, Not Active
+27.342000, P0, 71, 91.55, [N/A], 2445, 2445, 9001, 86, Not Active, Not Active
+27.543000, P0, 71, 79.73, [N/A], 2445, 2445, 9001, 43, Not Active, Not Active
+27.748000, P0, 71, 79.73, [N/A], 2445, 2445, 9001, 43, Not Active, Not Active
+27.949000, P0, 71, 79.73, [N/A], 2445, 2445, 9001, 43, Not Active, Not Active
+28.150000, P0, 71, 77.16, [N/A], 1875, 1875, 9001, 96, Active, Not Active
+28.351000, P0, 71, 77.16, [N/A], 1875, 1875, 9001, 96, Active, Not Active
+28.553000, P0, 70, 84.00, [N/A], 2250, 2250, 9001, 39, Active, Not Active
+28.753000, P0, 70, 84.00, [N/A], 2250, 2250, 9001, 39, Active, Not Active
+28.954000, P0, 70, 84.00, [N/A], 2250, 2250, 9001, 39, Active, Not Active
+29.156000, P0, 72, 94.55, [N/A], 1995, 1995, 9001, 100, Active, Not Active
+29.358000, P0, 72, 94.55, [N/A], 1995, 1995, 9001, 100, Active, Not Active
+29.559000, P0, 73, 102.13, [N/A], 2010, 2010, 9001, 100, Active, Not Active
+29.760000, P0, 73, 102.13, [N/A], 2010, 2010, 9001, 100, Active, Not Active
+29.963000, P0, 73, 102.13, [N/A], 2010, 2010, 9001, 100, Active, Not Active
+30.163000, P0, 73, 119.69, [N/A], 1905, 1905, 9001, 100, Active, Not Active
+30.364000, P0, 73, 119.69, [N/A], 1905, 1905, 9001, 100, Active, Not Active
+30.566000, P0, 69, 106.64, [N/A], 2430, 2430, 9001, 28, Not Active, Not Active
+30.767000, P0, 69, 106.64, [N/A], 2430, 2430, 9001, 28, Not Active, Not Active
+30.968000, P0, 69, 106.64, [N/A], 2430, 2430, 9001, 28, Not Active, Not Active
+31.169000, P0, 74, 101.66, [N/A], 1965, 1965, 9001, 100, Active, Not Active
+31.373000, P0, 74, 101.66, [N/A], 1965, 1965, 9001, 100, Active, Not Active
+31.574000, P0, 74, 121.78, [N/A], 1935, 1935, 9001, 100, Active, Not Active
+31.776000, P0, 74, 121.78, [N/A], 1935, 1935, 9001, 100, Active, Not Active
+31.978000, P0, 74, 121.78, [N/A], 1935, 1935, 9001, 100, Active, Not Active
+32.179000, P0, 74, 117.33, [N/A], 1890, 1890, 9001, 100, Active, Not Active
+32.379000, P0, 74, 117.33, [N/A], 1890, 1890, 9001, 100, Active, Not Active

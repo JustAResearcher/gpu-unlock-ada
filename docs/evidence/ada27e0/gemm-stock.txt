@@ -1,0 +1,21 @@
+=== round 1: gemm-1.log ===
+{"mode":"FP16/FP32","n":1024,"warmups":10,"iterations":20,"reps":5,"times_ms":[0.04602880,0.04565280,0.04741120,0.04572160,0.04561920],"median_TF_s":46.968690,"best_TF_s":47.074120,"cells_checked":1048576,"failures":0}
+{"mode":"BF16/FP32","n":1024,"warmups":10,"iterations":20,"reps":5,"times_ms":[0.04668160,0.04581440,0.04782080,0.04567040,0.04633600],"median_TF_s":46.345899,"best_TF_s":47.021346,"cells_checked":1048576,"failures":0}
+{"mode":"FP16/FP32","n":4096,"warmups":10,"iterations":20,"reps":5,"times_ms":[2.70126247,2.71933441,2.72558079,2.73484802,2.68707848],"median_TF_s":50.541395,"best_TF_s":51.148098,"cells_checked":16777216,"failures":0}
+{"mode":"BF16/FP32","n":4096,"warmups":10,"iterations":20,"reps":5,"times_ms":[2.66953602,2.69352951,2.80540161,2.83397121,2.72286720],"median_TF_s":50.475820,"best_TF_s":51.484210,"cells_checked":16777216,"failures":0}
+{"mode":"FP16/FP32","n":8192,"warmups":10,"iterations":20,"reps":5,"times_ms":[21.41291504,21.99362946,21.94176025,21.92204742,22.11097565],"median_TF_s":50.110457,"best_TF_s":51.348059,"cells_checked":67108864,"failures":0}
+{"mode":"BF16/FP32","n":8192,"warmups":10,"iterations":20,"reps":5,"times_ms":[22.07723541,22.42252808,22.25776672,22.48386536,22.30348816],"median_TF_s":49.297743,"best_TF_s":49.802958,"cells_checked":67108864,"failures":0}
+=== round 2: gemm-2.log ===
+{"mode":"FP16/FP32","n":1024,"warmups":10,"iterations":20,"reps":5,"times_ms":[0.04782080,0.04567040,0.04771840,0.04843520,0.04648960],"median_TF_s":45.003262,"best_TF_s":47.021346,"cells_checked":1048576,"failures":0}
+{"mode":"BF16/FP32","n":1024,"warmups":10,"iterations":20,"reps":5,"times_ms":[0.04582400,0.04746240,0.04561920,0.04556800,0.04802560],"median_TF_s":46.863732,"best_TF_s":47.127010,"cells_checked":1048576,"failures":0}
+{"mode":"FP16/FP32","n":4096,"warmups":10,"iterations":20,"reps":5,"times_ms":[2.75880966,2.83136005,2.70711040,2.76444168,2.77266884],"median_TF_s":49.716713,"best_TF_s":50.769615,"cells_checked":16777216,"failures":0}
+{"mode":"BF16/FP32","n":4096,"warmups":10,"iterations":20,"reps":5,"times_ms":[2.80335369,2.82629128,2.81180153,2.84712963,2.77775364],"median_TF_s":48.879322,"best_TF_s":49.478453,"cells_checked":16777216,"failures":0}
+{"mode":"FP16/FP32","n":8192,"warmups":10,"iterations":20,"reps":5,"times_ms":[21.62037811,22.17144318,22.15167999,22.07836151,22.29949493],"median_TF_s":49.635586,"best_TF_s":50.855338,"cells_checked":67108864,"failures":0}
+{"mode":"BF16/FP32","n":8192,"warmups":10,"iterations":20,"reps":5,"times_ms":[22.07370300,22.70945282,22.25254364,22.52661743,22.39267883],"median_TF_s":49.101389,"best_TF_s":49.810928,"cells_checked":67108864,"failures":0}
+=== round 3: gemm-3.log ===
+{"mode":"FP16/FP32","n":1024,"warmups":10,"iterations":20,"reps":5,"times_ms":[0.04556800,0.04628480,0.04633280,0.04746240,0.04654080],"median_TF_s":46.349101,"best_TF_s":47.127010,"cells_checked":1048576,"failures":0}
+{"mode":"BF16/FP32","n":1024,"warmups":10,"iterations":20,"reps":5,"times_ms":[0.04572160,0.04775840,0.04561920,0.04571680,0.04945760],"median_TF_s":46.968690,"best_TF_s":47.074120,"cells_checked":1048576,"failures":0}
+{"mode":"FP16/FP32","n":4096,"warmups":10,"iterations":20,"reps":5,"times_ms":[2.73704967,2.94500637,2.80510559,2.84569607,2.78840313],"median_TF_s":48.996000,"best_TF_s":50.214271,"cells_checked":16777216,"failures":0}
+{"mode":"BF16/FP32","n":4096,"warmups":10,"iterations":20,"reps":5,"times_ms":[2.78604794,2.93288956,2.88143368,2.81968632,2.79904633],"median_TF_s":48.742639,"best_TF_s":49.331152,"cells_checked":16777216,"failures":0}
+{"mode":"FP16/FP32","n":8192,"warmups":10,"iterations":20,"reps":5,"times_ms":[21.92532501,22.40179138,22.27404785,22.18577881,22.35996857],"median_TF_s":49.362901,"best_TF_s":50.148020,"cells_checked":67108864,"failures":0}
+{"mode":"BF16/FP32","n":8192,"warmups":10,"iterations":20,"reps":5,"times_ms":[22.25244141,22.90636749,22.55175476,22.51709442,22.65743408],"median_TF_s":48.755037,"best_TF_s":49.410831,"cells_checked":67108864,"failures":0}
