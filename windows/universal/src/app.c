@@ -17,6 +17,7 @@ EFI_RUNTIME_SERVICES    *gRT = NULL;
 EFI_HANDLE              gImageHandle = NULL;
 
 static EFI_GUID SimpleFileSystemGuid = EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID;
+static EFI_GUID DevicePathProtocolGuid = EFI_DEVICE_PATH_PROTOCOL_GUID;
 
 static DETECTED_GPU g_gpus[MAX_SYSTEM_GPUS];
 static UINTN g_gpu_count = 0;
@@ -107,47 +108,61 @@ static EFI_STATUS BootWindows(VOID)
         return EFI_NOT_FOUND;
     }
 
-    /* Construct device path for bootmgfw.efi:
-     * StrLen(L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi") = 32 chars.
-     * Including null-terminator: 33 CHAR16 elements (66 bytes).
-     * FilePath Node header: sizeof(EFI_DEVICE_PATH_PROTOCOL) = 4 bytes.
-     * FilePath Node total length: 4 + 66 = 70 bytes.
-     * End Node header: 4 bytes (Type=0x7F, SubType=0xFF, Length=4).
-     * Total Device Path length: 70 + 4 = 74 bytes.
-     */
     CONST CHAR16 *win_path = L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi";
     CONST UINTN chars_count = 33;
     CONST UINTN name_bytes = chars_count * sizeof(CHAR16);
     CONST UINTN file_node_len = sizeof(EFI_DEVICE_PATH_PROTOCOL) + name_bytes;
 
-    UINT8 dp_buffer[128];
-    memset(dp_buffer, 0, sizeof(dp_buffer));
+    /* 1. Retrieve volume device path from the Windows volume handle */
+    EFI_DEVICE_PATH_PROTOCOL *vol_dp = NULL;
+    EFI_STATUS s = gBS->HandleProtocol(win_vol, &DevicePathProtocolGuid, (VOID **)&vol_dp);
 
-    /* 1. File Path Node */
-    EFI_DEVICE_PATH_PROTOCOL *file_node = (EFI_DEVICE_PATH_PROTOCOL *)dp_buffer;
+    UINTN vol_dp_len = 0;
+    if (!EFI_ERROR(s) && vol_dp) {
+        EFI_DEVICE_PATH_PROTOCOL *node = vol_dp;
+        while (node && node->Type != END_DEVICE_PATH_TYPE) {
+            UINT16 nlen = (UINT16)node->Length[0] | ((UINT16)node->Length[1] << 8);
+            if (nlen < sizeof(EFI_DEVICE_PATH_PROTOCOL)) break;
+            vol_dp_len += nlen;
+            node = (EFI_DEVICE_PATH_PROTOCOL *)((UINT8 *)node + nlen);
+        }
+    }
+
+    /* 2. Construct complete composite device path: [vol_dp] + [file_node] + [end_node] */
+    UINTN total_len = vol_dp_len + file_node_len + 4;
+    EFI_DEVICE_PATH_PROTOCOL *composite_dp = NULL;
+    s = gBS->AllocatePool(EfiBootServicesData, total_len, (VOID **)&composite_dp);
+    if (EFI_ERROR(s) || !composite_dp) {
+        PrintColor(EFI_LIGHTRED | EFI_BLACK, L"\r\n[!] Error: Failed to allocate device path buffer.\r\n");
+        return s;
+    }
+
+    memset(composite_dp, 0, total_len);
+
+    if (vol_dp_len > 0 && vol_dp) {
+        memcpy(composite_dp, vol_dp, vol_dp_len);
+    }
+
+    EFI_DEVICE_PATH_PROTOCOL *file_node = (EFI_DEVICE_PATH_PROTOCOL *)((UINT8 *)composite_dp + vol_dp_len);
     file_node->Type = MEDIA_DEVICE_PATH;
     file_node->SubType = MEDIA_FILEPATH_DP;
     file_node->Length[0] = (UINT8)(file_node_len & 0xFF);
     file_node->Length[1] = (UINT8)(file_node_len >> 8);
 
-    CHAR16 *dst = (CHAR16 *)(dp_buffer + sizeof(EFI_DEVICE_PATH_PROTOCOL));
+    CHAR16 *dst = (CHAR16 *)((UINT8 *)file_node + sizeof(EFI_DEVICE_PATH_PROTOCOL));
     for (UINTN i = 0; i < chars_count; i++) dst[i] = win_path[i];
 
-    /* 2. End Entire Device Path Node (Type=0x7F, SubType=0xFF, Length=4) */
-    EFI_DEVICE_PATH_PROTOCOL *end_node = (EFI_DEVICE_PATH_PROTOCOL *)(dp_buffer + file_node_len);
+    EFI_DEVICE_PATH_PROTOCOL *end_node = (EFI_DEVICE_PATH_PROTOCOL *)((UINT8 *)file_node + file_node_len);
     end_node->Type = END_DEVICE_PATH_TYPE;
     end_node->SubType = END_ENTIRE_DEVICE_PATH_SUBTYPE;
     end_node->Length[0] = 4;
     end_node->Length[1] = 0;
 
-    EFI_DEVICE_PATH_PROTOCOL *file_dp = (EFI_DEVICE_PATH_PROTOCOL *)dp_buffer;
-
+    /* 3. Load Windows Boot Manager image using gImageHandle as ParentImageHandle */
     EFI_HANDLE win_image = NULL;
-    /* Try loading with win_vol as DeviceHandle first */
-    EFI_STATUS s = gBS->LoadImage(FALSE, win_vol, file_dp, NULL, 0, &win_image);
-    if (EFI_ERROR(s)) {
-        s = gBS->LoadImage(FALSE, gImageHandle, file_dp, NULL, 0, &win_image);
-    }
+    s = gBS->LoadImage(FALSE, gImageHandle, composite_dp, NULL, 0, &win_image);
+
+    gBS->FreePool(composite_dp);
 
     if (!EFI_ERROR(s) && win_image) {
         return gBS->StartImage(win_image, NULL, NULL);

@@ -5,14 +5,75 @@
 #include "logger.h"
 #include "port.h"
 #include "vendor/unlock_610.h"
+#include "vendor/vbios_610.h"
 
-static BOOLEAN UnlockDisplayOk(VOID) { return TRUE; }
+static DETECTED_GPU *g_current_unlock_gpu = NULL;
+
+static BOOLEAN CheckGpuDisplayAndOwnershipOk(VOID) {
+  if (!g_current_unlock_gpu || !g_current_unlock_gpu->pci_io) return FALSE;
+  UINT16 cmd = 0;
+  EFI_STATUS s = g_current_unlock_gpu->pci_io->Pci.Read(
+      g_current_unlock_gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &cmd);
+  if (EFI_ERROR(s)) return FALSE;
+  /* Memory decode must be active, Bus Master must be disabled */
+  if ((cmd & 0x0002) == 0 || (cmd & 0x0004) != 0) return FALSE;
+  return TRUE;
+}
+
+static BOOLEAN ValidateVbiosEvidence(DETECTED_GPU *gpu) {
+  if (!gpu || !gpu->vbios_loaded || !gpu->vbios_data || gpu->vbios_size < 0x200) {
+    LogWrite("[Unlock] VBIOS validation failed: missing or truncated image\n");
+    return FALSE;
+  }
+
+  const UINT8 *rom = (const UINT8 *)gpu->vbios_data;
+  /* 1. Validate Option ROM signature: 0x55, 0xAA */
+  if (rom[0] != 0x55 || rom[1] != 0xAA) {
+    LogWrite("[Unlock] VBIOS validation failed: missing 0x55 0xAA signature\n");
+    return FALSE;
+  }
+
+  /* 2. Validate PCIR structure */
+  UINT16 pcir_offset = (UINT16)rom[0x18] | ((UINT16)rom[0x19] << 8);
+  if ((UINTN)pcir_offset + 0x20 > gpu->vbios_size) {
+    LogWrite("[Unlock] VBIOS validation failed: invalid PCIR offset %#x\n", pcir_offset);
+    return FALSE;
+  }
+
+  const UINT8 *pcir = rom + pcir_offset;
+  if (pcir[0] != 'P' || pcir[1] != 'C' || pcir[2] != 'I' || pcir[3] != 'R') {
+    LogWrite("[Unlock] VBIOS validation failed: PCIR signature missing\n");
+    return FALSE;
+  }
+
+  UINT16 vendor_id = (UINT16)pcir[4] | ((UINT16)pcir[5] << 8);
+  UINT16 device_id = (UINT16)pcir[6] | ((UINT16)pcir[7] << 8);
+  if (vendor_id != 0x10de || device_id != gpu->device_id) {
+    LogWrite("[Unlock] VBIOS validation failed: ID mismatch (ROM: %#x:%#x, GPU: %#x:%#x)\n",
+             vendor_id, device_id, gpu->vendor_id, gpu->device_id);
+    return FALSE;
+  }
+
+  /* 3. Validate NVIDIA FWSEC structure using parser */
+  struct gpu_unlock_fwsec fw = {0};
+  int fw_err = gpu_unlock_vbios_fwsec(rom, gpu->vbios_size, &fw);
+  if (fw_err != 0) {
+    LogWrite("[Unlock] VBIOS validation failed: FWSEC parsing returned error %d\n", fw_err);
+    return FALSE;
+  }
+
+  LogWrite("[Unlock] VBIOS evidence verified: Vendor=%#x Dev=%#x FWSEC ucode=%#x sig_ver=%#x sig_bytes=%u\n",
+           vendor_id, device_id, (unsigned)fw.ucode_id, (unsigned)fw.sig_versions, (unsigned)fw.sig_bytes);
+  return TRUE;
+}
 
 EFI_STATUS ExecuteGpuRamUnlock(DETECTED_GPU *gpu) {
   if (!gpu || !gpu->pci_io) {
     LogWrite("[Unlock] Error: Invalid GPU handle or PCI IO\n");
     return EFI_INVALID_PARAMETER;
   }
+
+  g_current_unlock_gpu = gpu;
 
   LogWrite("[Unlock] Initializing Falcon/GSP V67 transaction for Bus %u:%u.%u "
            "(DevID=%#x SubVen=%#x)\n",
@@ -48,7 +109,15 @@ EFI_STATUS ExecuteGpuRamUnlock(DETECTED_GPU *gpu) {
   Gu.board_id = (gpu->device_id << 16) | gpu->vendor_id;
   Gu.board_subsystem = (gpu->subsys_device_id << 16) | gpu->subsys_vendor_id;
 
-  /* Check and latch initial cold speed selectors */
+  /* 1. Validate VBIOS evidence BEFORE latching selectors */
+  if (!ValidateVbiosEvidence(gpu)) {
+    LogWrite("[Unlock] Error: VBIOS evidence validation failed for GPU on Bus %u:%u.%u\n",
+             (unsigned)gpu->bus, (unsigned)gpu->device, (unsigned)gpu->function);
+    return EFI_COMPROMISED_DATA;
+  }
+  Gu.prom_verified = TRUE;
+
+  /* 2. Check and latch initial cold speed selectors (requires prom_verified == TRUE) */
   UINT32 cold_ss0 = GuRead32(0x82381c);
   UINT32 cold_ss1 = GuRead32(0x823820);
   LogWrite("[Unlock] Cold selectors before transaction: SS0=%#x SS1=%#x\n", cold_ss0, cold_ss1);
@@ -65,19 +134,12 @@ EFI_STATUS ExecuteGpuRamUnlock(DETECTED_GPU *gpu) {
     return EFI_DEVICE_ERROR;
   }
 
-  if (!gpu->vbios_loaded || !gpu->vbios_data || gpu->vbios_size == 0) {
-    LogWrite("[Unlock] Error: VBIOS image missing or invalid for GPU on Bus %u:%u.%u\n",
-             (unsigned)gpu->bus, (unsigned)gpu->device, (unsigned)gpu->function);
-    return EFI_NOT_FOUND;
-  }
-
-  /* Mark profile and ownership as verified only after checks succeed */
-  Gu.prom_verified = TRUE;
+  /* 3. Mark profile, ownership and display check */
   Gu.profile_verified = TRUE;
   Gu.owned = TRUE;
   Gu.armed = TRUE;
   Gu.display_ok = TRUE;
-  Gu.display_check = UnlockDisplayOk;
+  Gu.display_check = CheckGpuDisplayAndOwnershipOk;
   Gu.transaction_attempted = FALSE;
 
   /* 2. Setup Linux pci_dev structure */
