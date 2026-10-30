@@ -127,10 +127,11 @@ static BOOLEAN ExtractVbiosFromHardwareBar0(DETECTED_GPU *gpu, EFI_FILE_HANDLE r
     gpu->pci_io->Pci.Write(gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &active_cmd);
 
     /* 2. Read first bytes from BAR0+0x300000 */
-    CONST UINT8 *hw_prom = (CONST UINT8 *)(UINTN)(gpu->bar0_base + 0x300000);
-    if (hw_prom[0] != 0x55 || hw_prom[1] != 0xAA) {
+    UINT8 sig[2] = {0};
+    s = gpu->pci_io->Mem.Read(gpu->pci_io, EfiPciIoWidthUint8, 0, 0x300000, 2, sig);
+    if (EFI_ERROR(s) || sig[0] != 0x55 || sig[1] != 0xAA) {
         LogWrite("[VBIOS] Hardware BAR0+0x300000 does not start with 0x55 0xAA (found: %#x %#x)\n",
-                 hw_prom[0], hw_prom[1]);
+                 sig[0], sig[1]);
         gpu->pci_io->Pci.Write(gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &orig_cmd);
         return FALSE;
     }
@@ -144,7 +145,18 @@ static BOOLEAN ExtractVbiosFromHardwareBar0(DETECTED_GPU *gpu, EFI_FILE_HANDLE r
         return FALSE;
     }
 
-    memcpy(prom_buf, hw_prom, prom_size);
+    UINTN done = 0;
+    while (done < prom_size) {
+        UINTN chunk = (prom_size - done < 4096) ? (prom_size - done) : 4096;
+        s = gpu->pci_io->Mem.Read(gpu->pci_io, EfiPciIoWidthUint8, 0, 0x300000 + done, chunk, (UINT8 *)prom_buf + done);
+        if (EFI_ERROR(s)) {
+            LogWrite("[VBIOS] Hardware PROM read error at offset %#x\n", (unsigned)(0x300000 + done));
+            gBS->FreePool(prom_buf);
+            gpu->pci_io->Pci.Write(gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &orig_cmd);
+            return FALSE;
+        }
+        done += chunk;
+    }
     gpu->pci_io->Pci.Write(gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &orig_cmd);
 
     /* 4. Validate PCIR header */
