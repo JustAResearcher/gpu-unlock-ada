@@ -27,10 +27,14 @@ TARBALL := $(abspath $(DISTDIR))/gpu-unlock-$(VERSION).tar.xz
 DEBDIR  := $(abspath $(DISTDIR))/deb
 RPMDIR  := $(abspath $(DISTDIR))/rpm
 DEBS    := $(foreach p,dkms firmware,$(DEBDIR)/gpu-unlock-$(p)_$(VERSION)_all.deb)
+VOIDDIR := $(abspath $(DISTDIR))/void
+VOIDSRC := $(VOIDDIR)/gpu-unlock-$(VERSION)
+XBPSREV ?= 1
 
 .PHONY: all test test-full dist inputs firmware assets install-dkms install-firmware \
         install-mkinitcpio install-initramfs-tools install-dracut \
-        install-licenses arch deb rpm install install-arch install-deb install-rpm
+        install-licenses arch deb rpm void install install-arch install-deb install-rpm \
+        install-void
 
 all:
 
@@ -112,13 +116,14 @@ install:
 			arch) target=arch ;; \
 			debian|ubuntu) target=deb ;; \
 			fedora|rhel|centos) target=rpm ;; \
+			void) target=void ;; \
 			*) continue ;; \
 		esac; \
 		echo "Detected $$distro family; running make install-$$target"; \
 		$(MAKE) install-$$target; \
 		exit $$?; \
 	done; \
-	echo "Unsupported distribution: $${ID:-unknown}. Use make install-arch, install-deb, or install-rpm explicitly (RPM requires DNF)." >&2; \
+	echo "Unsupported distribution: $${ID:-unknown}. Use make install-arch, install-deb, install-rpm, or install-void explicitly (RPM requires DNF)." >&2; \
 	exit 1
 
 arch:
@@ -151,3 +156,37 @@ install-rpm:
 	sudo dnf builddep -y packaging/rpm/gpu-unlock.spec
 	$(MAKE) rpm
 	sudo dnf install -y $(RPMDIR)/RPMS/noarch/gpu-unlock-*-$(VERSION)-*.noarch.rpm
+
+# xbps packages in a local repository under $(VOIDDIR)/repo. The scripts
+# in packaging/void register the module with DKMS through the dkms trigger
+# and rebuild the initramfs, like a void-packages template would.
+void: dist inputs
+	rm -rf $(VOIDDIR)
+	mkdir -p $(VOIDDIR)/repo
+	tar -xf $(TARBALL) -C $(VOIDDIR)
+	$(MAKE) -C $(VOIDSRC) INPUTS=$(abspath $(INPUTS)) ASSETS=$(VOIDSRC)/assets firmware
+	$(MAKE) -C $(VOIDSRC) ASSETS=$(VOIDSRC)/assets test-full
+	$(MAKE) -C $(VOIDSRC) DESTDIR=$(VOIDDIR)/dkms \
+		install-dkms install-dracut install-mkinitcpio
+	$(MAKE) -C $(VOIDSRC) DESTDIR=$(VOIDDIR)/dkms PKG=gpu-unlock-dkms install-licenses
+	$(MAKE) -C $(VOIDSRC) DESTDIR=$(VOIDDIR)/firmware ASSETS=$(VOIDSRC)/assets install-firmware
+	for f in INSTALL REMOVE; do \
+		sed 's/@VERSION@/$(VERSION)/' $(VOIDSRC)/packaging/void/$$f > $(VOIDDIR)/dkms/$$f || exit 1; \
+	done
+	install -m644 $(VOIDSRC)/packaging/void/INSTALL.msg $(VOIDDIR)/dkms/INSTALL.msg
+	cd $(VOIDDIR)/repo && xbps-create -A noarch -n gpu-unlock-firmware-$(VERSION)_$(XBPSREV) \
+		-s 'Locally generated, pinned NVIDIA $(NV) firmware assets for gpu-unlock' \
+		-l 'custom:NVIDIA, GPL-2.0-only' -H https://github.com/JustAResearcher/gpu-unlock-ada \
+		$(VOIDDIR)/firmware
+	cd $(VOIDDIR)/repo && xbps-create -A noarch -n gpu-unlock-dkms-$(VERSION)_$(XBPSREV) \
+		-s 'RTX 4090 and experimental Ada tensor unlock before NVIDIA loads' \
+		-l GPL-2.0-only -H https://github.com/JustAResearcher/gpu-unlock-ada \
+		-D 'dkms>=0 gpu-unlock-firmware-$(VERSION)_$(XBPSREV)' \
+		-F /etc/mkinitcpio.conf.d/zz-gpu-unlock.conf \
+		$(VOIDDIR)/dkms
+	xbps-rindex -a $(VOIDDIR)/repo/*.xbps
+
+install-void:
+	sudo xbps-install -Sy git python3 zstd xz make gcc
+	$(MAKE) void
+	sudo xbps-install -fy --repository=$(VOIDDIR)/repo gpu-unlock-dkms gpu-unlock-firmware

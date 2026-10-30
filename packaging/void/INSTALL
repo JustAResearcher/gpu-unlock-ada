@@ -1,0 +1,33 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-2.0-only
+# xbps INSTALL script for gpu-unlock-dkms; `make void` fills in @VERSION@.
+# xbps runs it from the root directory with:
+#   ACTION PKGNAME VERSION UPDATE CONF_FILE ARCH
+ACTION="$1"
+PKGNAME="$2"
+VERSION="$3"
+UPDATE="$4"
+# The PATH xbps-src gives package scripts. A relative entry breaks dkms:
+# bash would hash grep as usr/bin/grep, which fails once dkms changes into
+# its build directory, so dkms 3.3 takes BUILD_EXCLUSIVE_CONFIG as unmet
+# and stores no module, yet reports the build as done.
+export PATH="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin"
+
+[ "$ACTION" = post ] || exit 0
+
+# Add, build and install the module for every kernel that has headers,
+# like a template's dkms_modules does; kernels installed later get it from
+# the dkms kernel hook.
+dkms_modules="gpu-unlock @VERSION@" \
+    usr/libexec/xbps-triggers/dkms run post-install "$PKGNAME" "$VERSION" "$UPDATE"
+
+# The initramfs has to carry gpu_unlock and its firmware so that it runs
+# before nvidia. Rebuild the images of the kernels that can load it with
+# whichever generator the initramfs alternative selects.
+[ -x etc/kernel.d/post-install/20-initramfs ] || exit 0
+for d in usr/lib/modules/*/; do
+    k=${d%/}; k=${k##*/}
+    modinfo -k "$k" gpu_unlock >/dev/null 2>&1 || continue
+    etc/kernel.d/post-install/20-initramfs "linux${k%.*}" "$k" || :
+done
+exit 0

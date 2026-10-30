@@ -1,0 +1,34 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-2.0-only
+# xbps REMOVE script for gpu-unlock-dkms; `make void` fills in @VERSION@.
+# xbps runs it from the root directory with:
+#   ACTION PKGNAME VERSION UPDATE CONF_FILE ARCH
+ACTION="$1"
+PKGNAME="$2"
+VERSION="$3"
+UPDATE="$4"
+# The PATH xbps-src gives package scripts. A relative entry breaks dkms:
+# bash would hash grep as usr/bin/grep, which fails once dkms changes into
+# its build directory, so dkms 3.3 takes BUILD_EXCLUSIVE_CONFIG as unmet
+# and stores no module, yet reports the build as done.
+export PATH="/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin"
+
+case "$ACTION" in
+pre)
+    # Also on an update, while this version's source is still on disk; the
+    # new version's INSTALL adds itself again.
+    dkms_modules="gpu-unlock @VERSION@" \
+        usr/libexec/xbps-triggers/dkms run pre-remove "$PKGNAME" "$VERSION" "$UPDATE"
+    ;;
+post)
+    # The module and the initramfs drop-ins are gone now; rebuild every
+    # installed kernel's image so that none still loads gpu_unlock.
+    [ "$UPDATE" = no ] && [ -x etc/kernel.d/post-install/20-initramfs ] || exit 0
+    for d in usr/lib/modules/*/kernel/; do
+        [ -d "$d" ] || continue
+        k=${d%/kernel/}; k=${k##*/}
+        etc/kernel.d/post-install/20-initramfs "linux${k%.*}" "$k" || :
+    done
+    ;;
+esac
+exit 0

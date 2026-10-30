@@ -15,6 +15,7 @@
 *.deb
 *.rpm
 *.pkg.tar.zst
+*.xbps
 /packaging/arch/src/
 /packaging/arch/pkg/
 /packaging/arch/gpu-unlock/

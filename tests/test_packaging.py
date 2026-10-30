@@ -3,6 +3,7 @@
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -66,6 +67,39 @@ class PackageTests(unittest.TestCase):
                 result = subprocess.run(["bash", "-c", f"MODULES=({before}); . {dropin}; echo ${{MODULES[*]}}"],
                                         capture_output=True, text=True, check=True)
                 self.assertEqual(result.stdout.strip(), after)
+
+    def test_void_scripts_drive_dkms_and_initramfs(self):
+        version = (ROOT / "VERSION").read_text().strip()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            log = root / "log"
+            stubs = {"usr/libexec/xbps-triggers/dkms": f"echo trigger $dkms_modules $* >> {log}",
+                     "etc/kernel.d/post-install/20-initramfs": f"echo initramfs $* >> {log}"}
+            for path, body in stubs.items():
+                stub = root / path
+                stub.parent.mkdir(parents=True, exist_ok=True)
+                stub.write_text(f"#!/bin/sh\n{body}\n")
+                stub.chmod(0o755)
+            for kver in ("6.12.10_1", "6.6.50_1"):
+                (root / "usr/lib/modules" / kver / "kernel").mkdir(parents=True)
+            for script, action, update in (("INSTALL", "post", "no"), ("REMOVE", "pre", "yes"),
+                                           ("REMOVE", "post", "no")):
+                text = (ROOT / "packaging/void" / script).read_text()
+                self.assertIn("@VERSION@", text)
+                # dkms changes directory, so every PATH entry must be absolute.
+                path = re.search(r'^export PATH="([^"]*)"$', text, re.M).group(1)
+                self.assertTrue(all(entry.startswith("/") for entry in path.split(":")), path)
+                # Only 6.12 has the module; 6.6 is another installed kernel.
+                text = 'modinfo() { [ "$2" = 6.12.10_1 ]; }\n' + text.replace("@VERSION@", version)
+                subprocess.run(["sh", "-c", text, script, action, "gpu-unlock-dkms",
+                                f"{version}_1", update, "no", "x86_64"],
+                               cwd=root, check=True)
+            self.assertEqual(log.read_text().splitlines(), [
+                f"trigger gpu-unlock {version} run post-install gpu-unlock-dkms {version}_1 no",
+                "initramfs linux6.12 6.12.10_1",
+                f"trigger gpu-unlock {version} run pre-remove gpu-unlock-dkms {version}_1 yes",
+                "initramfs linux6.12 6.12.10_1",
+                "initramfs linux6.6 6.6.50_1"])
 
     def test_pkgbuild_pins_match_manifest(self):
         manifest = json.loads((ROOT / "firmware/artifacts-610.43.03.json").read_text())

@@ -159,11 +159,12 @@ are:
 make install-arch   # makepkg -sif
 make install-deb    # apt-get build-dep, dpkg-buildpackage, apt-get install
 make install-rpm    # dnf builddep, rpmbuild, dnf install
+make install-void   # xbps-install, xbps-create, xbps-install from build/void/repo
 ```
 
-`make arch`, `make deb` and `make rpm` build without installing. Packages are
-built from the committed `HEAD`; Debian and RPM outputs go to `build/deb` and
-`build/rpm`. Kernel headers and a working DKMS toolchain are required.
+`make arch`, `make deb`, `make rpm` and `make void` build without installing.
+Packages are built from the committed `HEAD`; Debian, RPM and Void outputs go
+to `build/deb`, `build/rpm` and the local xbps repository `build/void/repo`. Kernel headers and a working DKMS toolchain are required.
 
 Builds fetch the pinned NVIDIA `610.43.03` source and binary inputs over HTTPS
 and verify their SHA-256 hashes. `make inputs` prepares the cache;
@@ -209,6 +210,9 @@ The packages support these initramfs generators:
 - **initramfs-tools:**
   `/usr/share/initramfs-tools/modules.d/gpu-unlock.conf`.
 - **dracut:** `/usr/lib/dracut/dracut.conf.d/gpu-unlock.conf`.
+- **Void Linux:** the package ships the dracut and mkinitcpio drop-ins and
+  rebuilds images through `/etc/kernel.d/post-install/20-initramfs`, whichever
+  generator the `initramfs` alternative selects.
 
 There is no `softdep nvidia pre:` rule because kmod uses only the first matching
 soft dependency line, which can conflict with other packages.
