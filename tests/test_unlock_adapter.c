@@ -50,6 +50,7 @@ static bool fake_ada_id(void) {
            dev.device==GU_AD103_RTX_4070_TI_SUPER ||
            dev.device==GU_AD103_RTX_4070 ||
            dev.device==GU_AD106_RTX_4060_TI_16GB ||
+           dev.device==GU_AD106M_RTX_4070_MOBILE ||
            dev.device==GU_AD107_RTX_4050_MOBILE ||
            dev.device==GU_AD104_RTX_4070 ||
            dev.device==GU_AD104_RTX_4070_TI ||
@@ -395,7 +396,7 @@ int main(int argc, char **argv) {
     assert(!strcmp(unlock_assets(&dev)->payload, V67_FILE_AD102));
     assert(unlock_assets(&dev)->arch==GU_BOOTER_AD10X);
     assert(is_ad102(&w));
-    const unsigned short ad106_ids[]={GU_AD106_RTX_4060_TI,GU_AD106_RTX_4060_TI_16GB};
+    const unsigned short ad106_ids[]={GU_AD106_RTX_4060_TI,GU_AD106_RTX_4060_TI_16GB,GU_AD106M_RTX_4070_MOBILE};
     for(unsigned i=0;i<ARRAY_SIZE(ad106_ids);i++) {
         dev.device=ad106_ids[i];
         assert(!strcmp(unlock_assets(&dev)->booter, BOOTER_FILE_AD102));

@@ -75,6 +75,7 @@ static bool ad102_family(unsigned short device)
 	case GU_AD104_RTX_4070:
 	case GU_AD106_RTX_4060_TI:
 	case GU_AD106_RTX_4060_TI_16GB:
+	case GU_AD106M_RTX_4070_MOBILE:
 	case GU_AD107_RTX_4060:
 	case GU_AD107_RTX_4060_LAPTOP:
 	case GU_AD107_RTX_4060_MOBILE:

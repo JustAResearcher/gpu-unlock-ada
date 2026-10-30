@@ -1,0 +1,25 @@
+====================================================================
+Device: NVIDIA GeForce RTX 4070 Laptop GPU (10de:2860, AD106M, 36 SMs)
+Driver: NVIDIA 580.178.04 (open kernel module / GSP-RM)
+Kernel: Linux 7.0.0-38-generic
+Host: ASUS ROG Zephyrus G16 GA605WI (AMD Ryzen AI 9 HX 370)
+====================================================================
+
+STOCK BASELINE (Factory Issue-Rate Clamps):
+--------------------------------------------------------------------
+  [1] FP16 -> FP32 Accumulate :  41.97 TF/s
+  [2] TF32 -> FP32 Accumulate :  19.44 TF/s
+  [3] BF16 Tensor GEMM        :  40.51 TF/s
+  [4] FP8 (e4m3fn) GEMM       :  79.09 TF/s
+  [5] INT8 Quantized Tensor   :  22.41 TOP/s
+  Telemetry: SM Clock: ~1800 MHz | Power: ~96 W | Temp: ~64 C
+
+UNLOCKED (Full Rate):
+--------------------------------------------------------------------
+  [1] FP16 -> FP32 Accumulate :  63.81 TF/s  [+52.0% speedup]
+  [2] TF32 -> FP32 Accumulate :  31.58 TF/s  [+62.4% speedup]
+  [3] BF16 Tensor GEMM        :  75.60 TF/s  [+86.6% speedup]
+  [4] FP8 (e4m3fn) GEMM       : 127.83 TF/s  [+61.6% speedup]
+  [5] INT8 Quantized Tensor   :  34.39 TOP/s  [+53.5% speedup]
+  Telemetry: SM Clock: 1740-1845 MHz | Power: ~96-101 W | Temp: ~64-66 C
+====================================================================

@@ -20,6 +20,7 @@ TARGETS = {
     "2786": ("RTX 4070 (experimental)", "ad104_experimental"),
     "2803": ("RTX 4060 Ti (experimental)", "ad106_experimental"),
     "2805": ("RTX 4060 Ti 16GB (experimental)", "ad106_experimental"),
+    "2860": ("RTX 4070 Laptop GPU (experimental)", "ad106_experimental"),
     "2882": ("RTX 4060 (experimental)", "ad107_experimental"),
     "28a0": ("RTX 4060 Laptop GPU (experimental)", "ad107_experimental"),
     "28e0": ("RTX 4060 Laptop GPU (experimental)", "ad107_experimental"),

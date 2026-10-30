@@ -204,7 +204,7 @@ int main(int argc, char **argv)
         assert(!fake.live && !fake.fw_live && dev.refs==1);
         puts("AD104 0x2786 profile dispatch under mocked registers PASS");
         }
-        const unsigned short ad106_ids[]={GU_AD106_RTX_4060_TI_16GB,GU_AD106_RTX_4060_TI};
+        const unsigned short ad106_ids[]={GU_AD106_RTX_4060_TI_16GB,GU_AD106_RTX_4060_TI,GU_AD106M_RTX_4070_MOBILE};
         for(unsigned i=0;i<ARRAY_SIZE(ad106_ids);i++) {
         /* Dispatch the same published AD102-family payload through the exact
          * 0x2805 and 0x2803 profiles under mocked registers. This is not silicon proof. */
