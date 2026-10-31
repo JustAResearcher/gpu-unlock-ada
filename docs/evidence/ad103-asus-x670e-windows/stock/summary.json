@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "label": "stock",
+  "completed": true,
+  "source_phase": "stock-20261031T091540Z",
+  "sanitized_export": true,
+  "runs": [
+    {
+      "path": "run-1.json",
+      "sha256": "6067596433bdc1d07d4cbc7bc9606b9851ed6624f8a8588ffacc93eb1008b3a3",
+      "original_sha256": "59a470faf24f785aefe2e85a91617e66c97af99ede0012db83ba9ebd8cb8ea24"
+    },
+    {
+      "path": "run-2.json",
+      "sha256": "85152c2b1d97424575ad15f0a9c92581bac01e382f17509da05de6e42f49b938",
+      "original_sha256": "77af753b9d64ac7ba570cd125f8f93a5926337f4f93eec93a0f4fe9ed89598e3"
+    },
+    {
+      "path": "run-3.json",
+      "sha256": "856c4b06b4a0a030e85b5f0e789f10a88576b8e947737e7d287c7944ac5abed0",
+      "original_sha256": "bd5ac32785c2fe0dcfdfc17b8df95f468d30f35df479841cd2e4d50e7ce02471"
+    }
+  ]
+}

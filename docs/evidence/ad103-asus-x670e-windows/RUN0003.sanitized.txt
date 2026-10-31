@@ -1,0 +1,134 @@
+ASUS AD103 candidate build=257e82e0d428dcf8262a50d5be6917328ea88a6db9ac79840dd34bc974cb0073 unlock_compiled=1
+[redacted: private pretrial proof and build hashes; original record retained]
+selector-evidence [private prior-log hash redacted] allowed_cold_SS1={0x1,0x3} exact_pair_latched_per_boot=1
+Windows boot image pin: size=3086848 sha256=3f8a4cbbc97b89836df92c4895236be1fac4a127665420d90509e897a7298511 status=0
+Windows staged: status=0 matches=1 ordinary bootmgfw.efi, ESP read-only
+ASUS preflight status=0 stage=complete
+gpu_unlock: ROM chain: pos=0 data=0x52494350 bytes=64512 type=0 last=0
+gpu_unlock: ROM chain: pos=0xfc00 data=0x52494350 bytes=86016 type=0x3 last=0
+gpu_unlock: ROM chain: pos=0x24c00 data=0x5344504e bytes=24576 type=0xe0 last=0
+gpu_unlock: ROM chain: pos=0x2ac00 data=0x5344504e bytes=456192 type=0xe0 last=128
+gpu_unlock: ROM expansion: base=0xfc00 ext=0x24c00 adjust=0x15000
+gpu_unlock: ROM BIT: offset=0x1b0 size=12 stride=6 tokens=19 adjust=0x15000
+gpu_unlock: ROM ucode table: offset=0x99fb6 version=1 header=6 stride=6 entries=16
+gpu_unlock: FWSEC descriptor: offset=0x4581c ROM_bytes=1048576 header=0x32c0301
+gpu_unlock: FWSEC geometry: image_off=0x45b48 size=0x10500 imem=0xf700 va=0 pa=0 dmem=0xd80 pa=0 pkc=0xb24 interface=0x1c engine=0x400 ucode=9 signatures=2 versions=0x3 bytes=768
+ASUS Stop intent: exactly the pinned NVIDIA DriverBinding, AMD retained
+ASUS Stop return=0
+ASUS exclusive-claim intent: no active target opens
+ASUS exclusive-claim return=0
+Decode restore intent: exclusive owner, command=0 attributes=0 -> IO|MEM only; BME stays off
+Decode restored: exact config readback, command=3 attributes=0x300 BME=0
+asset request: gpu-unlock/610.43.03/gsp_ga10x.bin
+asset result: gpu-unlock/610.43.03/gsp_ga10x.bin error=0 bytes=84277400
+asset cache cleanup: gpu-unlock/610.43.03/gsp_ga10x.bin devres_released=0
+driver probe resources: phase=entry empty=1
+asset request: gpu-unlock/610.43.03/v67-ad102-610.43.03-four-plm.bin
+asset result: gpu-unlock/610.43.03/v67-ad102-610.43.03-four-plm.bin error=0 bytes=64000
+asset cache cleanup: gpu-unlock/610.43.03/v67-ad102-610.43.03-four-plm.bin devres_released=0
+asset request: gpu-unlock/610.43.03/gsp_boot_ad102.bin
+asset result: gpu-unlock/610.43.03/gsp_boot_ad102.bin error=0 bytes=36864
+asset cache cleanup: gpu-unlock/610.43.03/gsp_boot_ad102.bin devres_released=0
+asset request: gpu-unlock/610.43.03/gsp_boot_desc_ad102.bin
+asset result: gpu-unlock/610.43.03/gsp_boot_desc_ad102.bin error=0 bytes=84
+asset cache cleanup: gpu-unlock/610.43.03/gsp_boot_desc_ad102.bin devres_released=0
+asset geometry: image=84226048 signature=4096 boot=36864 code=0x4800 data=0x800 manifest=0 parse=0
+asset request: gpu-unlock/610.43.03/booter_load_ad102.bin
+asset result: gpu-unlock/610.43.03/booter_load_ad102.bin error=0 bytes=57672
+asset cache cleanup: gpu-unlock/610.43.03/booter_load_ad102.bin devres_released=0
+claim: power=0 pm_cap=0x60 flags=0
+claim: command=0x3 capability=0x112c8de1 BAR_mask=0x1
+layout inputs: fb_mb=0x3ff8 vga=0x1 mmu_plm=0x45cb8f mmu_lo=0x100000 mmu_hi=0x3cf7ff0 image=84226048 boot=36864
+layout mmu: lo=0x10000000 hi=0x3cf7ff000 hi_exclusive=0x3cf800000 constrain=0
+mmu lock ignored: high address is not the FB top
+layout decoded: fb=0x3ff800000 vga=0x3ff700000 mmu_valid=0 mmu_low=0x10000000 frts=0x100000 heap=0x5800000 result=0
+layout ranges: nonwpr=0x3f4b00000 wpr=0x3f4c00000 heap=0x3f4d00000 gsp=0x3fa5a0000 boot=0x3ff5f7000 frts=0x3ff600000 end=0x3ff700000 scrub_floor=0x3ef800000
+DMA masks: streaming=0xffffffffffff coherent=0xfffffffff requested=0xffffffff
+Booter signature: fuse_raw=0x1 version=1 signatures=2 size=768
+DMA buffers mapped: 2048
+DMA buffers mapped: 4096
+DMA buffers mapped: 6144
+DMA buffers mapped: 8192
+DMA buffers mapped: 10240
+DMA buffers mapped: 12288
+DMA buffers mapped: 14336
+DMA buffers mapped: 16384
+DMA buffers mapped: 18432
+DMA buffers mapped: 20480
+entry: plm=0xffffff8f ss0=0x41455066 ss1=0x1 wpr2_hi=0
+AD102 permission before-firmware: WPR_CFG[0x1fa7cc]=0x4cb8f before=0x4cb8f expected=0xfffff0ff required=1 valid=1 pci=0x270510de chip=0x193000a1
+AD102 permission before-firmware: FBPA[0x9a0148]=0xffffff0f before=0xffffff0f expected=0xffffffff required=0 valid=1 pci=0x270510de chip=0x193000a1
+AD102 permission before-firmware: WPR[0x1fa7c4]=0x4cb8f before=0x4cb8f expected=0xffffffff required=1 valid=1 pci=0x270510de chip=0x193000a1
+AD102 permission before-firmware: FEAT[0x823804]=0xffffff8f before=0xffffff8f expected=0xffffffff required=1 valid=1 pci=0x270510de chip=0x193000a1
+AD102 before-firmware: readout1=0x410080 fields=0 0 2 0 0 2 0 2 0 valid=1 full=0
+FWSEC: reading PROM at 0x300000
+FWSEC: PROM bytes=1048576 signature=0xaa55
+gpu_unlock: ROM chain: pos=0 data=0x52494350 bytes=64512 type=0 last=0
+gpu_unlock: ROM chain: pos=0xfc00 data=0x52494350 bytes=86016 type=0x3 last=0
+gpu_unlock: ROM chain: pos=0x24c00 data=0x5344504e bytes=24576 type=0xe0 last=0
+gpu_unlock: ROM chain: pos=0x2ac00 data=0x5344504e bytes=456192 type=0xe0 last=128
+gpu_unlock: ROM expansion: base=0xfc00 ext=0x24c00 adjust=0x15000
+gpu_unlock: ROM BIT: offset=0x1b0 size=12 stride=6 tokens=19 adjust=0x15000
+gpu_unlock: ROM ucode table: offset=0x99fb6 version=1 header=6 stride=6 entries=16
+gpu_unlock: FWSEC descriptor: offset=0x4581c ROM_bytes=1048576 header=0x32c0301
+gpu_unlock: FWSEC geometry: image_off=0x45b48 size=0x10500 imem=0xf700 va=0 pa=0 dmem=0xd80 pa=0 pkc=0xb24 interface=0x1c engine=0x400 ucode=9 signatures=2 versions=0x3 bytes=768
+gpu_unlock: FWSEC interface: offset=0x1c version=1 header=4 stride=8 entries=2 FRTS=0x3ff600000
+gpu_unlock: FWSEC mapper: version=3 size=64 cmd_offset=0xd40 cmd_size=64
+FWSEC fuse: raw=0x1 version=1
+gpu_unlock: FWSEC signature selection: versions=0x3 fuse_version=1 sig_bytes=384
+Bus Master enable intent: command=0x3 attributes=0x300
+Bus Master enabled: command=0x7 attributes=0x700 matched=1
+Falcon reset begin: base=0x110000
+poll timeout tolerated: reg=0x1100f4 last=0x47b7 mask=0x80000000 expected=0x80000000 budget_us=1000
+Falcon pre-reset timeout tolerated per HW bug 3419321
+Falcon reset done: base=0x110000 hwcfg=0x67b7 chip=0x193000a1
+Falcon DMA: base=0x110000 dest=0 offset=0 src=<DMA_ADDR_1> size=0xf700 cmd=0x614
+Falcon DMA: base=0x110000 dest=0 offset=0 src=<DMA_ADDR_2> size=0xd80 cmd=0x600
+Falcon start: base=0x110000 cpuctl=0x10 code_va=0 sig_dmem=0xb24 engine_mask=0x400 ucode=9 mailbox=0:0
+FWSEC result: scratch=0 expected_hi16=0
+FWSEC WPR2: low=0x3ff6000 high=0x3ff6e00 expected_page=0x3ff600 end=0x3ff700000
+Falcon reset begin: base=0x840000
+poll timeout tolerated: reg=0x8400f4 last=0x67b7 mask=0x80000000 expected=0x80000000 budget_us=1000
+Falcon pre-reset timeout tolerated per HW bug 3419321
+Falcon reset done: base=0x840000 hwcfg=0x67b7 chip=0x193000a1
+Falcon DMA: base=0x840000 dest=0 offset=0x100 src=<DMA_ADDR_3> size=0x7d00 cmd=0x614
+Falcon DMA: base=0x840000 dest=0 offset=0 src=<DMA_ADDR_4> size=0x6000 cmd=0x600
+Falcon start: base=0x840000 cpuctl=0x10 code_va=0x100 sig_dmem=0x10 engine_mask=0x1 ucode=3 mailbox=0:<DMA_ADDR_5>
+AD102 permission after-payload: WPR_CFG[0x1fa7cc]=0xfffff0ff before=0x4cb8f expected=0xfffff0ff required=1 valid=1 pci=0x270510de chip=0x193000a1
+AD102 permission after-payload: FBPA[0x9a0148]=0xffffff0f before=0xffffff0f expected=0xffffffff required=0 valid=1 pci=0x270510de chip=0x193000a1
+AD102 permission after-payload: WPR[0x1fa7c4]=0xffffffff before=0x4cb8f expected=0xffffffff required=1 valid=1 pci=0x270510de chip=0x193000a1
+AD102 permission after-payload: FEAT[0x823804]=0xffffffff before=0xffffff8f expected=0xffffffff required=1 valid=1 pci=0x270510de chip=0x193000a1
+AD102 after-payload: readout1=0x410080 fields=0 0 2 0 0 2 0 2 0 valid=1 full=0
+AD102 payload result: boot=0 halt=0 marker=0x67b00001 expected=0x67b00001 marker_ok=1 required_permissions=1 cpuctl=0x10 halted=1 debug=0xda550000 ss0=0x41455066 ss1=0x1
+selector read: SS0=0x41455066 expected_unlock=0x88888888
+selector write: SS0=0x88888888
+selector result: SS0=0x88888888 expected=0x88888888 matched=1
+selector read: SS1=0x1 expected_unlock=0x8
+selector write: SS1=0x8
+selector result: SS1=0x8 expected=0x8 matched=1
+AD102 selectors-applied: readout1=0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+pre-FLR selectors: ss0=0x88888888 expected=0x88888888 ss1=0x8 expected=0x8
+AD102 pre-FLR: readout1=0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+PCIe FLR begin: BME=0 DMA retained, chip=0x193000a1
+PCIe FLR returned: result=0
+post-FLR BAR ready: chip=0x193000a1
+post-FLR GFW result: error=0 pci=0x270510de plm=0x8b8f boot=0x3ff cpuctl=0x10 budget_us=2050000
+engine reset assert: phase=post-FLR base=0x840000 before=0 write=0x1
+engine reset propagation: phase=post-FLR base=0x840000 first=0x1 tenth=0x1
+engine reset asserted: phase=post-FLR base=0x840000 error=0 last=0x1
+engine reset release: phase=post-FLR base=0x840000 before=0x1 write=0
+engine reset released: phase=post-FLR base=0x840000 engine=0 hwcfg2=0x67b7
+post-FLR SEC2 reset released, GSP halted, BME=0 pending=0 WPR2=1ffffe00:00000000 SS0=88888888 SS1=00000008
+AD102 permission post-FLR: WPR_CFG[0x1fa7cc]=0x4cb8f before=0x4cb8f expected=0xfffff0ff required=1 valid=1 pci=0x270510de chip=0x193000a1
+AD102 permission post-FLR: FBPA[0x9a0148]=0xffffff0f before=0xffffff0f expected=0xffffffff required=0 valid=1 pci=0x270510de chip=0x193000a1
+AD102 permission post-FLR: WPR[0x1fa7c4]=0x4cb8f before=0x4cb8f expected=0xffffffff required=1 valid=1 pci=0x270510de chip=0x193000a1
+AD102 permission post-FLR: FEAT[0x823804]=0xffffffff before=0xffffff8f expected=0xffffffff required=1 valid=1 pci=0x270510de chip=0x193000a1
+AD102 post-FLR: readout1=0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+driver probe resources: phase=handoff empty=1
+restore streaming mask: actual=0xffffffffffff expected=0xffffffffffff
+restore coherent mask: actual=0xfffffffff expected=0xfffffffff
+restore PCI command: actual=0x3 original=0x3 mask=0x6
+Transaction result=0 safe=1 retained=0 started=1 quiesced=1 flrs=1 DMA_live=0
+ASUS close-exclusive intent: quiescent, DMA absent, BME off
+ASUS close-exclusive return=0
+Transaction readbacks and containment passed; Windows start intent; benchmark still required

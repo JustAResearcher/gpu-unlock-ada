@@ -1,0 +1,301 @@
+{
+  "schema": 2,
+  "label": "unlocked",
+  "utc": "2026-10-31T10:53:26.823306+00:00",
+  "python": "3.13.2",
+  "executable": "<benchmark-venv>/Scripts/python.exe",
+  "numpy": "2.3.5",
+  "torch": "2.11.0+cu128",
+  "torch_cuda": "12.8",
+  "gpu": "NVIDIA GeForce RTX 4070 Ti SUPER",
+  "capability": [
+    8,
+    9
+  ],
+  "cublas_version": 120804,
+  "cublas_sha256": "9513540e4ec4c51ee9e7304138c2cc255c29a8c181f9e80c38efa25738becd99",
+  "cublasLt_sha256": "b199d1ff892a81b7fd3d57ba1781549609b41500b36008fef326038393ad46c7",
+  "benchmark_sha256": "ba10ce79168965564c23f08560185000542769afd5f721c45932478f822c2c95",
+  "math_mode": 16,
+  "seed": 20261024,
+  "warmup_seconds": 0.75,
+  "initial_telemetry": {
+    "utc": "2026-10-31T10:53:24.940494+00:00",
+    "returncode": 0,
+    "devices": [
+      {
+        "name": "NVIDIA GeForce RTX 4070 Ti SUPER",
+        "uuid": "GPU-REDACTED-SAME-DEVICE",
+        "pci.bus_id": "00000000:01:00.0",
+        "pci.device_id": "0x270510DE",
+        "driver_version": "621.01",
+        "vbios_version": "95.03.45.00.9a",
+        "power.limit": "285.00",
+        "power.draw": "25.85",
+        "temperature.gpu": "34.10",
+        "clocks.sm": "225",
+        "clocks.mem": "5001",
+        "utilization.gpu": "0",
+        "memory.used": "0"
+      }
+    ],
+    "error": ""
+  },
+  "results": [
+    {
+      "full_256_exact": true,
+      "full_256_max_abs_error": 0.0,
+      "mode": "fp32_pedantic",
+      "n": 4096,
+      "samples": 15,
+      "batch": 5,
+      "milliseconds": [
+        4.176268768310547,
+        4.163180923461914,
+        4.184428787231445,
+        4.347289657592773,
+        4.339916610717774,
+        4.340127944946289,
+        4.329702377319336,
+        4.3388927459716795,
+        4.314847946166992,
+        4.315334320068359,
+        4.315897750854492,
+        4.314931106567383,
+        4.311859130859375,
+        4.312063980102539,
+        4.312844848632812
+      ],
+      "median_ms": 4.314931106567383,
+      "median_tflops": 31.85194620206475,
+      "min_ms": 4.163180923461914,
+      "max_ms": 4.347289657592773,
+      "sample_cv": 0.014246759924260874,
+      "compute_type": 69,
+      "input_type": 0,
+      "output_type": "FP32",
+      "sampled_large_exact": true,
+      "sampled_large_elements": 1024,
+      "sampled_large_max_abs_error": 0.0,
+      "warmup_batches": 35,
+      "output_sha256": "0e3b4c1a854bc95d06fb91f688b1f4f739fe7e76972c889fa1bbeb042ac7c1bc",
+      "telemetry_before": {
+        "utc": "2026-10-31T10:53:28.167760+00:00",
+        "returncode": 0,
+        "devices": [
+          {
+            "name": "NVIDIA GeForce RTX 4070 Ti SUPER",
+            "uuid": "GPU-REDACTED-SAME-DEVICE",
+            "pci.bus_id": "00000000:01:00.0",
+            "pci.device_id": "0x270510DE",
+            "driver_version": "621.01",
+            "vbios_version": "95.03.45.00.9a",
+            "power.limit": "285.00",
+            "power.draw": "201.04",
+            "temperature.gpu": "58.80",
+            "clocks.sm": "2610",
+            "clocks.mem": "10251",
+            "utilization.gpu": "100",
+            "memory.used": "390"
+          }
+        ],
+        "error": ""
+      },
+      "telemetry_after": {
+        "utc": "2026-10-31T10:53:28.532944+00:00",
+        "returncode": 0,
+        "devices": [
+          {
+            "name": "NVIDIA GeForce RTX 4070 Ti SUPER",
+            "uuid": "GPU-REDACTED-SAME-DEVICE",
+            "pci.bus_id": "00000000:01:00.0",
+            "pci.device_id": "0x270510DE",
+            "driver_version": "621.01",
+            "vbios_version": "95.03.45.00.9a",
+            "power.limit": "285.00",
+            "power.draw": "255.96",
+            "temperature.gpu": "58.43",
+            "clocks.sm": "2610",
+            "clocks.mem": "10251",
+            "utilization.gpu": "100",
+            "memory.used": "390"
+          }
+        ],
+        "error": ""
+      }
+    },
+    {
+      "full_256_exact": true,
+      "full_256_max_abs_error": 0.0,
+      "mode": "fp16_fp32",
+      "n": 4096,
+      "samples": 15,
+      "batch": 5,
+      "milliseconds": [
+        0.8715583801269531,
+        0.8697855949401856,
+        0.8855232238769531,
+        0.8796671867370606,
+        0.8740096092224121,
+        0.8957951545715332,
+        0.9119935989379883,
+        0.9060352325439454,
+        0.9063936233520508,
+        0.9072640419006348,
+        0.9401535987854004,
+        0.9431039810180664,
+        0.9455615997314453,
+        0.9502719879150391,
+        0.9514816284179688
+      ],
+      "median_ms": 0.9063936233520508,
+      "median_tflops": 151.63274534491907,
+      "min_ms": 0.8697855949401856,
+      "max_ms": 0.9514816284179688,
+      "sample_cv": 0.03207133285814674,
+      "compute_type": 68,
+      "input_type": 2,
+      "output_type": "FP32",
+      "sampled_large_exact": true,
+      "sampled_large_elements": 1024,
+      "sampled_large_max_abs_error": 0.0,
+      "warmup_batches": 163,
+      "output_sha256": "0e3b4c1a854bc95d06fb91f688b1f4f739fe7e76972c889fa1bbeb042ac7c1bc",
+      "telemetry_before": {
+        "utc": "2026-10-31T10:53:29.541042+00:00",
+        "returncode": 0,
+        "devices": [
+          {
+            "name": "NVIDIA GeForce RTX 4070 Ti SUPER",
+            "uuid": "GPU-REDACTED-SAME-DEVICE",
+            "pci.bus_id": "00000000:01:00.0",
+            "pci.device_id": "0x270510DE",
+            "driver_version": "621.01",
+            "vbios_version": "95.03.45.00.9a",
+            "power.limit": "285.00",
+            "power.draw": "237.58",
+            "temperature.gpu": "57.68",
+            "clocks.sm": "2445",
+            "clocks.mem": "10251",
+            "utilization.gpu": "100",
+            "memory.used": "538"
+          }
+        ],
+        "error": ""
+      },
+      "telemetry_after": {
+        "utc": "2026-10-31T10:53:29.646549+00:00",
+        "returncode": 0,
+        "devices": [
+          {
+            "name": "NVIDIA GeForce RTX 4070 Ti SUPER",
+            "uuid": "GPU-REDACTED-SAME-DEVICE",
+            "pci.bus_id": "00000000:01:00.0",
+            "pci.device_id": "0x270510DE",
+            "driver_version": "621.01",
+            "vbios_version": "95.03.45.00.9a",
+            "power.limit": "285.00",
+            "power.draw": "230.09",
+            "temperature.gpu": "50.03",
+            "clocks.sm": "2520",
+            "clocks.mem": "10251",
+            "utilization.gpu": "57",
+            "memory.used": "538"
+          }
+        ],
+        "error": ""
+      }
+    },
+    {
+      "full_256_exact": true,
+      "full_256_max_abs_error": 0.0,
+      "mode": "bf16_fp32",
+      "n": 4096,
+      "samples": 15,
+      "batch": 5,
+      "milliseconds": [
+        0.8830528259277344,
+        0.8787967681884765,
+        0.8779775619506835,
+        0.8777024269104003,
+        0.8775296211242676,
+        0.8761216163635254,
+        0.8765439987182617,
+        0.8757247924804688,
+        0.8781824111938477,
+        0.8777088165283203,
+        0.8787967681884765,
+        0.9215999603271484,
+        0.9379136085510253,
+        0.9385215759277343,
+        0.9369600296020508
+      ],
+      "median_ms": 0.8781824111938477,
+      "median_tflops": 156.50387860212118,
+      "min_ms": 0.8757247924804688,
+      "max_ms": 0.9385215759277343,
+      "sample_cv": 0.027959944818510274,
+      "compute_type": 68,
+      "input_type": 14,
+      "output_type": "FP32",
+      "sampled_large_exact": true,
+      "sampled_large_elements": 1024,
+      "sampled_large_max_abs_error": 0.0,
+      "warmup_batches": 161,
+      "output_sha256": "0e3b4c1a854bc95d06fb91f688b1f4f739fe7e76972c889fa1bbeb042ac7c1bc",
+      "telemetry_before": {
+        "utc": "2026-10-31T10:53:30.627812+00:00",
+        "returncode": 0,
+        "devices": [
+          {
+            "name": "NVIDIA GeForce RTX 4070 Ti SUPER",
+            "uuid": "GPU-REDACTED-SAME-DEVICE",
+            "pci.bus_id": "00000000:01:00.0",
+            "pci.device_id": "0x270510DE",
+            "driver_version": "621.01",
+            "vbios_version": "95.03.45.00.9a",
+            "power.limit": "285.00",
+            "power.draw": "237.99",
+            "temperature.gpu": "58.51",
+            "clocks.sm": "2430",
+            "clocks.mem": "10251",
+            "utilization.gpu": "99",
+            "memory.used": "542"
+          }
+        ],
+        "error": ""
+      },
+      "telemetry_after": {
+        "utc": "2026-10-31T10:53:30.733673+00:00",
+        "returncode": 0,
+        "devices": [
+          {
+            "name": "NVIDIA GeForce RTX 4070 Ti SUPER",
+            "uuid": "GPU-REDACTED-SAME-DEVICE",
+            "pci.bus_id": "00000000:01:00.0",
+            "pci.device_id": "0x270510DE",
+            "driver_version": "621.01",
+            "vbios_version": "95.03.45.00.9a",
+            "power.limit": "285.00",
+            "power.draw": "237.99",
+            "temperature.gpu": "58.51",
+            "clocks.sm": "2430",
+            "clocks.mem": "10251",
+            "utilization.gpu": "99",
+            "memory.used": "542"
+          }
+        ],
+        "error": ""
+      }
+    }
+  ],
+  "completed": true,
+  "process_environment": {
+    "CUDA_VISIBLE_DEVICES": "GPU-REDACTED-SAME-DEVICE",
+    "CUDA_LAUNCH_BLOCKING": null,
+    "CUBLAS_WORKSPACE_CONFIG": null,
+    "NVIDIA_TF32_OVERRIDE": null
+  },
+  "note": "cuBLAS GEMM baseline, not a register instruction-rate measurement or proof of unlock",
+  "elapsed_seconds": 3.577046800000062
+}

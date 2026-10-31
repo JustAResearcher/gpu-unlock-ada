@@ -91,6 +91,13 @@ profile; it does **not** add AD104 admission to the Linux module. See the
 binaries or automatic boot installer are distributed. Contribution by **Latence.app**;
 original upstream credits and licences are retained.
 
+A separate owner report on an ASUS TUF RTX 4070 Ti SUPER AD103 with an ASUS
+X670E-PLUS WIFI records a successful manual UEFI transaction and matched
+cuBLAS FP16/FP32 **+78.4%**, BF16/FP32 **+78.5%** at the same 285 W cap. Windows
+resumed its kernel; fresh cold driver initialization, persistence and extended
+stability remain untested. See the [ASUS report and sanitized evidence](docs/ad103-asus-x670e-windows-report.md).
+This report does not distribute its machine-specific EFI or add general Windows support.
+
 ## Supported targets
 
 The module selects the AD102 firmware and payload automatically for RTX 4090
