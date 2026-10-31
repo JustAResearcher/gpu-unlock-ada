@@ -127,8 +127,8 @@ EFI_STATUS ReconnectGpuDisplay(DETECTED_GPU *gpu)
 
     if (!force_reconnect) {
         LogWrite("[Display] Skipping firmware ConnectController by default.\n"
-                 "          Rationale: calling Option ROM GOP driver post-FLR deadlocks modern UEFI firmware (AD102/RTX 4090).\n"
-                 "          TOTORONG design: Windows Boot Manager (bootmgfw.efi) and nvlddmkm.sys initialize display natively.\n");
+                 "          Rationale: Option ROM GOP driver post-FLR causes UEFI deadlocks on modern platforms.\n"
+                 "          Handoff design: Windows Boot Manager (bootmgfw.efi) and nvlddmkm.sys initialize display natively.\n");
         return EFI_SUCCESS;
     }
 
