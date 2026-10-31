@@ -57,7 +57,7 @@ BOOLEAN GuTargetConfig(const UINT32 *C, UINTN S, UINTN B, UINTN D, UINTN F) {
     C[11]==GU_BOARD_SUBSYSTEM && C[2]==0x030000a1U && !((C[3]>>16)&0x7f);
 }
 BOOLEAN GuSafeToReturn(VOID) {
-  return !Gu.retained && !Gu.allocations && !Gu.dma_count && !Gu.master_attributes_pending &&
+  return !Gu.reset_delay_unverified && !Gu.retained && !Gu.allocations && !Gu.dma_count && !Gu.master_attributes_pending &&
     (!Gu.started || (Gu.quiesced && !Gu.fault));
 }
 VOID *GuAlloc(size_t N) {
@@ -75,7 +75,7 @@ EFI_STATUS GuDmaAllocate(UINTN N, VOID **C, UINT64 *D) {
   EFI_STATUS Status; GU_DMA *Entry; UINTN Mapped;
   if(!C || !D)return EFI_INVALID_PARAMETER;
   *C=NULL;*D=0;
-  if(GU_PREFLIGHT_ONLY || !Gu.profile_verified || !Gu.armed || !Gu.display_ok || !N || N>(128U<<20) || Gu.fault || Gu.retained || !Gu.pci || !Gu.owned)return EFI_INVALID_PARAMETER;
+  if(GU_PREFLIGHT_ONLY || !Gu.profile_verified || !Gu.armed || !Gu.display_ok || !N || N>(128U<<20) || Gu.fault || Gu.reset_delay_unverified || Gu.retained || !Gu.pci || !Gu.owned)return EFI_INVALID_PARAMETER;
   Entry=GuAlloc(sizeof(*Entry));if(!Entry)return EFI_OUT_OF_RESOURCES;
   Entry->pages=(N+4095)/4096;Entry->bytes=Entry->pages*4096;
   Status=Gu.pci->AllocateBuffer(Gu.pci,AllocateAnyPages,EfiBootServicesData,
@@ -106,7 +106,7 @@ EFI_STATUS GuDmaFree(VOID *C, UINT64 D) {
   while(*Link && ((*Link)->cpu!=C || (*Link)->dma!=D))Link=&(*Link)->next;
   if(!*Link)return EFI_NOT_FOUND;
   Entry=*Link;
-  if(Gu.retained || Gu.master_attributes_pending || (Gu.started && (!Gu.quiesced || Gu.fault))) {
+  if(Gu.reset_delay_unverified || Gu.retained || Gu.master_attributes_pending || (Gu.started && (!Gu.quiesced || Gu.fault))) {
     Gu.retained=TRUE;return EFI_ACCESS_DENIED;
   }
   if(Entry->mapped) {
@@ -120,7 +120,7 @@ EFI_STATUS GuDmaFree(VOID *C, UINT64 D) {
 }
 UINT32 GuRead32(UINT32 O) {
   UINT32 Value=0xffffffffU;
-  if(Gu.fault)return Value;
+  if(Gu.fault || Gu.reset_delay_unverified)return Value;
   if(!Gu.pci || (O&3) || (UINT64)O+4>Gu.bar_size ||
      EFI_ERROR(Gu.pci->Mem.Read(Gu.pci,EfiPciIoWidthUint32,0,O,1,&Value))) {
     Gu.fault=TRUE;return 0xffffffffU;
@@ -128,7 +128,7 @@ UINT32 GuRead32(UINT32 O) {
   return Value;
 }
 VOID GuWrite32(UINT32 O, UINT32 V) {
-  if(Gu.fault)return;
+  if(Gu.fault || Gu.reset_delay_unverified)return;
 #ifdef GU_ENTRY_LATCHED_SS1_PRESERVE
   if(O==0x823820){Gu.fault=TRUE;return;}
 #endif
@@ -145,24 +145,37 @@ VOID GuWrite32(UINT32 O, UINT32 V) {
   if(EFI_ERROR(Gu.pci->Mem.Write(Gu.pci,EfiPciIoWidthUint32,0,O,1,&V)))Gu.fault=TRUE;
 }
 static EFI_STATUS RawRead(EFI_PCI_IO_PROTOCOL_WIDTH W, UINT32 O, VOID *V) {
+  if(Gu.reset_delay_unverified)return EFI_NOT_READY;
   if(!Gu.pci || W>EfiPciIoWidthUint32 || O>256-((UINT32)1<<W))return EFI_INVALID_PARAMETER;
   return Gu.pci->Pci.Read(Gu.pci,W,O,1,V);
 }
 EFI_STATUS GuConfigRead(EFI_PCI_IO_PROTOCOL_WIDTH W, UINT32 O, VOID *V) {
   EFI_STATUS Status;
-  if(Gu.fault)return EFI_DEVICE_ERROR;
+  if(Gu.fault || Gu.reset_delay_unverified)return EFI_DEVICE_ERROR;
   Status=RawRead(W,O,V);if(EFI_ERROR(Status))Gu.fault=TRUE;return Status;
 }
 EFI_STATUS GuConfigWrite(EFI_PCI_IO_PROTOCOL_WIDTH W, UINT32 O, VOID *V) {
   EFI_STATUS Status;
-  if(Gu.fault)return EFI_DEVICE_ERROR;
+  if(Gu.fault || Gu.reset_delay_unverified)return EFI_DEVICE_ERROR;
   if(GU_PREFLIGHT_ONLY || !Gu.profile_verified || !Gu.pci || !Gu.owned || !Gu.armed || !Gu.display_ok || W>EfiPciIoWidthUint32 ||
      O>256-((UINT32)1<<W)) {Gu.fault=TRUE;return EFI_ACCESS_DENIED;}
   Status=Gu.pci->Pci.Write(Gu.pci,W,O,1,V);
   if(EFI_ERROR(Status))Gu.fault=TRUE;return Status;
 }
+static EFI_STATUS CheckedDelay(UINTN Microseconds) {
+  EFI_STATUS Status=(!Gu.bs || !Gu.bs->Stall)?EFI_UNSUPPORTED:Gu.bs->Stall(Microseconds);
+  if(Status!=EFI_SUCCESS) {
+    Gu.fault=TRUE;
+    return EFI_ERROR(Status)?Status:EFI_DEVICE_ERROR;
+  }
+  if(Gu.ticks>~(UINT64)0-Microseconds){Gu.fault=TRUE;return EFI_DEVICE_ERROR;}
+  Gu.ticks+=Microseconds;
+  return EFI_SUCCESS;
+}
 VOID GuStall(UINTN Microseconds) {
-  Gu.bs->Stall(Microseconds);Gu.ticks+=Microseconds;
+  /* A failed poll delay faults the next guarded read; do not invent time or
+     retry an uncertain reset delay through the ordinary polling helper. */
+  if(!Gu.fault && !Gu.reset_delay_unverified)(VOID)CheckedDelay(Microseconds);
 }
 EFI_STATUS GuEnableMaster(VOID) {
   UINT32 Id=0;UINT16 Command=0xffff,Now=0xffff;
@@ -214,6 +227,7 @@ EFI_STATUS GuClearMaster(VOID) {
   UINT32 Id=0;UINT16 Command=0xffff,Now=0xffff;EFI_STATUS Status;
   EFI_STATUS AttributeStatus=EFI_SUCCESS;UINT64 Attributes=~0ULL;
   if(GU_PREFLIGHT_ONLY)return EFI_ACCESS_DENIED;
+  if(Gu.reset_delay_unverified){Gu.fault=Gu.retained=TRUE;return EFI_NOT_READY;}
   /* Containment remains permitted after a latched I/O failure. */
   Status=RawRead(EfiPciIoWidthUint32,0,&Id);
   if(EFI_ERROR(Status) || Id!=GU_BOARD_ID)goto fail;
@@ -300,13 +314,16 @@ EFI_STATUS GuFlr(VOID) {
   Ctl|=0x8000;Gu.flrs++;GuStarted();
   ResetStatus=GuConfigWrite(EfiPciIoWidthUint16,Gu.pcie_cap+8,&Ctl);
   /* No access of any kind to this function for at least 100 ms. */
-  GuStall(100000);
+  Gu.reset_delay_unverified=TRUE;
+  /* This wait is mandatory even when the reset write reported failure. */
+  if(CheckedDelay(100000)!=EFI_SUCCESS){Gu.retained=TRUE;return EFI_DEVICE_ERROR;}
+  Gu.reset_delay_unverified=FALSE;
   if(EFI_ERROR(ResetStatus))return EFI_DEVICE_ERROR;
   for(Wait=0;Wait<=1000000;Wait+=1000) {
     EFI_STATUS Status=RawRead(EfiPciIoWidthUint32,0,&Identity);
     if(!EFI_ERROR(Status) && Identity==GU_BOARD_ID)return EFI_SUCCESS;
     if(!EFI_ERROR(Status) && Identity!=0xffffffffU && Identity!=0)break;
-    if(Wait<1000000)GuStall(1000);
+    if(Wait<1000000){GuStall(1000);if(Gu.fault)return EFI_DEVICE_ERROR;}
   }
   Gu.fault=TRUE;return EFI_DEVICE_ERROR;
 }

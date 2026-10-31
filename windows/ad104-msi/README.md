@@ -33,7 +33,17 @@ Copy-Item boot_profile.example.h local/boot_profile.h
 
 The GUID is only one check: this profile also requires ESP partition 2, start LBA 1,085,440, size 202,752 sectors and the pinned 3,086,728-byte Microsoft boot manager. A different layout or boot-manager hash needs independent capture and review. No tool here automatically widens a hardware profile.
 
-Output: `build/AD104-EXPERIMENTAL.EFI`. The build verifies x64 EFI entry, relocations, no imports/TLS/CLR and per-function stack frames. The public configuration abstraction rebuilds the historical tested EFI byte-for-byte when supplied the original private configuration. No portable EFI binary is distributed. New build manifests describe an unexecuted local build; historical evidence is separate.
+Output: `build/AD104-EXPERIMENTAL.EFI`. The build verifies x64 EFI entry, relocations, no imports/TLS/CLR and per-function stack frames. The original published v0.5.4 revision rebuilt the historical tested EFI byte-for-byte when supplied the original private configuration, as recorded in `provenance.json`. The subsequent reset-delay fix changes runtime code: it has only been host-tested and is not the same binary; no hardware boot of this revision has been performed. No portable EFI binary is distributed. New build manifests describe an unexecuted local build; historical evidence is separate.
+
+## Public reset-delay regression tests
+
+`Test-ResetDelay.ps1 -Gcc gcc` runs synthetic EFI tests without a captured PROM,
+firmware payload, driver image or Windows image. It checks missing, failing and
+warning `Stall` callbacks, elapsed-time accounting, the mandatory post-FLR quiet
+period, blocked target access/DMA cleanup after an uncertain wait, and the
+existing application-flow suite. It builds host test executables only; no GPU
+operation or bootable EFI execution occurs. This runner does not exercise the
+private-input transaction suite or validate timing on real hardware.
 
 ## Firmware and private tests
 
@@ -55,7 +65,7 @@ python tools/extract_private_capture.py CAP0004.JSON --out local/capture
   -WindowsImage C:\private\bootmgfw.efi
 ```
 
-The Windows image must be a private copy of the reviewed boot manager already on your own ESP. Tests simulate all GPU/EFI effects and perform no unlock. Full suite: 90 transaction + 17 admission + 47 ownership/USB lifecycle + 15 application + 8 I/O scenarios = **177**. The public tree was freshly retested with private inputs, and its rebuilt EFI matched the historical hardware binary SHA-256.
+The Windows image must be a private copy of the reviewed boot manager already on your own ESP. Tests simulate all GPU/EFI effects and perform no unlock. At the original v0.5.4 publication, the private-input suite passed 90 transaction + 17 admission + 47 ownership/USB lifecycle + 15 application + 8 I/O scenarios = **177**, and that revision's rebuilt EFI matched the historical hardware binary SHA-256. Those results remain historical evidence in `provenance.json`; the private-input suite has not been rerun for the subsequent reset-delay fix. Its validation consists of the public host tests and a freestanding library build, not a hardware boot or a byte-identical reconstruction of the original EFI.
 
 ## Manual experimental boot
 

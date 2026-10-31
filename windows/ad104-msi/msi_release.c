@@ -487,7 +487,7 @@ EFI_STATUS GuMsiRelease(VOID) {
 }
 BOOLEAN GuMsiReleased(VOID) {
   UINT32 c[64];UINT64 attrs=0;const char *failed=NULL;
-  if(!Plan.ready||Plan.stage!=3||!Plan.claimed||!Gu.owned||Gu.fault)failed="state";
+  if(!Plan.ready||Plan.stage!=3||!Plan.claimed||!Gu.owned||Gu.fault||Gu.reset_delay_unverified)failed="state";
   else if(Alive()!=EFI_SUCCESS)failed="console";
   else if(Gops(FALSE)!=EFI_SUCCESS)failed="GOP";
   else if(ReadConfig(c)!=EFI_SUCCESS)failed="config-read";
