@@ -39,7 +39,7 @@ EFI_STATUS LoggerInit(EFI_HANDLE image_handle)
     for (UINTN slot = 1; slot <= 9999; slot++) {
         CHAR16 name[] = L"RUN0000.TXT";
         UINTN number = slot;
-        for (UINTN at = 7; at > 3; at--) {
+        for (INTN at = 6; at >= 3; at--) {
             name[at] = (CHAR16)(L'0' + (number % 10));
             number /= 10;
         }
