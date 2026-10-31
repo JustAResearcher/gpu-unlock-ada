@@ -66,6 +66,9 @@ typedef struct {
   BOOLEAN fault, retained, started, quiesced, armed, owned, display_ok, saved;
   BOOLEAN profile_verified, prom_verified;
   BOOLEAN transaction_attempted;
+  /* The mandatory post-FLR quiet period has not completed successfully.
+     No target access or DMA cleanup is permitted until it has. */
+  BOOLEAN reset_delay_unverified;
   BOOLEAN master_attributes_pending;
   UINT64 master_original_attributes;
   UINT16 master_original_command;

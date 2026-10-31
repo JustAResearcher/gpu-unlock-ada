@@ -21,10 +21,11 @@ void writel(u32 Value,void *P) {
 VOID GuCopyFromIo(VOID *D,const VOID *S,size_t N) {
   UINT64 Address=(UINTN)S,Offset;UINTN Done=0;
   memset(D,0,N);
-  if(Gu.fault || Address<Gu.bar_base || Address-Gu.bar_base>Gu.bar_size ||
+  if(Gu.fault || Gu.reset_delay_unverified || Address<Gu.bar_base || Address-Gu.bar_base>Gu.bar_size ||
      N>Gu.bar_size-(Address-Gu.bar_base)){Gu.fault=TRUE;return;}
   Offset=Address-Gu.bar_base;
   while(Done<N) {
+    if(Gu.fault || Gu.reset_delay_unverified)return;
     UINTN Count=N-Done<1024?N-Done:1024;
     if(EFI_ERROR(Gu.pci->Mem.Read(Gu.pci,EfiPciIoWidthUint8,0,Offset+Done,Count,(UINT8 *)D+Done))) {
       Gu.fault=TRUE;return;
@@ -44,6 +45,7 @@ int dma_set_mask(struct device *D,u64 Mask) {if(!D->dma_mask)return -EINVAL;*D->
 int dma_set_coherent_mask(struct device *D,u64 Mask) {D->coherent_dma_mask=Mask;return 0;}
 void dma_wmb(void) {
   __atomic_thread_fence(__ATOMIC_SEQ_CST);
+  if(Gu.reset_delay_unverified){Gu.fault=TRUE;return;}
   if(Gu.pci->Flush && EFI_ERROR(Gu.pci->Flush(Gu.pci)))Gu.fault=TRUE;
 }
 void *kzalloc(size_t N,int Flags) {(void)Flags;return GuAlloc(N);}
