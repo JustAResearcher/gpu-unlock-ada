@@ -1,0 +1,6 @@
+# journalctl --list-boots (2026-10-31, CST), session date 2026-10-31
+# boot-id (32 chars, truncated display in listing) start -> end
+ 1ff2699eb59c49e9b025bfa26dcbb8aa  01:58:37 -> 02:21:11   unlock (warm reboot cycle, legacy collect = unlock run1)
+ 3e65b5f5ae2e4cf291ee428ca2cbc047  02:21:21 -> 03:26:05   stock baseline (warm reboot, stock cmdline, collects run2+run3)
+267d0cf75ff9411ea2313a09097acf2c  03:26:11 -> 03:35:20   unlock cold cycle 1 (EC reset) -> unlock run2
+7569fe75498d410e8747a7d17dfa4063  03:35:27 -> ended      unlock cold cycle 2 (EC reset) -> unlock run3

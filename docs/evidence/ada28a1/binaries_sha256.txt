@@ -1,0 +1,3 @@
+7d603fb1972a23648d1917165878ba38e8dc25874aea3fd02ef919de0776879d  build/matched-bench/mma_bench
+fbc27096bedc5b5e105fea9e6b4dd37ed5ddff275dc188f033d8f3ec51f1421b  build/matched-bench/validate_gemm
+cd0a70d5fc511f29c732c6b76c7801b54fc23c70241e0d0aa15682f655083697  build/matched-bench/gemm_bench
