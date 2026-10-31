@@ -2,6 +2,7 @@
 #include "unlock_engine.h"
 #include "checks.h"
 #include "compat/compat.h"
+#include "display_release.h"
 #include "logger.h"
 #include "port.h"
 #include "vendor/unlock_610.h"
@@ -91,6 +92,12 @@ EFI_STATUS ExecuteGpuRamUnlock(DETECTED_GPU *gpu) {
   Gu.bar_base = gpu->bar0_base;
   Gu.bar_size = gpu->bar0_size ? gpu->bar0_size : 0x1000000;
 
+  /* 0. Normalize PCI Command for BOTH primary and secondary GPUs before reading config:
+   * IO=1, Memory=1, Bus Master=0. This satisfies GuCheckConfig requirements regardless
+   * of what firmware initialized on secondary/headless cards.
+   */
+  RestoreGpuPciDecode(gpu);
+
   UINT32 c[64] = {0};
   GU_CAPS caps = {0};
   EFI_STATUS pci_st = gpu->pci_io->Pci.Read(gpu->pci_io, EfiPciIoWidthUint32, 0, 64, c);
@@ -98,6 +105,10 @@ EFI_STATUS ExecuteGpuRamUnlock(DETECTED_GPU *gpu) {
     LogWrite("[Unlock] Error: Failed to read PCI config space (%#llx)\n", (unsigned long long)pci_st);
     return pci_st;
   }
+
+  LogWrite("[Unlock] Bus %u:%u.%u Config: ID=%#010x Cmd/Stat=%#010x Class/Rev=%#010x BAR0=%#010x Subsys=%#010x RomBase=%#010x CapsPtr=%#04x\n",
+           (unsigned)gpu->bus, (unsigned)gpu->device, (unsigned)gpu->function,
+           c[0], c[1], c[2], c[4], c[11], c[12], (unsigned)(c[13] & 0xff));
 
   if (!GuCheckConfig(c, gpu->segment, gpu->bus, gpu->device, gpu->function, &caps)) {
     LogWrite("[Unlock] Error: GuCheckConfig rejected PCI configuration for GPU on Bus %u:%u.%u\n",

@@ -485,11 +485,16 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable
             }
 
             PrintColor(EFI_LIGHTCYAN | EFI_BLACK, L"----------------------------------------------------------------------\r\n");
-            PrintColor(EFI_LIGHTGREEN | EFI_BLACK, L"  [+] Display GOP reconnected. Windows will boot with full display.\r\n\r\n");
+            if (primary_display_idx >= 0) {
+                PrintColor(EFI_LIGHTGREEN | EFI_BLACK, L"  [+] Handing off to Windows Boot Manager (native display initialization)...\r\n\r\n");
+            } else {
+                PrintColor(EFI_LIGHTGREEN | EFI_BLACK, L"  [+] Secondary GPUs unlocked. Display console intact.\r\n\r\n");
+            }
 
-            /* 10-second countdown with instant skip on any keypress */
+            /* Countdown: if primary display was unlocked (screen detached), 1s stall so log flushes;
+             * otherwise 5s countdown with keypress skip */
+            UINTN cd = (primary_display_idx >= 0) ? 1 : 5;
             PrintColor(EFI_YELLOW | EFI_BLACK, L"Booting Windows in ");
-            UINTN cd = 10;
             while (cd > 0) {
                 PrintDec(cd);
                 Print(L"... ");
@@ -514,7 +519,8 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable
     }
 
     PrintColor(EFI_WHITE | EFI_BLACK, L"\r\nLaunching Windows Boot Manager...\r\n");
-    gBS->Stall(1000000);
+    LogWrite("[Handoff] Transitioning to Windows Boot Manager (bootmgfw.efi)...\n");
+    gBS->Stall(500000);
 
     return BootWindows();
 }

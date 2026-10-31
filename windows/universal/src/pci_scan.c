@@ -43,26 +43,55 @@ GPU_ARCH ClassifyGpuArchitecture(UINT16 device_id, CONST CHAR16 **chip_name,
     return GPU_ARCH_AMPERE;
   }
 
-  /* Ada Lovelace (RTX 40-Series) Device ID ranges */
+  /* Ada Lovelace (RTX 40-Series) Device ID ranges & specific cards */
+  if (device_id == 0x2684) {
+    if (chip_name) *chip_name = L"AD102";
+    if (model_name) *model_name = L"RTX 4090";
+    return GPU_ARCH_ADA_LOVELACE;
+  }
+  if (device_id == 0x2685) {
+    if (chip_name) *chip_name = L"AD102";
+    if (model_name) *model_name = L"RTX 4090D";
+    return GPU_ARCH_ADA_LOVELACE;
+  }
+  if (device_id == 0x2689) {
+    if (chip_name) *chip_name = L"AD103";
+    if (model_name) *model_name = L"RTX 4070 Ti SUPER";
+    return GPU_ARCH_ADA_LOVELACE;
+  }
   if (device_id >= 0x2680 && device_id <= 0x26BF) {
-    if (chip_name)
-      *chip_name = L"AD102";
-    if (model_name)
-      *model_name = L"RTX 4090/6000Ada";
+    if (chip_name) *chip_name = L"AD102";
+    if (model_name) *model_name = L"RTX 4090/6000Ada";
+    return GPU_ARCH_ADA_LOVELACE;
+  }
+  if (device_id == 0x2703) {
+    if (chip_name) *chip_name = L"AD103";
+    if (model_name) *model_name = L"RTX 4080 SUPER";
+    return GPU_ARCH_ADA_LOVELACE;
+  }
+  if (device_id == 0x2704) {
+    if (chip_name) *chip_name = L"AD103";
+    if (model_name) *model_name = L"RTX 4080";
     return GPU_ARCH_ADA_LOVELACE;
   }
   if (device_id >= 0x2700 && device_id <= 0x277F) {
-    if (chip_name)
-      *chip_name = L"AD103";
-    if (model_name)
-      *model_name = L"RTX 4080/4080S";
+    if (chip_name) *chip_name = L"AD103";
+    if (model_name) *model_name = L"RTX 4080/4080S";
+    return GPU_ARCH_ADA_LOVELACE;
+  }
+  if (device_id == 0x2782) {
+    if (chip_name) *chip_name = L"AD104";
+    if (model_name) *model_name = L"RTX 4070 Ti";
+    return GPU_ARCH_ADA_LOVELACE;
+  }
+  if (device_id == 0x2786) {
+    if (chip_name) *chip_name = L"AD104";
+    if (model_name) *model_name = L"RTX 4070";
     return GPU_ARCH_ADA_LOVELACE;
   }
   if (device_id >= 0x2780 && device_id <= 0x27FF) {
-    if (chip_name)
-      *chip_name = L"AD104";
-    if (model_name)
-      *model_name = L"RTX 4070/4070Ti";
+    if (chip_name) *chip_name = L"AD104";
+    if (model_name) *model_name = L"RTX 4070/4070Ti";
     return GPU_ARCH_ADA_LOVELACE;
   }
   if (device_id >= 0x2800 && device_id <= 0x287F) {
