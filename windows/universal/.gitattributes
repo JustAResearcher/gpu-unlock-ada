@@ -1,0 +1,9 @@
+# Ensure Windows batch files always use CRLF line endings across all platforms and clones
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# UEFI binaries and firmware assets are strictly binary
+*.efi binary
+*.rom binary
+*.bin binary
+

@@ -1,0 +1,6 @@
+D:\GPU Unlock\gpu-unlock-ada\windows\ad104-gigabyte-x99\runtime.c:2:7:memcpy	8	static
+D:\GPU Unlock\gpu-unlock-ada\windows\ad104-gigabyte-x99\runtime.c:6:7:memset	8	static
+D:\GPU Unlock\gpu-unlock-ada\windows\ad104-gigabyte-x99\runtime.c:10:7:memchr	8	static
+D:\GPU Unlock\gpu-unlock-ada\windows\ad104-gigabyte-x99\runtime.c:14:5:memcmp	8	static
+D:\GPU Unlock\gpu-unlock-ada\windows\ad104-gigabyte-x99\runtime.c:18:5:strcmp	8	static
+D:\GPU Unlock\gpu-unlock-ada\windows\ad104-gigabyte-x99\runtime.c:22:8:strlen	8	static
