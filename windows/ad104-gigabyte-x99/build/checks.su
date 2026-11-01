@@ -1,0 +1,4 @@
+D:\GPU Unlock\gpu-unlock-ada\windows\ad104-gigabyte-x99\checks.c:14:15:ConfigWord	8	static
+D:\GPU Unlock\gpu-unlock-ada\windows\ad104-gigabyte-x99\checks.c:142:16:TakePci	16	static
+D:\GPU Unlock\gpu-unlock-ada\windows\ad104-gigabyte-x99\checks.c:19:9:GuCheckConfig	320	static
+D:\GPU Unlock\gpu-unlock-ada\windows\ad104-gigabyte-x99\checks.c:153:5:GuDisplayPath	64	static

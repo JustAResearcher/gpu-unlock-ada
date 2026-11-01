@@ -1,0 +1,8 @@
+{
+  "x64_efi_verified": true,
+  "imports_tls_clr": false,
+  "image_base": "0x180000000",
+  "max_function_stack": 2128,
+  "hardware_tested": false,
+  "gpu_write_capability": true
+}

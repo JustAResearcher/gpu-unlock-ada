@@ -1,0 +1,3 @@
+D:\GPU Unlock\gpu-unlock-ada\windows\ad104-gigabyte-x99\vendor\vbios_610.c:168:5:gpu_unlock_vbios_fwsec	320	static
+D:\GPU Unlock\gpu-unlock-ada\windows\ad104-gigabyte-x99\vendor\vbios_610.c:229:5:gpu_unlock_fwsec_sig_offset	96	static
+D:\GPU Unlock\gpu-unlock-ada\windows\ad104-gigabyte-x99\vendor\vbios_610.c:250:5:gpu_unlock_fwsec_patch_frts	160	static

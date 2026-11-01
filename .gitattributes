@@ -1,5 +1,7 @@
 # Linux build scripts and package metadata must keep LF in Git and archives.
 * text=auto eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
 
 # `make dist` ships only the source needed to build and test the packages.
 /* export-ignore

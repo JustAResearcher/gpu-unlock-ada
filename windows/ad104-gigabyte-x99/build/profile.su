@@ -1,0 +1,7 @@
+D:\GPU Unlock\gpu-unlock-ada\windows\ad104-gigabyte-x99\profile.c:46:16:Config	400	static
+D:\GPU Unlock\gpu-unlock-ada\windows\ad104-gigabyte-x99\profile.c:83:16:Registers	128	static
+D:\GPU Unlock\gpu-unlock-ada\windows\ad104-gigabyte-x99\profile.c:18:9:GuAd104AssetsValid	64	static
+D:\GPU Unlock\gpu-unlock-ada\windows\ad104-gigabyte-x99\profile.c:25:9:GuAd104PromMatches	48	static
+D:\GPU Unlock\gpu-unlock-ada\windows\ad104-gigabyte-x99\profile.c:37:9:GuAd104FwsecMatches	8	static
+D:\GPU Unlock\gpu-unlock-ada\windows\ad104-gigabyte-x99\profile.c:100:9:GuAd104ColdEntry	64	static
+D:\GPU Unlock\gpu-unlock-ada\windows\ad104-gigabyte-x99\profile.c:105:12:GuAd104Prepare	320	static
