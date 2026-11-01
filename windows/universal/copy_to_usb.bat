@@ -1,31 +1,20 @@
 @echo off
-chcp 65001 >nul
 setlocal EnableDelayedExpansion
-title Копирование Universal GPU Unlock на флешку
+title Copy Universal GPU Unlock to USB Flash Drive
 
 echo ====================================================
-echo   Копирование Universal GPU Unlock на USB-флешку (FAT32)
+echo   Copy Universal GPU Unlock to USB Flash Drive
 echo ====================================================
 echo.
 
 set "DRIVE=%~1"
 if "!DRIVE!"=="" (
-    if exist "G:\" (
-        set "DEF=G"
-    ) else (
-        set "DEF="
-    )
-    if defined DEF (
-        set /p "DRIVE=Введите букву вашей флешки [Enter для !DEF!]: "
-        if "!DRIVE!"=="" set "DRIVE=!DEF!"
-    ) else (
-        set /p "DRIVE=Введите букву вашей флешки (например G): "
-    )
+    set /p "DRIVE=Enter your USB flash drive letter (e.g. E, F, or G): "
 )
 
 if "!DRIVE!"=="" (
     echo.
-    echo [ОШИБКА] Буква диска не указана!
+    echo [ERROR] Drive letter not specified!
     echo.
     pause
     exit /b 1
@@ -33,21 +22,45 @@ if "!DRIVE!"=="" (
 
 set "DRIVE=!DRIVE:~0,1!:"
 
+if /i "!DRIVE!"=="C:" (
+    echo.
+    echo [ERROR] Drive C: is the Windows system drive!
+    echo.
+    pause
+    exit /b 1
+)
+
 if not exist "!DRIVE!\" (
     echo.
-    echo [ОШИБКА] Диск !DRIVE! не найден! Проверьте подключение флешки.
+    echo [ERROR] Drive !DRIVE! was not found! Please check connection.
     echo.
     pause
     exit /b 1
 )
 
 echo.
-echo Копирование файлов на !DRIVE!\ ...
+echo Target Drive: !DRIVE!\
+echo Copying files to !DRIVE!\ ...
+echo.
 
-if exist "%~dp0dist\*" xcopy /E /I /Y "%~dp0dist\*" "!DRIVE!\" >nul
+if exist "%~dp0dist\*" (
+    echo [1/4] Copying EFI loader...
+    xcopy /E /I /Y "%~dp0dist\*" "!DRIVE!\" >nul
+)
+
 if not exist "!DRIVE!\EFI\ASSETS" mkdir "!DRIVE!\EFI\ASSETS" >nul 2>&1
-if exist "%~dp0UNIVERSAL-ASSETS\*" xcopy /E /I /Y "%~dp0UNIVERSAL-ASSETS\*" "!DRIVE!\EFI\ASSETS\" >nul
-if exist "%~dp0EFI\*" xcopy /E /I /Y "%~dp0EFI\*" "!DRIVE!\EFI\" >nul
+
+if exist "%~dp0UNIVERSAL-ASSETS\*" (
+    echo [2/4] Copying firmware assets to \EFI\ASSETS\...
+    xcopy /E /I /Y "%~dp0UNIVERSAL-ASSETS\*" "!DRIVE!\EFI\ASSETS\" >nul
+)
+
+if exist "%~dp0EFI\*" (
+    echo [3/4] Copying VBIOS...
+    xcopy /E /I /Y "%~dp0EFI\*" "!DRIVE!\EFI\" >nul
+)
+
+echo [4/4] Copying Windows utilities...
 if exist "%~dp0dump_vbios.bat" copy /Y "%~dp0dump_vbios.bat" "!DRIVE!\" >nul
 if exist "%~dp0dump_vbios.ps1" copy /Y "%~dp0dump_vbios.ps1" "!DRIVE!\" >nul
 if exist "%~dp0enable_laptop_hybrid.bat" copy /Y "%~dp0enable_laptop_hybrid.bat" "!DRIVE!\" >nul
@@ -59,13 +72,15 @@ if exist "%~dp0nvflashk.exe" (
 )
 if exist "%~dp0usb_release_staging\ИНСТРУКЦИЯ.txt" copy /Y "%~dp0usb_release_staging\ИНСТРУКЦИЯ.txt" "!DRIVE!\" >nul
 
-if errorlevel 1 (
-    echo.
-    echo [ОШИБКА] Не удалось скопировать файлы. Возможно, диск защищен от записи.
-) else (
-    echo.
+echo.
+if exist "!DRIVE!\EFI\ASSETS\gsp_ga10x.bin" (
     echo ====================================================
-    echo [УСПЕХ] Все файлы успешно записаны на !DRIVE!\!
+    echo [SUCCESS] Flash drive !DRIVE!\ is ready!
+    echo           BOOTX64.EFI and all firmware assets copied.
+    echo ====================================================
+) else (
+    echo ====================================================
+    echo [WARNING] gsp_ga10x.bin missing from !DRIVE!\EFI\ASSETS\
     echo ====================================================
 )
 
