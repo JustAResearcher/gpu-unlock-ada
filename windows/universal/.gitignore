@@ -6,6 +6,7 @@ build/
 # Staging and binary dumps
 *.rom
 *.bin
+!UNIVERSAL-ASSETS/*.bin
 *.exe
 usb_release_staging/
 dist/EFI/VBIOS/*.rom
