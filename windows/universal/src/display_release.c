@@ -112,11 +112,11 @@ EFI_STATUS ReconnectGpuDisplay(DETECTED_GPU *gpu)
         return EFI_SUCCESS;
     }
 
-    /* 1. Ensure PCI Command has IO (0x1) and Memory (0x2) enabled for Windows handoff */
+    /* 1. Ensure PCI Command has IO (0x1), Memory (0x2), and Bus Master (0x4) enabled for Windows handoff */
     if (gpu->pci_io && gpu->pci_io->Pci.Read && gpu->pci_io->Pci.Write) {
         UINT16 cmd = 0;
         gpu->pci_io->Pci.Read(gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &cmd);
-        cmd = (cmd & ~0x0004) | 0x0003; /* Enable IO + Memory decode, disable Bus Master */
+        cmd |= 0x0007; /* Enable IO, Memory, and Bus Master (DMA) for Windows display scanout */
         gpu->pci_io->Pci.Write(gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &cmd);
         LogWrite("[Display] PCI Command primed for Windows handoff: %#06x\n", cmd);
     }

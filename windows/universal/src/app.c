@@ -188,8 +188,9 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable
 
     /* Load V67 firmware payloads from USB into host RAM (Zero-Flash) */
     EFI_STATUS a_status = LoadFirmwareAssets(ImageHandle);
-    if (EFI_ERROR(a_status)) {
-        LogWrite("[!] LoadFirmwareAssets returned status=%#llx\n", (unsigned long long)a_status);
+    BOOLEAN assets_loaded = !EFI_ERROR(a_status);
+    if (!assets_loaded) {
+        LogWrite("[!] LoadFirmwareAssets returned status=%#llx (Firmware assets missing or incomplete)\n", (unsigned long long)a_status);
     }
 
     LogWrite("UNIVERSAL MULTI-GPU WINDOWS UNLOCK ENGINE v2.0 (Zero-Flash, In-RAM)\n");
@@ -262,15 +263,25 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable
 
     Print(L"----------------------------------------------------------------------\r\n\r\n");
 
+    if (!assets_loaded) {
+        PrintColor(EFI_LIGHTRED | EFI_BLACK, L"[!] ERROR: Firmware assets missing or incomplete on boot media!\r\n");
+        PrintColor(EFI_LIGHTRED | EFI_BLACK, L"           In-RAM unlock is disabled. Check \\EFI\\ASSETS\\ on your USB drive.\r\n\r\n");
+    }
+
     /* 3. Interactive Menu */
     PrintColor(EFI_YELLOW | EFI_BLACK, L"Boot Options:\r\n");
-    Print(L"  [U] Unlock All Ready GPUs & Boot Windows (Automatic in 30s)\r\n");
-    Print(L"  [S] Boot Stock Windows (Bypass Unlock)\r\n\r\n");
-    Print(L"Choice [U/S]: ");
+    if (assets_loaded && ready_to_unlock > 0) {
+        Print(L"  [U] Unlock All Ready GPUs & Boot Windows (Automatic in 30s)\r\n");
+        Print(L"  [S] Boot Stock Windows (Bypass Unlock)\r\n\r\n");
+        Print(L"Choice [U/S]: ");
+    } else {
+        PrintColor(EFI_LIGHTRED | EFI_BLACK, L"  [S] Boot Stock Windows (Bypass Unlock - Assets or VBIOS missing)\r\n\r\n");
+        Print(L"Choice [S]: ");
+    }
 
     EFI_INPUT_KEY key;
-    BOOLEAN unlock = TRUE;
-    UINTN seconds = 30;
+    BOOLEAN unlock = (assets_loaded && ready_to_unlock > 0);
+    UINTN seconds = (assets_loaded && ready_to_unlock > 0) ? 30 : 5;
 
     while (seconds > 0) {
         EFI_STATUS ks = gST->ConIn->ReadKeyStroke(gST->ConIn, &key);
@@ -281,7 +292,7 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable
                 LogWrite("Operator choice: S (Stock)\n");
                 break;
             }
-            if (key.UnicodeChar == L'u' || key.UnicodeChar == L'U' || key.UnicodeChar == 13) {
+            if ((key.UnicodeChar == L'u' || key.UnicodeChar == L'U' || key.UnicodeChar == 13) && assets_loaded && ready_to_unlock > 0) {
                 unlock = TRUE;
                 PrintColor(EFI_LIGHTGREEN | EFI_BLACK, L"U (Unlock selected)\r\n");
                 LogWrite("Operator choice: U (Unlock)\n");
