@@ -9,7 +9,7 @@ echo.
 
 set "DRIVE=%~1"
 if "!DRIVE!"=="" (
-    set /p "DRIVE=Enter your USB flash drive letter (e.g. E, F, or G): "
+    set /p "DRIVE=Enter USB drive letter: "
 )
 
 if "!DRIVE!"=="" (
