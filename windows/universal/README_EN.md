@@ -100,6 +100,18 @@ USB_ROOT/
 
 ---
 
+## Optional Diagnostic & Control Flags (TXT Files on USB Root)
+
+By default, the engine is tuned for maximum reliability across modern motherboards and chipsets:
+
+| File Name on USB Root | Purpose & Behavior |
+| :--- | :--- |
+| *(Default, no files)* | **Safe Direct Handoff (Recommended)**. The engine detaches UEFI GOP before PCIe FLR, restores `PCI Command = 0x0007` (Bus Master DMA enabled), and immediately transitions to Windows Boot Manager (`bootmgfw.efi`). Completely eliminates post-FLR Option ROM deadlocks observed on modern UEFI platforms (Z790/X670/B650). Windows WDDM and `nvlddmkm.sys` initialize the display heads natively. |
+| **`tx-force-reconnect.txt`** | **Forced UEFI GOP Reconnection**. Creating this empty text file on the root of your boot drive instructs the engine to call `gBS->ConnectController` after unlocking, restoring the UEFI text console and display output before Windows launches (works reliably on platforms like Z370/B660/X99). |
+| **`tx-reconnect-recursive.txt`** | **Recursive Child Connect**. Used in combination with `tx-force-reconnect.txt`. Performs a recursive binding of all child video output handles and resets `gST->ConsoleOutHandle`. |
+
+---
+
 ## Performance Verification (Benchmark)
 
 The repository includes a truly universal multi-GPU benchmark that automatically discovers and tests any number of installed graphics cards (from 1 to 8+ GPUs):
