@@ -423,8 +423,16 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable
                         }
                     }
 
-                    /* Always reconnect display GOP and restore console after unlock attempt */
-                    ReconnectGpuDisplay(gpu);
+                    /* Only reconnect/prime display if the device is quiescent and safe to touch */
+                    if (!unsafe_state) {
+                        EFI_STATUS rc_stat = ReconnectGpuDisplay(gpu);
+                        if (EFI_ERROR(rc_stat)) {
+                            LogWrite("[Display] ReconnectGpuDisplay returned status=%#llx\n",
+                                     (unsigned long long)rc_stat);
+                        }
+                    } else {
+                        LogWrite("[Display] Suppressed ReconnectGpuDisplay due to unsafe hardware state\n");
+                    }
                 }
             }
         }

@@ -9,13 +9,24 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 PROJECT_DIR = ROOT
 
-# Search for w64devkit in parent hierarchy
+# Search for w64devkit in parent hierarchy and sibling directories
 w64devkit_bin = None
 for p in [ROOT, *ROOT.parents]:
     candidate = p / "tools" / "w64devkit" / "bin"
     if candidate.exists() and (candidate / "gcc.exe").exists():
         w64devkit_bin = candidate
         break
+    try:
+        for sub in p.iterdir():
+            if sub.is_dir():
+                candidate = sub / "tools" / "w64devkit" / "bin"
+                if candidate.exists() and (candidate / "gcc.exe").exists():
+                    w64devkit_bin = candidate
+                    break
+        if w64devkit_bin:
+            break
+    except Exception:
+        pass
 
 if w64devkit_bin:
     GCC = str(w64devkit_bin / "gcc.exe")

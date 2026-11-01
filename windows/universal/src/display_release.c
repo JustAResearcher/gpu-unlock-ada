@@ -112,13 +112,45 @@ EFI_STATUS ReconnectGpuDisplay(DETECTED_GPU *gpu)
         return EFI_SUCCESS;
     }
 
-    /* 1. Ensure PCI Command has IO (0x1), Memory (0x2), and Bus Master (0x4) enabled for Windows handoff */
+    /* 1. Ensure PCI Command has IO (0x1), Memory (0x2), and Bus Master (0x4) enabled for Windows handoff.
+     * Must verify actual hardware readback to guarantee the root complex accepted the write.
+     */
     if (gpu->pci_io && gpu->pci_io->Pci.Read && gpu->pci_io->Pci.Write) {
-        UINT16 cmd = 0;
-        gpu->pci_io->Pci.Read(gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &cmd);
-        cmd |= 0x0007; /* Enable IO, Memory, and Bus Master (DMA) for Windows display scanout */
-        gpu->pci_io->Pci.Write(gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &cmd);
-        LogWrite("[Display] PCI Command primed for Windows handoff: %#06x\n", cmd);
+        UINT16 cmd_before = 0;
+        EFI_STATUS s = gpu->pci_io->Pci.Read(gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &cmd_before);
+        if (EFI_ERROR(s)) {
+            LogWrite("[Display] Error: Failed to read PCI Command register prior to handoff (%#llx)\n",
+                     (unsigned long long)s);
+            return s;
+        }
+
+        UINT16 cmd_target = cmd_before | 0x0007; /* Enable IO, Memory, and Bus Master (DMA) */
+        s = gpu->pci_io->Pci.Write(gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &cmd_target);
+        if (EFI_ERROR(s)) {
+            LogWrite("[Display] Error: Failed to write PCI Command register for handoff (%#llx)\n",
+                     (unsigned long long)s);
+            return s;
+        }
+
+        UINT16 cmd_readback = 0;
+        s = gpu->pci_io->Pci.Read(gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &cmd_readback);
+        if (EFI_ERROR(s)) {
+            LogWrite("[Display] Error: Failed to read back PCI Command register (%#llx)\n",
+                     (unsigned long long)s);
+            return s;
+        }
+
+        LogWrite("[Display] PCI Command primed for Windows handoff: %#06x (readback: %#06x, IO=%u, Mem=%u, BME=%u)\n",
+                 cmd_target, cmd_readback,
+                 (cmd_readback & 0x1) ? 1 : 0,
+                 (cmd_readback & 0x2) ? 1 : 0,
+                 (cmd_readback & 0x4) ? 1 : 0);
+
+        if ((cmd_readback & 0x0007) != 0x0007) {
+            LogWrite("[Display] Error: Hardware rejected PCI Command write! Readback: %#06x (expected & 0x7 == 0x7)\n",
+                     cmd_readback);
+            return EFI_DEVICE_ERROR;
+        }
     }
 
     /* 2. Check if user explicitly requested firmware ConnectController via tx-force-reconnect.txt */
@@ -139,18 +171,11 @@ EFI_STATUS ReconnectGpuDisplay(DETECTED_GPU *gpu)
     LogWrite("[Display] Attempting FORCED GOP reconnect (recursive=%s)...\n",
              force_recursive ? "TRUE" : "FALSE");
 
-    if (gpu->pci_io && gpu->pci_io->Pci.Read && gpu->pci_io->Pci.Write) {
-        UINT16 cmd = 0;
-        gpu->pci_io->Pci.Read(gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &cmd);
-        cmd |= 0x0007; /* Enable IO, Memory, and Bus Master for GOP */
-        gpu->pci_io->Pci.Write(gpu->pci_io, EfiPciIoWidthUint16, 4, 1, &cmd);
-    }
-
     gBS->Stall(200000);
     EFI_STATUS status = gBS->ConnectController(gpu->handle, NULL, NULL, force_recursive);
     LogWrite("[Display] ConnectController on GPU handle returned status=%#llx\n", (unsigned long long)status);
 
-    if (force_recursive) {
+    if (force_recursive && !EFI_ERROR(status)) {
         if (gST && gST->ConsoleOutHandle) {
             LogWrite("[Display] Reconnecting ConsoleOutHandle...\n");
             gBS->ConnectController(gST->ConsoleOutHandle, NULL, NULL, TRUE);
@@ -162,5 +187,5 @@ EFI_STATUS ReconnectGpuDisplay(DETECTED_GPU *gpu)
         }
     }
 
-    return EFI_SUCCESS;
+    return status;
 }
