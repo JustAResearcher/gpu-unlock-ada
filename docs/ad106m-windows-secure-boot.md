@@ -213,13 +213,31 @@ access sequence. Its successful run entered a different, nonzero selector pair
 and recorded no FWSEC state failure. This is one successful
 physical run for the newly admitted nonzero case, **not a repair of the zero/zero
 failure**.
-Instrumentation can also affect timing. A direct Windows Restart into this
-unchanged, already authorized candidate remains to be tested without a BIOS
-setup visit or further key changes.
+Instrumentation can also affect timing.
+
+A subsequent ordinary Windows Restart into the same v0.8.3 image completed
+from the zero/zero initial state. Firmware preparation, payload, selectors,
+reset, cleanup and same-boot Windows handoff all passed. The complete Secure
+Boot variable set was unchanged from the preceding successful run, and Secure
+Boot and HVCI remained enabled. The owner confirmed normal desktop controls and
+brightness both on return and after the fresh numerical check:
+
+| Format | v0.8.3 zero-state Restart result, TFLOP/s |
+|---|---:|
+| FP16 | 74.13 |
+| BF16 | 82.16 |
+| TF32 | 39.92 |
+| FP8 E4M3 | 142.13 |
+| FP32 control | 13.332 |
+
+All five finite-output and sampled numerical checks passed. This establishes
+one successful manual Restart from zero/zero. No FWSEC failure occurred, so
+the original v0.8.2 failure remains unexplained; this result does not establish
+repeatability or attribute a performance change to a code change.
 
 The candidate remains separate from the default startup entry. Its own physical
-OFF control, restart reliability and genuine Windows sleep/wake recovery remain
-unqualified. No runtime reapply path or portable unlock implementation is added
+OFF control, automatic-startup reliability and genuine Windows sleep/wake recovery
+remain unqualified. No runtime reapply path or portable unlock implementation is added
 to this PR. Private capture contents, trust databases, individual fingerprints
 and exact activity timestamps remain excluded.
 
