@@ -1,5 +1,11 @@
 # RTX 4070 Laptop / AD106M: bounded Windows Secure Boot result
 
+**Latest status, 2026-11-02:** the v0.8.3 automatic-startup trial failed.
+The recovery control has saved the unlock OFF and restored original Windows
+Boot Manager first. The successful default-startup measurements below are
+historical; repeatable automatic startup and genuine sleep recovery remain
+unqualified. Details of the new failure and recovery are retained below.
+
 One ASUS TUF Gaming A15 FA507XI with an RTX 4070 Laptop 8 GB (`10de:2860`,
 AD106M) completed a locally developed preboot transaction, started the stock
 Windows driver and showed higher FP16, BF16, TF32 and FP8 dense GEMM rates.
@@ -235,11 +241,54 @@ one successful manual Restart from zero/zero. No FWSEC failure occurred, so
 the original v0.8.2 failure remains unexplained; this result does not establish
 repeatability or attribute a performance change to a code change.
 
-The candidate remains separate from the default startup entry. Its own physical
-OFF control, automatic-startup reliability and genuine Windows sleep/wake recovery
-remain unqualified. No runtime reapply path or portable unlock implementation is added
-to this PR. Private capture contents, trust databases, individual fingerprints
-and exact activity timestamps remain excluded.
+The exact v0.8.3 candidate subsequently passed its own full-power OFF control.
+The owner confirmed full power-off before selecting that entry, and normal
+controls before and after measurement. The brief boot banner could not be read;
+OFF was instead supported by the saved-mode readback, unchanged prior captures
+and fresh stock-like performance. All five numerical checks passed:
+
+| Format | v0.8.3 full-power OFF result, TFLOP/s |
+|---|---:|
+| FP16 | 44.71 |
+| BF16 | 47.04 |
+| TF32 | 23.11 |
+| FP8 E4M3 | 93.40 |
+| FP32 control | 13.317 |
+
+The local controls were then installed and their Status/OFF/ON/Status actions
+verified, with v0.8.3 selected as the default for an automatic-startup trial.
+These settings checks did not establish successful automatic execution.
+The EFI images, shared payload and Secure Boot trust were unchanged.
+
+**The subsequent automatic-startup trial failed.** Two new captures identify
+automatic execution of the same v0.8.3 image. Both stopped during FWSEC firmware
+transfer: one after 30 DMA blocks and 99 successful writes, the other after
+189 blocks and 576 writes. In each case the first failing state check retained
+a successful configuration read whose only difference was the PCIe Device
+Status Transactions Pending bit changing from clear to set. The firmware CPU
+had not started, the unlock payload made no hardware writes, and no Windows
+handoff was approved. Both reports retained containment and required full
+power-off. The owner confirmed fully powering off after STOP, then skipping
+the unlock to reach Windows with all four desktop controls working. A fresh
+check of that recovered session was stock-like and passed all five numerical
+cases; it is not a successful same-boot result for either failed attempt.
+
+The recorded capability layout establishes which status bit changed. Microsoft
+[defines Transactions Pending](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/ns-ntddk-_pci_express_device_status_register)
+as outstanding non-posted requests; the bit can clear after either completion
+or completion timeout. These observations explain the immediate guard trigger
+in these two attempts. They do not establish successful DMA, justify ignoring
+the status bit, or prove that the older v0.8.2 failure had the same cause.
+The later parent-attribute cleanup mismatch is not the first failure.
+
+All six Secure Boot variables remained unchanged. Automatic qualification is
+still false. The installed recovery control saved OFF and restored original
+Windows Boot Manager as the first entry to prevent automatic repetition.
+The preceding successful manual ON/Restart and full-power OFF results remain
+retained; they do not qualify repeatable automatic startup. Genuine Windows
+sleep/wake recovery is still unimplemented. No runtime reapply path or portable
+unlock implementation is added to this PR. Private capture contents, trust
+databases, individual fingerprints and exact activity timestamps remain excluded.
 
 ### Earlier observations
 
