@@ -125,11 +125,20 @@ other boards, memory configurations and laptop models remain unverified.
 | `2805` | RTX 4060 Ti 16GB | AD106 | `ad106_experimental`, exact | one card, no matched throughput run | [report](docs/ada-2805-report.md) |
 | `2882` | RTX 4060 | AD107 | `ad107_experimental`, exact | one card, matched cuBLAS; cold boot and warm reboot | [report](docs/ada-2882-report.md) |
 | `28a0` | RTX 4060 Laptop GPU | AD107 | `ad107_experimental`, exact | one card, unlocked state only | [report](docs/ada-28a0-report.md) |
+| `28a1` | RTX 4050 Laptop GPU | AD107 | `ad107_experimental`, exact | one laptop, matched (`D3cold` inhibited) | [report](docs/ada-28a1-report.md) |
 | `28e0` | RTX 4060 Laptop GPU | AD107 | `ad107_experimental`, exact | one owner report | [#10](https://github.com/JustAResearcher/gpu-unlock-ada/pull/10) |
 | `28e1` | RTX 4050 Laptop GPU | AD107 | `ad107_experimental`, exact | one laptop, matched | [report](docs/ada-28e1-report.md) |
 
 Laptops differ in VBIOS ROM exposure, embedded-controller power rails and FLR
-handling, so a result on one model does not carry over to another. Other Ada
+handling, so a result on one model does not carry over to another. On hybrid /
+Optimus laptops where the display server runs on the iGPU, fine-grained runtime
+`D3cold` (`NVreg_DynamicPowerManagement=0x02`) cuts the dGPU power rail a few
+seconds after boot, wiping the hardware unlock registers back to half rate
+while `NVreg_PreserveVideoMemoryAllocations=1` causes `tools/read_sm_rates.py`
+to keep reporting a cached `0 0 0` (full rate); set
+`NVreg_DynamicPowerManagement=0x00` (or lock the PCI device's `power/control`
+to `on`) to retain the 2× unlock across idle periods (see the
+[28a1 report](docs/ada-28a1-report.md)). Other Ada
 IDs, professional RTX A-series and data-centre parts are not accepted. Shared
 firmware across Ada chips does not establish support for untested cards.
 

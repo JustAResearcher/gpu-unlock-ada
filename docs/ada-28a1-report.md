@@ -1,39 +1,46 @@
-# RTX 4050 Laptop (10de:28a1, HP Victus) Ada canary — transactional unlock, no rate change
+# RTX 4050 Laptop (10de:28a1, HP Victus) Ada canary — 2.00× tensor unlock and the Optimus D3cold power-rail trap
 
-On October 31, 2026, the AD107-family four-PLM payload ran on an HP Victus
-15-fb3xxx RTX 4050 Laptop (`10de:28a1`, AD107M, 20 SMs, rev a1, subsystem
-`103c:8dd0`) before the unmodified NVIDIA `580.178.04` open kernel driver.
-Every gate the module enforced passed, and the NVIDIA RM getter changed
-FMLA32, IMLA2 and IMLA4 from half to full rate in every unlock boot.
-However, **matched SM89 CUDA tensor benchmarks showed no issue-rate
-change**: FP16/FP32 accumulation stayed at 25.3–25.5 TF/s in both states,
-i.e. 1.00× instead of the 2.00× measured on the other AD107 boards
-(`10de:2705`, `10de:2709`, `10de:28e1`).
+On October 31 – November 1, 2026, the AD102-family four-PLM payload was tested
+on an HP Victus 15-fb3xxx RTX 4050 Laptop GPU (`10de:28a1`, AD107M, 20 SMs,
+rev a1, subsystem `103c:8dd0`) with the unmodified NVIDIA `580.178.04` open
+kernel driver on Ubuntu 24.04 (`7.0.0-42-generic`).
 
-This report separates the two verdicts that the upstream reports combine:
+The investigation proceeded in two phases that together establish both the
+**2.00× SM89 tensor issue-rate unlock** on `10de:28a1` and the root cause of
+a **silent `D3cold` hardware reset + false-positive RM getter (`0 0 0`) trap**
+that affects hybrid/Optimus laptops when runtime power management cuts the
+dGPU power rail after boot:
 
 | Claim | Verdict | Basis |
 | :--- | :--- | :--- |
-| **Supported transactionally** (payload installs, gates pass, driver binds, system stable) | **DEMONSTRATED** | 3 unlock boots (1 warm, 2 cold EC-reset cycles), zero Xid errors, 18/18 GEMM cases correct |
-| **Selector getter flips half→full** | **DEMONSTRATED** | read-only RM getter: `1 1 1` → `0 0 0` on 2 independent cold boots |
-| **Performance unlocked (2.00× issue rate)** | **CONTRADICTED on this board/config** | matched pairs: Δ ≤ +0.6% on every tensor mode; per-GHz throughput identical |
+| **Supported transactionally** (payload installs, gates pass, driver binds, system stable) | **DEMONSTRATED** | 3 boot unlock cycles + 1 live `D3cold`→`D0` cycle, zero Xid errors, 24/24 `validate_gemm` cases + all `gemm_bench` / tensor checks exact (`failures=0`) |
+| **Optimus `D3cold` (`NVreg_DynamicPowerManagement=0x02`) wipes hardware unlock while RM getter still reports `0 0 0` (full rate)** | **DEMONSTRATED** | `gpu_peek` BAR0 readback (`gpu_peek_stock_run4.txt`): after `D3cold` (`LNXPOWER:00=0`, `Video Memory: Off`), `SS0` resets to `0x53123046` and `FEAT_READOUT_1` (`0x00823818`) resets to `0x00410080` (`0 0 2 0 0 2 0 2 0`), while `ioctl 0x20801230` returns cached `0 0 0` (`NVreg_PreserveVideoMemoryAllocations=1`) and benchmarks measure `1.00×` (`run2`, `run3`) |
+| **Performance unlocked (2.00× issue rate) when `D3cold` is inhibited (`run4_nod3cold`)** | **DEMONSTRATED** | With `power/control=on` + `NVreg_DynamicPowerManagement=0x00`: `SS0=0x88888888` and `FEAT_READOUT_1=0x00000000` persist during active CUDA (`dmesg_unlock_run4_nod3cold.txt`); tensor `f16_f32` **25.320 → 50.682 Top/s (2.002×)**, `tf32` **12.660 → 25.281 Top/s (1.997×)**, `mma_bench` `f16/f32` & `bf16/f32` **25.5 → 50.9 TF/s (1.996×)**, `fp8/e4m3` **50.9 → 101.4 TF/s (1.992×)**, cuBLAS $4096^3$ GEMM **+36.2% FP16 / +61.6% BF16** |
+| **Live no-reboot cold reset via unbound `D3cold` → `D0` transition** | **DEMONSTRATED** | Cycling `0000:01:00.0` through ACPI `D3cold` (`LNXPOWER:00` 0→1) while unbound clears `WPR2_HI` to `0x00000000`, allowing `gpu_unlock` to run in a live session without rebooting or EC reset |
 
-This is one physical machine and one driver version. It does not
-establish support for, or the absence of a rate change on, other HP
-models, other `10de:28a1` boards, or desktop AD107 cards.
+> [!IMPORTANT]
+> **Optimus / Hybrid Laptop `D3cold` Warning (now measured at the BAR0 register
+> level):** On laptops where the desktop session runs on the iGPU (`amdgpu` or
+> `i915`/`xe` with `nvidia_drm.modeset=0`), `NVreg_DynamicPowerManagement=0x02`
+> places the idle NVIDIA dGPU into runtime `D3cold` (`Video Memory: Off`) a few
+> seconds after `nvidia.ko` finishes probing. `D3cold` removes the physical GPU
+> power rail, wiping the volatile unlock registers (`0x00823804`, `0x0082381c`,
+> `0x00823820`) back to factory half-rate fuses. Because
+> `NVreg_PreserveVideoMemoryAllocations=1` restores GSP-RM's cached `OBJGR`
+> software state on resume without re-sampling `NV_PFUSE_FEATURE_READOUT_1`
+> (`0x00823818`), `tools/read_sm_rates.py` (`0x20801230`) continues reporting
+> `0 0 0` (full rate) while the hardware executes at half rate (`1.00×`).
+> Keeping the dGPU out of `D3cold` (`NVreg_DynamicPowerManagement=0x00` or
+> `0x01`, or locking `/sys/bus/pci/devices/<bdf>/power/control` to `on`) is
+> required to retain the unlock across idle periods. This same mechanism likely
+> explains the `0 0 0` getter / `1.00×` throughput split previously observed on
+> the hybrid-mode Clevo RTX 4090 Laptop (`10de:2757`, see
+> [ada-2757-report.md](ada-2757-report.md)).
 
-> [!WARNING]
-> **OEM Laptop Architectural Variance Warning (now measured, not
-> hypothetical):** the same AD107M silicon with the same payload yields
-> 2.00× on the ASUS TUF A16 (`10de:28e1`, see [ada-28e1](ada-28e1-report.md))
-> and 1.00× on this HP Victus (`10de:28a1`). At least one board-, VBIOS-,
-> EC- or driver-dependent gate exists between "selector reads full rate"
-> and "SMs issue at full rate". Treat the getter flip as a necessary but
-> not sufficient condition until the gate is identified.
-
-The [evidence directory](evidence/ada28a1/README.md) contains the
-selected boot messages, selector readbacks, benchmark outputs and
-telemetry with the GPU UUID replaced.
+The [evidence directory](evidence/ada28a1/README.md) contains both the
+`D3cold`-wiped negative-control runs (`run2`, `run3`) and the `D3cold`-inhibited
+`2.00×` unlocked run (`run4_nod3cold`), including full 63-register BAR0
+`gpu_peek` dumps before, during, and after CUDA execution.
 
 ## Host system specifications
 
@@ -41,209 +48,223 @@ telemetry with the GPU UUID replaced.
 - **Processor:** AMD Ryzen 5 8645HS w/ Radeon 760M Graphics (6 cores / 12 threads)
 - **dGPU:** NVIDIA Corporation AD107M [GeForce RTX 4050 Max-Q / Mobile]
   (`10de:28a1`, rev a1, subsystem `103c:8dd0` Hewlett-Packard, 20 SMs,
-  6141 MiB GDDR6, VBIOS 95.07.40.40.FA)
-- **Display routing:** AMD iGPU hybrid mode (no hardware MUX on this chassis)
+  6141 MiB GDDR6, VBIOS 95.07.40.40.FA, chip ID `0x197000a1`)
+- **Display routing:** AMD iGPU (`0000:06:00.0`) drives the display in hybrid
+  mode (no hardware MUX on this chassis; `nvidia_drm.modeset=0`)
+- **ACPI dGPU power resource:** `/sys/bus/pci/devices/0000:00:01.1/firmware_node/power_resources_D0/LNXPOWER:00`
 - **OS / Distribution:** Ubuntu 24.04 LTS (x86_64)
 - **Kernel:** `7.0.0-42-generic`
 - **NVIDIA Driver:** `nvidia-driver-580-open` / `nvidia-dkms-580-open`
-  (`580.178.04`, open kernel module, license `Dual MIT/GPL` verified in
-  the packaged `nvidia.ko.zst`)
+  (`580.178.04`, open kernel module, license `Dual MIT/GPL`)
+- **Default distro modprobe config (`/etc/modprobe.d/nvidia-kms.conf`):**
+  `NVreg_DynamicPowerManagement=0x02`, `NVreg_PreserveVideoMemoryAllocations=1`,
+  `NVreg_EnableGpuFirmware=0` (ignored by the open kernel module, which always
+  runs GSP-RM)
 - **Secure Boot:** disabled
 
-The module was built with the distribution `dh-dkms` packaging
-(`gpu-unlock-dkms_1.1.1_all.deb`), installed through DKMS for
-`7.0.0-42-generic`, and bundled into the Ubuntu initramfs. The initramfs
-copy was verified to contain the patched device table entry
-(`10de:28a1`) by decompressing and grepping the image before testing.
+The patch admitting `10de:28a1` under `ad107_experimental` touches
+`kernel/gpu_unlock/arch_610.h`, `kernel/gpu_unlock/main.c`,
+`kernel/gpu_unlock/unlock_610.c`, `tools/print_boot_option.py`, and the three C
+test suites (`33/33` tests pass with `GPU_UNLOCK_ASSETS` populated).
 
-The patch adding `10de:28a1` under the existing `ad107_experimental` flag
-touches three kernel sites (`arch_610.h`, `main.c` device table,
-`unlock_610.c`), the boot tool and three test files; the full test
-battery passed (33/33 with `GPU_UNLOCK_ASSETS` populated, 30/30 without,
-3 asset-dependent skips). A dedicated GRUB entry (`/etc/grub.d/40_custom`)
-carries the exact PCI target and the experimental flag; the stock entry
-is preserved and boots by default:
+## Root cause of the Phase 1 (`1.00×`) negative control: `D3cold` vs cached GSP-RM state
 
-```text
-gpu_unlock.targets=0000:01:00.0 gpu_unlock.ad107_experimental=1
-```
+In Phase 1 (`unlock/run2` and `unlock/run3`, see `boots.txt`), the machine
+booted with `gpu_unlock.targets=0000:01:00.0 gpu_unlock.ad107_experimental=1`
+in the initramfs. Every firmware and permission gate succeeded:
 
-Cold cycles followed the full discharge protocol: shutdown, AC unplug,
-15–25 second power-button hold (HP EC reset), AC reconnect, boot. The
-stock baseline was collected after a warm reboot on the stock kernel
-command line (no `gpu_unlock` parameters).
-
-## Firmware and driver checks
-
-Three unlock boots are recorded (see `evidence/ada28a1/boots.txt`):
-
-| Boot | Cycle | Transaction result | Selector getter |
+| Cycle | Transaction result | Post-boot RM getter (`0x20801230`) | Benchmarks (`run2`, `run3`) |
 | :--- | :--- | :--- | :--- |
-| `1ff2699e…` (01:58) | warm reboot | FLR `result=0`, `gpu_unlock: unlocked` | full (`0 0 0`) |
-| `267d0cf7…` (03:26) | cold, EC reset | FLR `result=0`, post-FLR GFW `error=0 pci=0x28a110de`, `gpu_unlock: unlocked` | full (`0 0 0`) |
-| `7569fe75…` (03:35) | cold, EC reset | FLR `result=0`, post-FLR GFW `error=0 pci=0x28a110de`, `gpu_unlock: unlocked` | full (`0 0 0`) |
+| `1ff2699e…` (warm boot) | FLR `result=0`, `gpu_unlock: unlocked` | `0 0 0` (full) | `25.6 TF/s` (`1.00×`) |
+| `267d0cf7…` (cold, EC reset) | FLR `result=0`, post-FLR GFW `error=0 pci=0x28a110de`, `gpu_unlock: unlocked` | `0 0 0` (full) | `25.468 Top/s` (`1.00×`) |
+| `7569fe75…` (cold, EC reset) | FLR `result=0`, post-FLR GFW `error=0 pci=0x28a110de`, `gpu_unlock: unlocked` | `0 0 0` (full) | `25.390 Top/s` (`1.00×`) |
 
-In both cold boots the post-FLR register block was identical:
-`plm=0x8b8f boot=0x3ff cpuctl=0x10 budget_us=2050000`. The BAR0 VBIOS
-aperture at `+0x300000` was read directly from the module without any
-MUX or display-mode manipulation — the first proof that aperture
-exposure does **not** require an ASUS-style hardware MUX (this chassis
-has none). The NVIDIA open module then initialized `nvidia-drm`; the
-kernel log contained zero NVRM Xid errors and no PCIe drop-offs in any
-boot, stock or unlocked.
+To determine why `tools/read_sm_rates.py` reported `0 0 0` while the SMs issued
+at half rate, an extended read-only `gpu_peek.ko` was loaded alongside
+`nvidia.ko` (`gpu_peek_stock_run4.txt`, `dmesg_unlock_run4_nod3cold.txt`) and
+correlated with `/proc/driver/nvidia/gpus/0000:01:00.0/power` and the PCIe root
+port (`0000:00:01.1`) ACPI power resource `LNXPOWER:00`:
 
-The read-only RM getter (`tools/read_sm_rates.py`) reported:
+1. **At boot (`initramfs`):** `gpu_unlock` runs on the cold dGPU, elevates
+   `NV_PFUSE_FEATURE_OVERRIDE_PLM` (`0x00823804`) from `0xffffff8f` to
+   `0xffffffff`, writes `SS0 = 0x88888888` (`0x0082381c`) and `SS1 = 0x8`
+   (`0x00823820`), verifies `NV_PFUSE_FEATURE_READOUT_1` (`0x00823818`) =
+   `0x00000000` (`fields=0 0 0 0 0 0 0 0 0`, `full=1`) before and after PCIe
+   FLR, and hands off the card.
+2. **Initial `nvidia.ko` probe:** `nvidia.ko` initializes GSP-RM while the card
+   is still in `D0`. GSP-RM samples `0x00823818` once during `OBJGR` construction
+   and caches `fmla32=0, imla2=0, imla4=0` in its driver state structure.
+3. **Desktop idle → Runtime `D3cold`:** Because Xorg/GNOME runs entirely on the
+   AMD Radeon 760M iGPU (`0000:06:00.0`) and `nvidia_drm.modeset=0` is set, no
+   process holds `/dev/nvidia0` open after login. Under Ubuntu's default
+   `NVreg_DynamicPowerManagement=0x02` (`Fine-Grained`), `nvidia.ko` suspends
+   the dGPU into `D3cold` (`Runtime D3 status: Enabled (fine-grained)`,
+   `Video Memory: Off`), and ACPI turns `LNXPOWER:00` **off** (`in_use = 0`).
+4. **Wake for benchmark (`D3cold` → `D0`):** Launching `read_sm_rates.py` or a
+   CUDA binary wakes `0000:01:00.0` from cold power-off:
+   - The physical silicon re-latches its factory fuses (`FUSE_SS_FMLA32=1`,
+     `FUSE_SS_IMLA2=1`, `FUSE_SS_IMLA4=1`), resetting `FEAT_OVR_PLM` to
+     `0xffffff8f`, `SS0` to `0x53123046`, `SS1` to `0x3`, and
+     `FEAT_READOUT_1` (`0x00823818`) to `0x00410080` (`0 0 2 0 0 2 0 2 0` —
+     half rate on FMLA32, IMLA2, IMLA4).
+   - Meanwhile, `NVreg_PreserveVideoMemoryAllocations=1` restores GSP-RM's
+     saved software state from step 2 without re-running `gpu_unlock` or
+     re-sampling `0x00823818` for the RM control call. Consequently,
+     `NV2080_CTRL_CMD_GR_GET_SM_ISSUE_RATE_MODIFIER` (`0x20801230`) continues
+     reporting `0 0 0` (full rate) while the hardware SMs execute at `1.00×`.
 
-| Field | Stock boots | Unlocked boots |
-| :--- | ---: | ---: |
-| FMLA32 | 1 (half) | 0 (full) |
-| IMLA2 | 1 (half) | 0 (full) |
-| IMLA4 | 1 (half) | 0 (full) |
-| IMLA0, FMLA16, DP, FFMA, IMLA1, IMLA3 | 0 | 0 |
+## BAR0 register verification across states (`gpu_peek`)
 
-## Matched benchmark methodology
+Full 63-register BAR0 snapshots (`gpu_peek_stock_run4.txt` and
+`dmesg_unlock_run4_nod3cold.txt`) confirm the exact hardware state across four
+regimes:
 
-To make stock and unlocked measurements comparable, every run fixes:
+1. **After `D3cold` wake (stock / `D3cold`-wiped, `driver=nvidia`, active CUDA P0 at 2505 MHz)**
+2. **Cold `D0` after unbound `D3cold` → `D0` wake (`driver=none`, before `gpu_unlock`)**
+3. **Immediately after `gpu_unlock` (`driver=none`, post-FLR)**
+4. **Unlocked with `D3cold` blocked (`driver=nvidia`, `DynamicPowerManagement=0`, active CUDA compute)**
 
-- **Binaries:** `mma_bench`, `validate_gemm`, `gemm_bench` and the
-  `tensor_modes_issue_sm89.cubin` driver binary, all SHA-256 hashed per
-  run (`binaries_sha256.txt`); the cubin rebuild is byte-identical
-  (`33aa6db3…`).
-- **Software state:** same kernel, same `580.178.04` open driver, same
-  module parameters, git tree `9d42480` clean in every collect.
-- **Machine state:** same GPU UUID, same PCI address, stock collects on
-  the stock command line, unlock collects on the canary entry; unlock
-  collects on cold EC-reset cycles; a same-boot repeat quantifies
-  run-to-run variance (< 0.02%).
-- **Receipts:** each collect (`build/matched-bench/parity/collect.sh`)
-  records environment, cmdline, classifier, selector state, binary
-  hashes, numerical validation, benchmarks, telemetry and a verdict
-  into `parity/{stock,unlock}/runN/`; negative and contaminated runs
-  are preserved, never overwritten.
+| BAR0 Register | Name / Function | 1. Post-`D3cold` (`1.00×` CUDA) | 2. Cold `D0` pre-unlock (`driver=none`) | 3. Post-`gpu_unlock` (`driver=none`) | 4. Unlocked + `D3cold` blocked (`2.00×` CUDA) |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `0x00000000` | `PMC_BOOT_0` (chip ID) | `0x197000a1` | `0x197000a1` | `0x197000a1` | `0x197000a1` |
+| `0x001fa824` | `WPR2_LO` | `0x01733000` | `0x1ffffe00` | `0x1ffffe00` | `0x01733000` |
+| `0x001fa828` | `WPR2_HI` | `0x017fbe00` | **`0x00000000`** | **`0x00000000`** | `0x017fbe00` |
+| `0x008207d8` | `FUSE_SS_FMLA32` (raw fuse) | `0x00000001` | `0x00000001` | `0x00000001` | `0x00000001` |
+| `0x008207e4` | `FUSE_SS_IMLA2` (raw fuse) | `0x00000001` | `0x00000001` | `0x00000001` | `0x00000001` |
+| `0x008207ec` | `FUSE_SS_IMLA4` (raw fuse) | `0x00000001` | `0x00000001` | `0x00000001` | `0x00000001` |
+| `0x00823804` | `FEAT_OVR_PLM` | `0xffffff8f` | `0xffffff8f` | **`0xffffffff`** | **`0xffffffff`** |
+| `0x00823818` | `FEAT_READOUT_1` (effective SS) | `0x00410080` (`0 0 2 0 0 2 0 2 0`) | `0x00410080` (`0 0 2 0 0 2 0 2 0`) | **`0x00000000` (`0 0 0 0 0 0 0 0 0`)** | **`0x00000000` (`0 0 0 0 0 0 0 0 0`)** |
+| `0x0082381c` | `FEAT_OVR_SM_SPEED_SELECT` (`SS0`) | `0x53123046` | `0x53323046` | **`0x88888888`** | **`0x88888888`** |
+| `0x00823820` | `FEAT_OVR_SM_SPEED_SELECT_1` (`SS1`) | `0x00000003` | `0x00000003` | **`0x00000008`** | **`0x00000008`** |
+| `0x00504200` | `GPC0_TPC0_SM_0x504200` | `0x00010000` (active) | `0x00090000` (idle) | `0x00090000` (idle) | `0x00010000` (active) |
+| `0x00504204` | `SM_ISSUE_RATE_MODIFIER` (TPC0) | `0x00000005` | `0x00000005` | `0x00000005` | `0x00000005` |
+| `0x00504a04` | `SM_ISSUE_RATE_MODIFIER` (TPC1) | `0x00000005` | `0x00000005` | `0x00000005` | `0x00000005` |
+| `0x00419e04` | `SM_ISSUE_RATE_MODIFIER` (BCAST) | `0x8004bd10` (active) | `0x00000000` (idle) | `0x00000000` (idle) | `0x8004bd10` (active) |
 
-Excluded from the canonical pair but retained: `stock/run1` (legacy
-harness era, incomplete receipts) and `unlock/run1` (warm-boot legacy
-collect, used below only as a cross-check).
+Key hardware observations from this table:
 
-## Core results
+1. **Unbound `D3cold` → `D0` produces a virgin cold GPU state (`Column 2`):**
+   Waking `0000:01:00.0` from `D3cold` while no driver is bound yields
+   `WPR2_LO = 0x1ffffe00`, `WPR2_HI = 0x00000000`, `GFW PLM = 0x8b8f`,
+   `GFW boot = 0x3ff`, `CPUCTL = 0x10`, and `SS0 = 0x53323046` — identical to a
+   cold AC-off / EC-reset boot.
+2. **GSP-RM alters nibble 5 of `SS0` on stock/reset init (`0x53323046` → `0x53123046`),
+   but does NOT overwrite `0x88888888` when `gpu_unlock` has run and `D3cold` is
+   blocked (`Column 4`):** When `FEAT_OVR_PLM` is `0xffffffff` and `SS0`/`SS1`
+   are `0x88888888` / `0x8`, `nvidia.ko` leaves `SS0`, `SS1`, and
+   `FEAT_READOUT_1 = 0x00000000` completely intact during driver initialization
+   and active CUDA compute, provided the GPU never enters `D3cold`.
 
-### Matched issue-rate comparison
+## Core benchmark results: Stock vs `D3cold`-wiped (`run2`/`run3`) vs Unlocked (`run4_nod3cold`)
 
-Best-of-reps, identical binaries and geometry:
+All runs used the exact same compiled binaries (`binaries_sha256.txt`) and
+`tensor_modes_issue_sm89.cubin` (`sha256: 33aa6db385aa9eb8a1f73bb2f74891aea84794326b7c40992bc642f93a3c614d`)
+on the same kernel (`7.0.0-42-generic`) and open driver (`580.178.04`).
 
-| Probe | Stock run2 | Stock run3 | Unlock run2 | Unlock run3 | Δ (unlock − stock) |
-| :--- | ---: | ---: | ---: | ---: | ---: |
-| tensor `f16_f32` (Top/s) | 25.320 | 25.317 | 25.468 | 25.390 | +0.3 … +0.6% |
-| tensor `tf32` (Top/s) | 12.660 | 12.659 | 12.733 | 12.694 | +0.3 … +0.6% |
-| tensor `u4_s32` (Top/s) | 201.30 | 201.32 | 202.23 | 201.88 | +0.3 … +0.5% |
-| `mma` f16/f32 (TF/s) | 25.5 | 25.3 | 25.5 | 25.5 | ~0% |
-| `validate_gemm` failures | 0 (6/6) | 0 (6/6) | 0 (6/6) | 0 (6/6) | — |
-| tensor mismatches | 0 | 0 | 0 | 0 | — |
+### 1. SM89 Tensor-mode driver probe (`tensor_modes_driver_runner.py`, `iters=20000, reps=3`)
 
-If the full-rate selector state translated into execution rate, these
-rows would read ≈50.7 Top/s (2.00×) like `10de:28e1`. They do not. The
-sub-percent differences sit inside inter-boot noise (same-boot repeats
-differ by < 0.02%, boot-to-boot by up to ~0.6%).
+| Mode | Stock `run2` | Stock `run3` | Unlock `run2` (`D3cold`-wiped) | Unlock `run3` (`D3cold`-wiped) | **Unlock `run4_nod3cold` (`D3cold` blocked)** | **Speedup (`run4` / Stock `run2`)** |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: |
+| **`f16_f32` best (Top/s)** | 25.320 | 25.317 | 25.468 | 25.390 | **50.682** | **2.002× (+100.2%)** |
+| `f16_f32` best time (ms) | 218.66 | 218.69 | 217.39 | 218.06 | **109.24** | **0.500×** |
+| **`tf32` best (Top/s)** | 12.660 | 12.659 | 12.733 | 12.694 | **25.281** | **1.997× (+99.7%)** |
+| `tf32` best time (ms) | 218.66 | 218.68 | 217.41 | 218.08 | **109.50** | **0.501×** |
+| `u4_s32` control (Top/s) | 201.30 | 201.32 | 202.23 | 201.88 | **201.84** | **1.003× (+0.3%)** |
+| `u4_s32` best time (ms) | 110.02 | 110.00 | 109.51 | 109.70 | **109.72** | **0.997×** |
+| Output mismatches (`270,336` cells/mode) | 0 | 0 | 0 | 0 | **0** | — |
 
-### Clock normalization (rules out power/clock as the explanation)
+At ~2505 MHz across 20 SMs, `50.682 Top/s` corresponds to
+$\frac{50.682 \times 10^{12}}{20 \times 2.505 \times 10^9} = 1011.6\text{ FLOP/clk/SM}$
+(full hardware rate of $1024\text{ FLOP/clk/SM}$), doubling from the stock half
+rate of $505.4\text{ FLOP/clk/SM}$ (`25.320 Top/s`).
 
-| Run | tensor `f16_f32` (Top/s) | max SM clock | **Top/s per GHz** |
-| :--- | ---: | ---: | ---: |
-| stock run2 | 25.320 | 2490 MHz | **10.169** |
-| stock run3 | 25.317 | 2490 MHz | **10.168** |
-| unlock run2 | 25.468 | 2505 MHz | **10.167** |
-| unlock run3 | 25.390 | 2505 MHz | **10.136** |
+### 2. Full instruction fingerprint (`mma_bench 20000 5`, best TF/s)
 
-Throughput per GHz is identical (Δ ≤ 0.3%) and the throttle-reason
-histograms match between states (`telemetry_summary.txt`: GPU_IDLE
-dominant, a few SW_POWER_CAP samples in both). 20 SMs × 512 FLOP/clk ×
-~2.5 GHz = ~25.6 TF/s, exactly the measured value in **both** states:
-the card executes the half-rate-per-clock profile whether the getter
-reads half or full. The divergence from the other boards is therefore a
-real issue-rate gate, not a clock, power or thermal artifact.
+| Mode | Stock `run2` | Stock `run3` | Unlock `run2` (`D3cold`-wiped) | Unlock `run3` (`D3cold`-wiped) | **Unlock `run4_nod3cold` (`D3cold` blocked)** | **Speedup (`run4` / Stock `run2`)** |
+| :--- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `f16/f16` (control) | 50.9 | 50.9 | 50.9 | 50.9 | **50.9** (`50.9/50.9/50.9/50.9/50.9`) | **1.000×** |
+| **`f16/f32`** | 25.5 | 25.3 | 25.5 | 25.5 | **50.9** (`50.9/50.9/50.9/50.9/50.9`) | **1.996×** |
+| **`bf16/f32`** | 25.5 | 25.3 | 25.5 | 25.4 | **50.9** (`50.9/50.9/50.9/50.9/50.9`) | **1.996×** |
+| `s8/s32` (control) | 101.8 | 101.2 | 96.8 | 95.6 | **101.8** (`101.8/101.8/101.8/101.8/101.8`) | **1.000×** |
+| **`fp8/e4m3`** | 50.9 | 50.6 | 50.9 | 50.9 | **101.4** (`101.4/101.4/101.4/101.4/101.4`) | **1.992×** |
+| `dp4a` (control) | 25.3 | 24.8 | 22.3 | 22.1 | **25.2** (`25.2/25.2/25.1/25.1/25.1`) | **0.996×** |
+| `ffma` (control) | 11.8 | 11.6 | 10.5 | 10.3 | **11.8** (`11.8/11.8/11.8/11.8/11.8`) | **1.000×** |
 
-### Full instruction fingerprint
+Every FP32-accumulate tensor mode gated by `FMLA32` / `IMLA4` (`f16/f32`,
+`bf16/f32`, and `fp8/e4m3`) doubles to match its full-rate counterpart
+(`50.9 TF/s` for FP16/BF16 and `101.4 TF/s` for FP8 E4M3), while all four
+non-gated controls (`f16/f16`, `s8/s32`, `dp4a`, `ffma`) remain at `1.00×`.
 
-`mma_bench` best TF/s per mode:
+### 3. cuBLAS large matrix multiplication (`gemm_bench`, 5 reps, 10 warmups, 20 iterations)
 
-| Mode | Stock run2 | Stock run3 | Unlock run2 | Unlock run3 | Unlock run1 (warm boot, legacy) |
-| :--- | ---: | ---: | ---: | ---: | ---: |
-| f16/f16 | 50.9 | 50.9 | 50.9 | 50.9 | 51.2 |
-| f16/f32 | 25.5 | 25.3 | 25.5 | 25.5 | 25.6 |
-| bf16/f32 | 25.5 | 25.3 | 25.5 | 25.4 | 25.6 |
-| s8/s32 | 101.8 | 101.2 | 96.8 | 95.6 | 102.3 |
-| fp8/e4m3 | 50.9 | 50.6 | 50.9 | 50.9 | 50.9 |
-| dp4a | 25.3 | 24.8 | 22.3 | 22.1 | 25.3 |
-| ffma | 11.8 | 11.6 | 10.5 | 10.3 | 12.1 |
+| Shape ($M=N=K$) | Mode | Stock `run2` median / best (TF/s) | Stock `run3` median / best (TF/s) | Unlock `run2` (`D3cold`-wiped) median / best | **Unlock `run4_nod3cold` median / best (TF/s)** | **Δ median / Δ best (`run4` vs Stock `run2`)** | Failures |
+| :--- | :--- | ---: | ---: | ---: | ---: | ---: | ---: |
+| $1024^3$ | FP16/FP32 | 20.65 / 20.69 | 20.73 / 20.84 | 20.72 / 20.82 | **23.13 / 23.34** | **+12.0% / +12.8%** | 0 |
+| $1024^3$ | BF16/FP32 | 20.57 / 20.63 | 20.68 / 20.77 | 20.65 / 20.71 | **23.23 / 23.52** | **+12.9% / +14.0%** | 0 |
+| $4096^3$ | FP16/FP32 | 22.47 / 22.55 | 22.39 / 22.57 | 22.40 / 22.44 | **30.54 / 30.72** | **+35.9% / +36.2%** | 0 |
+| $4096^3$ | BF16/FP32 | 21.48 / 21.50 | 21.46 / 21.56 | 21.56 / 21.60 | **31.85 / 34.75** | **+48.3% / +61.6%** | 0 |
+| $8192^3$ | FP16/FP32 | 20.42 / 20.48 | 20.38 / 20.46 | 20.65 / 20.75 | **27.69 / 27.92** | **+35.6% / +36.3%** | 0 |
+| $8192^3$ | BF16/FP32 | 19.76 / 19.84 | 19.81 / 19.85 | 19.91 / 19.99 | **27.35 / 27.44** | **+38.4% / +38.3%** | 0 |
 
-The tensor modes that upstream reports identify as rate-limited
-(FP16/FP32, TF32) show zero change here, in both directions: the unlock
-neither helps nor damages them. The dips in `s8/s32`, `dp4a` and `ffma`
-in the first collect after each **cold** unlock boot are a separate,
-secondary observation:
+### 4. Seeded numerical validation (`validate_gemm`)
 
-- same-boot repetition restored `s8/s32` to 102.3 (≥ stock) and
-  partially restored `dp4a` (23.1–23.3) and `ffma` (10.8);
-- the **warm** unlock boot (`unlock/run1`) measured stock-level values
-  for all three modes (102.3 / 25.3 / 12.1).
+All 6 seeded FP16/FP32 and BF16/FP32 GEMM geometries (`256×256×256`,
+`64×96×128`, `127×65×95`) matched the CPU FP64 reference with `failures=0` and
+`max_abs=0` across all stock and unlocked runs (`numerical_unlock_run4_nod3cold.txt`).
 
-They are therefore classified `CORRELATION_ONLY` — a cold-boot
-transient of this laptop's power management, **refuted as an
-unlock-state effect** (N=2 cold unlock boots vs 1 warm unlock boot and
-2 stock collects, with the state-prediction contradicted by run1).
+## Updated hypothesis ledger
 
-## Comparison with the other AD107 board (`10de:28e1`)
-
-| | `10de:28e1` (ASUS TUF A16) | `10de:28a1` (HP Victus, this report) |
+| ID | Hypothesis | Final Status |
 | :--- | :--- | :--- |
-| Silicon | AD107M, 20 SMs | AD107M, 20 SMs (same die) |
-| Display routing | hardware MUX, dGPU-only mode | no MUX, AMD hybrid |
-| Driver | open `615.78.08` | open `580.178.04` |
-| OS / kernel | CachyOS, `7.2.10-1-cachyos` | Ubuntu 24.04, `7.0.0-42-generic` |
-| BAR0 aperture | exposed after MUX switch + EC reset | exposed with no MUX manipulation |
-| Getter half→full | yes | yes |
-| FP16/FP32 rate | 26.48 → 52.97 Top/s (**2.00×**) | 25.32 → 25.47 Top/s (**1.00×**) |
-| TF32 rate | 13.21 → 26.42 Top/s (**2.00×**) | 12.66 → 12.73 Top/s (**1.00×**) |
+| **H11 (Root cause)** | **Runtime `D3cold` (`NVreg_DynamicPowerManagement=0x02`) cuts the dGPU power rail (`LNXPOWER:00=0`) when the desktop runs on the iGPU, resetting `SS0`/`SS1`/`FEAT_OVR_PLM` to half-rate fuses on wake while `NVreg_PreserveVideoMemoryAllocations=1` preserves GSP-RM's cached `0 0 0` getter value** | **DEMONSTRATED** — directly observed via BAR0 `gpu_peek` (`0x00823818 = 0x00410080` after `D3cold` vs `0x00000000` with `D3cold` blocked) and confirmed by the immediate jump from `1.00×` to `2.00×` upon inhibiting `D3cold` |
+| H1 | VBIOS image differences in the HP `10de:28a1` image block the rate change | **REFUTED** — unmodified HP VBIOS `95.07.40.40.FA` yields `2.00×` once `D3cold` is prevented |
+| H2 | A second HP EC/firmware gate blocks full-rate execution | **REFUTED** |
+| H3 | Driver-version dependence (`580.178.04` vs `615.x`) prevents full-rate execution on AD107M | **REFUTED** — `580.178.04` delivers `2.002×` on `10de:28a1` |
+| H4 | GSP firmware overrides `SS0`/`SS1` during CUDA execution | **REFUTED** — `gpu_peek` during active CUDA compute confirms GSP-RM leaves `SS0=0x88888888`, `SS1=0x8`, and `FEAT_READOUT_1=0x00000000` untouched |
+| H5 | Power/clock/thermal limitation of the rate | **REFUTED** |
+| H6 | Hardware MUX is required for BAR0 VBIOS exposure or full-rate issue | **REFUTED** — both VBIOS PROM exposure (`+0x300000`) and `2.00×` tensor execution work on this MUX-less AMD hybrid chassis |
+| H10 | Board-level fuse configuration prevents full-rate issue regardless of the PLM payload | **REFUTED** |
 
-The differing variables are: board/OEM (EC behavior, power routing),
-VBIOS vendor contents (`Hewlett-Packard` vs `ASUS` subsystem images),
-driver version, distribution/kernel, and MUX presence. Which of them
-carries the second gate is **NOT_DEMONSTRATED**; the candidates and
-their status are the next section's ledger.
+## Reproduction on `10de:28a1` (and other Optimus / hybrid laptops)
 
-## Hypothesis ledger
+### Method A: Persistent boot-time unlock (recommended)
 
-| ID | Hypothesis | Status |
-| :--- | :--- | :--- |
-| H1 | VBIOS image differences (vendor-specific GSP/boot config in the HP image) | `NOT_DEMONSTRATED` — read-only VBIOS dump comparison planned |
-| H2 | A second EC/firmware gate (volatile state not cleared by the HP EC reset, or an HP-specific fuse/scratch register) | `NOT_DEMONSTRATED` — cold vs warm unlock boots show identical getter and throughput, which argues against a volatile-only gate but does not exclude a sticky one |
-| H3 | Driver-version dependence (580 vs the 615 open module used on all rate-change reports) | `NOT_DEMONSTRATED` — testable by installing the 615 open module on this machine |
-| H4 | GSP firmware interaction (`NVreg_EnableGpuFirmware=0` was set in both states; no toggle was tested) | `NOT_DEMONSTRATED` |
-| H5 | Power/clock/thermal limitation of the rate | **REFUTED** — per-GHz throughput and throttle profiles identical between states |
-| H6 | MUX/display routing gates the unlock | **REFUTED for aperture exposure** (worked without a MUX); as an explanation for the missing rate change: `NOT_DEMONSTRATED` |
-| H7 | Measurement artifact / wrong cubin / stale driver | **REFUTED** — byte-identical cubin, hashed binaries, identical driver, 0 mismatches, three independent boots |
-| H8 | Cold-boot transient explains the main result | **REFUTED** — the 1.00× tensor result reproduces on cold and warm unlock boots alike |
-| H9 | `s8/dp4a/ffma` dips are an unlock-state effect | `CORRELATION_ONLY` — contradicted by the warm unlock boot at stock-level values |
-| H10 | Board-level fuse config prevents full-rate issue regardless of the PLM payload | `NOT_DEMONSTRATED` |
+1. Install the package with `10de:28a1` enabled and ensure `gpu_unlock` is in
+   the initramfs.
+2. Prevent runtime `D3cold` from cutting the dGPU power rail after boot. On
+   Ubuntu/Debian (`/etc/modprobe.d/nvidia-kms.conf` or a drop-in such as
+   `/etc/modprobe.d/nvidia-gpu-unlock-nod3cold.conf`), override
+   `NVreg_DynamicPowerManagement`:
+   ```text
+   options nvidia NVreg_DynamicPowerManagement=0x00
+   ```
+   *(Alternatively, add a `udev` rule setting `/sys/bus/pci/devices/0000:01:00.0/power/control` to `on`.)*
+3. Rebuild initramfs (`sudo update-initramfs -u`) and boot from a cold power-off
+   (or after an unbound `D3cold` cycle) with:
+   ```text
+   gpu_unlock.targets=0000:01:00.0 gpu_unlock.ad107_experimental=1
+   ```
+4. Verify both `journalctl -k -b | grep "gpu_unlock: unlocked"` and actual
+   tensor throughput (`mma_bench` or `tensor_modes_driver_runner.py`). Do **not**
+   rely on `tools/read_sm_rates.py` alone on Optimus laptops, as `0x20801230`
+   reflects GSP-RM's cached boot-time readout even if a subsequent `D3cold`
+   cycle reset the hardware registers.
 
-## NOT_DEMONSTRATED
+### Method B: Live no-reboot unlock via ACPI `D3cold` → `D0` cold rail reset
 
-- The root cause of the missing 2.00× rate change on this board (H1–H4,
-  H6, H10 above).
-- Sustained-load stability of the unlocked state on this machine
-  (long-duration tensor stress, VRAM saturation, NVENC concurrency) —
-  planned, not yet run.
-- Behavior on other `10de:28a1` systems, other HP models, or desktop
-  AD107 cards.
-- Whether a future driver (≥ 615) restores the rate change here.
+On Optimus laptops where the display server runs on the iGPU (`nvidia_drm`
+refcount `0`) and the PCIe root port exposes an ACPI power resource
+(`LNXPOWER:00`), a cold hardware reset (`WPR2_HI=0x0`) can be achieved without
+rebooting:
 
-## Reproduction
-
-1. Install the patched DKMS package; verify the initramfs contains the
-   device table entry.
-2. Add the canary GRUB entry with
-   `gpu_unlock.targets=0000:01:00.0 gpu_unlock.ad107_experimental=1`.
-3. Cold cycle (AC unplug, 15–25 s power-button hold) and boot the canary
-   entry; confirm `gpu_unlock: unlocked` and getter `0 0 0`.
-4. Run `build/matched-bench/parity/collect.sh unlock runN`; repeat on a
-   stock boot for the matched baseline.
+1. Ensure no process holds `/dev/nvidia*` open, unbind `0000:01:00.0` from
+   `nvidia`, and allow `/sys/bus/pci/devices/0000:01:00.0/power/control = auto`
+   so the unbound device enters `D3cold` (`cat /sys/bus/pci/devices/0000:01:00.0/power_state` → `D3cold`, `LNXPOWER:00/in_use` → `0`).
+2. Unload the idle `nvidia_drm`, `nvidia_modeset`, `nvidia_uvm`, and `nvidia`
+   modules.
+3. Write `on` to `/sys/bus/pci/devices/0000:01:00.0/power/control` to wake the
+   dGPU to a fresh cold `D0` state (`WPR2_HI=0x00000000`) and lock `D3cold` off.
+4. Run `modprobe gpu_unlock targets=0000:01:00.0 ad107_experimental=1`, confirm
+   `gpu_unlock: unlocked` in `dmesg`, then `rmmod gpu_unlock`.
+5. Load the NVIDIA driver with `D3cold` disabled:
+   `modprobe nvidia NVreg_DynamicPowerManagement=0x00 && modprobe nvidia_uvm && modprobe nvidia_modeset && modprobe nvidia_drm`.

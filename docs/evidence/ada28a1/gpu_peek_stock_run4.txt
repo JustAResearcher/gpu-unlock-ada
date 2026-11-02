@@ -1,0 +1,168 @@
+=== 1. GPU STATE BEFORE CUDA (IDLE) ===
+name, pci.bus_id, pstate, clocks.current.graphics [MHz], power.draw [W]
+NVIDIA GeForce RTX 4050 Laptop GPU, 00000000:01:00.0, P3, 1755 MHz, 9.20 W
+[92766.645971] nvidia 0000:01:00.0: gpu_peek: driver=nvidia BAR0=0xfb000000 len=0x1000000 command=0x407
+[92766.645978] nvidia 0000:01:00.0: gpu_peek: 0x00000000 PMC_BOOT_0 (chip id)               = 0x197000a1
+[92766.645981] nvidia 0000:01:00.0: gpu_peek: 0x00118128 GFW PLM                            = 0x00008b8f
+[92766.645984] nvidia 0000:01:00.0: gpu_peek: 0x00118234 GFW boot progress                  = 0x000003ff
+[92766.645987] nvidia 0000:01:00.0: gpu_peek: 0x00110100 GFW falcon CPUCTL                  = 0xbadf5720
+[92766.645989] nvidia 0000:01:00.0: gpu_peek: 0x001fa824 WPR2 lo                            = 0x01733000
+[92766.645991] nvidia 0000:01:00.0: gpu_peek: 0x001fa828 WPR2 hi                            = 0x017fbe00
+[92766.645994] nvidia 0000:01:00.0: gpu_peek: 0x001fa7cc WPR_CFG PLM                        = 0x0004cb8f
+[92766.645996] nvidia 0000:01:00.0: gpu_peek: 0x009a0148 FBPA PLM                           = 0xffffff0f
+[92766.645998] nvidia 0000:01:00.0: gpu_peek: 0x001fa7c4 WPR PLM                            = 0x0004cb8f
+[92766.646001] nvidia 0000:01:00.0: gpu_peek: 0x00820000 FUSECTRL                           = 0xe0040000
+[92766.646003] nvidia 0000:01:00.0: gpu_peek: 0x00820040 EN_SW_OVERRIDE                     = 0x00000001
+[92766.646006] nvidia 0000:01:00.0: gpu_peek: 0x00820078 ENABLE_FUSE_PROGRAM_STATUS         = 0x00000001
+[92766.646008] nvidia 0000:01:00.0: gpu_peek: 0x0082007c DISABLE_FUSE_PROGRAM               = 0xbadf5040
+[92766.646011] nvidia 0000:01:00.0: gpu_peek: 0x00820084 DISABLE_SW_OVERRIDE_STATUS         = 0x00000001
+[92766.646013] nvidia 0000:01:00.0: gpu_peek: 0x008200fc FUSE_SS_PLM (speed-select PLM)     = 0xffffffff
+[92766.646016] nvidia 0000:01:00.0: gpu_peek: 0x00820224 FUSE_SS_DP                         = 0x00000000
+[92766.646018] nvidia 0000:01:00.0: gpu_peek: 0x0082038c SECURE_FEAT_OVR_QUADRO_WR_SEC      = 0x00000001
+[92766.646021] nvidia 0000:01:00.0: gpu_peek: 0x0082059c FUSE_SS_FFMA                       = 0x00000000
+[92766.646023] nvidia 0000:01:00.0: gpu_peek: 0x008207d4 FUSE_SS_FMLA16                     = 0x00000000
+[92766.646026] nvidia 0000:01:00.0: gpu_peek: 0x008207d8 FUSE_SS_FMLA32                     = 0x00000001
+[92766.646028] nvidia 0000:01:00.0: gpu_peek: 0x008207dc FUSE_SS_IMLA0                      = 0x00000000
+[92766.646030] nvidia 0000:01:00.0: gpu_peek: 0x008207e0 FUSE_SS_IMLA1                      = 0x00000000
+[92766.646033] nvidia 0000:01:00.0: gpu_peek: 0x008207e4 FUSE_SS_IMLA2                      = 0x00000001
+[92766.646035] nvidia 0000:01:00.0: gpu_peek: 0x008207e8 FUSE_SS_IMLA3                      = 0x00000000
+[92766.646038] nvidia 0000:01:00.0: gpu_peek: 0x008207ec FUSE_SS_IMLA4                      = 0x00000001
+[92766.646040] nvidia 0000:01:00.0: gpu_peek: 0x00823800 FEAT_OVR_ECC_PLM                   = 0xffffff8f
+[92766.646043] nvidia 0000:01:00.0: gpu_peek: 0x00823804 FEAT_OVR_PLM                       = 0xffffff8f
+[92766.646045] nvidia 0000:01:00.0: gpu_peek: 0x00823808 FEAT_OVR_QUADRO                    = 0x01100082
+[92766.646048] nvidia 0000:01:00.0: gpu_peek: 0x0082380c FEAT_OVR_ECC                       = 0x00888888
+[92766.646050] nvidia 0000:01:00.0: gpu_peek: 0x00823810 FEAT_OVR_ECC_1                     = 0x00aaaaaa
+[92766.646053] nvidia 0000:01:00.0: gpu_peek: 0x00823814 FEAT_READOUT_0                     = 0x00000233
+[92766.646055] nvidia 0000:01:00.0: gpu_peek: 0x00823818 FEAT_READOUT_1 (SS effective)      = 0x00410080
+[92766.646058] nvidia 0000:01:00.0: gpu_peek: 0x0082381c FEAT_OVR_SM_SPEED_SELECT (SS0)     = 0x53123046
+[92766.646060] nvidia 0000:01:00.0: gpu_peek: 0x00823820 FEAT_OVR_SM_SPEED_SELECT_1(SS1)    = 0x00000003
+[92766.646062] nvidia 0000:01:00.0: gpu_peek: 0x00823824 FEAT_OVR_ROW_REMAPPER              = 0x00000000
+[92766.646065] nvidia 0000:01:00.0: gpu_peek: 0x00823828 FEAT_READOUT_2                     = 0x00000001
+[92766.646068] nvidia 0000:01:00.0: gpu_peek: 0x0082382c FEAT_OVR_ECC_2                     = 0x0000000a
+[92766.646071] nvidia 0000:01:00.0: gpu_peek: 0x00823830 FEAT_CLUSTER_0x823830              = 0x00000001
+[92766.646073] nvidia 0000:01:00.0: gpu_peek: 0x00823834 FEAT_CLUSTER_0x823834              = 0x00000000
+[92766.646075] nvidia 0000:01:00.0: gpu_peek: 0x00823838 FEAT_CLUSTER_0x823838              = 0x00000000
+[92766.646078] nvidia 0000:01:00.0: gpu_peek: 0x0082383c FEAT_CLUSTER_0x82383c              = 0x00000000
+[92766.646080] nvidia 0000:01:00.0: gpu_peek: 0x00823840 FEAT_CLUSTER_0x823840              = 0x00000000
+[92766.646083] nvidia 0000:01:00.0: gpu_peek: 0x00823844 FEAT_CLUSTER_0x823844              = 0xbadf5040
+[92766.646085] nvidia 0000:01:00.0: gpu_peek: 0x00823848 FEAT_CLUSTER_0x823848              = 0xbadf5040
+[92766.646088] nvidia 0000:01:00.0: gpu_peek: 0x0082384c FEAT_CLUSTER_0x82384c              = 0xbadf5040
+[92766.646090] nvidia 0000:01:00.0: gpu_peek: 0x00823850 FEAT_CLUSTER_0x823850              = 0xbadf5040
+[92766.646093] nvidia 0000:01:00.0: gpu_peek: 0x00823854 FEAT_CLUSTER_0x823854              = 0xbadf5040
+[92766.646095] nvidia 0000:01:00.0: gpu_peek: 0x00823858 FEAT_CLUSTER_0x823858              = 0xbadf5040
+[92766.646098] nvidia 0000:01:00.0: gpu_peek: 0x0082385c FEAT_CLUSTER_0x82385c              = 0xbadf5040
+[92766.646100] nvidia 0000:01:00.0: gpu_peek: 0x00823860 FEAT_CLUSTER_0x823860              = 0xbadf5040
+[92766.646102] nvidia 0000:01:00.0: gpu_peek: 0x00823864 FEAT_CLUSTER_0x823864              = 0xbadf5040
+[92766.646105] nvidia 0000:01:00.0: gpu_peek: 0x00823868 FEAT_CLUSTER_0x823868              = 0xbadf5040
+[92766.646107] nvidia 0000:01:00.0: gpu_peek: 0x0082386c FEAT_CLUSTER_0x82386c              = 0xbadf5040
+[92766.646110] nvidia 0000:01:00.0: gpu_peek: 0x00823870 FEAT_CLUSTER_0x823870              = 0xbadf5040
+[92766.646112] nvidia 0000:01:00.0: gpu_peek: 0x00823874 FEAT_CLUSTER_0x823874              = 0xbadf5040
+[92766.646115] nvidia 0000:01:00.0: gpu_peek: 0x00823878 FEAT_CLUSTER_0x823878              = 0xbadf5040
+[92766.646117] nvidia 0000:01:00.0: gpu_peek: 0x00409658 PGRAPH_PRI_FECS_0x409658           = 0xbadf5040
+[92766.646119] nvidia 0000:01:00.0: gpu_peek: 0x0040965c PGRAPH_PRI_FECS_0x40965c           = 0xbadf5040
+[92766.646121] nvidia 0000:01:00.0: gpu_peek: 0x00409660 PGRAPH_PRI_FECS_0x409660           = 0xbadf5040
+[92766.646123] nvidia 0000:01:00.0: gpu_peek: 0x00409664 FECS_FEAT_OVERRIDE_SM_SPEED_SEL    = 0xbadf5040
+[92766.646125] nvidia 0000:01:00.0: gpu_peek: 0x00409668 FECS_FEAT_READOUT_1                = 0xbadf5040
+[92766.646127] nvidia 0000:01:00.0: gpu_peek: 0x0040966c PGRAPH_PRI_FECS_0x40966c           = 0xbadf5040
+[92766.646130] nvidia 0000:01:00.0: gpu_peek: 0x00409670 PGRAPH_PRI_FECS_0x409670           = 0xbadf5040
+[92766.646132] nvidia 0000:01:00.0: gpu_peek: 0x00409674 PGRAPH_PRI_FECS_0x409674           = 0xbadf5040
+[92766.646134] nvidia 0000:01:00.0: gpu_peek: 0x00504200 GPC0_TPC0_SM_0x504200              = 0x00090000
+[92766.646136] nvidia 0000:01:00.0: gpu_peek: 0x00504204 SM_ISSUE_RATE_MODIFIER (TPC0)      = 0x00000005
+[92766.646139] nvidia 0000:01:00.0: gpu_peek: 0x00504208 GPC0_TPC0_SM_0x504208              = 0x00000221
+[92766.646141] nvidia 0000:01:00.0: gpu_peek: 0x0050420c GPC0_TPC0_SM_0x50420c              = 0x00100000
+[92766.646144] nvidia 0000:01:00.0: gpu_peek: 0x00504a04 SM_ISSUE_RATE_MODIFIER (TPC1)      = 0x00000005
+[92766.646147] nvidia 0000:01:00.0: gpu_peek: 0x00419e04 SM_ISSUE_RATE_MODIFIER (BCAST)     = 0x00000000
+[92766.646151] nvidia 0000:01:00.0: gpu_peek: 0x00824148 GU_FUSE_SEC2_UCODE1                = 0x00000001
+[92766.646154] nvidia 0000:01:00.0: gpu_peek: 0x008241e0 FWSEC fuse (ucode id 9)            = 0x00000001
+[92766.646158] nvidia 0000:01:00.0: gpu_peek: FEAT_READOUT_1 units (3-bit, 0=full): 0 0 2 0 0 2 0 2 0
+[92766.646162] nvidia 0000:01:00.0: gpu_peek: FEAT_OVR_SM_SPEED_SELECT nibbles: 6 4 0 3 2 1 3 5
+
+=== 2. GPU STATE DURING ACTIVE CUDA TENSOR COMPUTE (P0) ===
+name, pci.bus_id, pstate, clocks.current.graphics [MHz], power.draw [W]
+NVIDIA GeForce RTX 4050 Laptop GPU, 00000000:01:00.0, P4, 2505 MHz, 24.46 W
+[92768.235395] nvidia 0000:01:00.0: gpu_peek: driver=nvidia BAR0=0xfb000000 len=0x1000000 command=0x407
+[92768.235404] nvidia 0000:01:00.0: gpu_peek: 0x00000000 PMC_BOOT_0 (chip id)               = 0x197000a1
+[92768.235407] nvidia 0000:01:00.0: gpu_peek: 0x00118128 GFW PLM                            = 0x00008b8f
+[92768.235410] nvidia 0000:01:00.0: gpu_peek: 0x00118234 GFW boot progress                  = 0x000003ff
+[92768.235413] nvidia 0000:01:00.0: gpu_peek: 0x00110100 GFW falcon CPUCTL                  = 0xbadf5720
+[92768.235415] nvidia 0000:01:00.0: gpu_peek: 0x001fa824 WPR2 lo                            = 0x01733000
+[92768.235417] nvidia 0000:01:00.0: gpu_peek: 0x001fa828 WPR2 hi                            = 0x017fbe00
+[92768.235419] nvidia 0000:01:00.0: gpu_peek: 0x001fa7cc WPR_CFG PLM                        = 0x0004cb8f
+[92768.235422] nvidia 0000:01:00.0: gpu_peek: 0x009a0148 FBPA PLM                           = 0xffffff0f
+[92768.235424] nvidia 0000:01:00.0: gpu_peek: 0x001fa7c4 WPR PLM                            = 0x0004cb8f
+[92768.235426] nvidia 0000:01:00.0: gpu_peek: 0x00820000 FUSECTRL                           = 0xe0040000
+[92768.235429] nvidia 0000:01:00.0: gpu_peek: 0x00820040 EN_SW_OVERRIDE                     = 0x00000001
+[92768.235431] nvidia 0000:01:00.0: gpu_peek: 0x00820078 ENABLE_FUSE_PROGRAM_STATUS         = 0x00000001
+[92768.235433] nvidia 0000:01:00.0: gpu_peek: 0x0082007c DISABLE_FUSE_PROGRAM               = 0xbadf5040
+[92768.235436] nvidia 0000:01:00.0: gpu_peek: 0x00820084 DISABLE_SW_OVERRIDE_STATUS         = 0x00000001
+[92768.235438] nvidia 0000:01:00.0: gpu_peek: 0x008200fc FUSE_SS_PLM (speed-select PLM)     = 0xffffffff
+[92768.235441] nvidia 0000:01:00.0: gpu_peek: 0x00820224 FUSE_SS_DP                         = 0x00000000
+[92768.235443] nvidia 0000:01:00.0: gpu_peek: 0x0082038c SECURE_FEAT_OVR_QUADRO_WR_SEC      = 0x00000001
+[92768.235446] nvidia 0000:01:00.0: gpu_peek: 0x0082059c FUSE_SS_FFMA                       = 0x00000000
+[92768.235448] nvidia 0000:01:00.0: gpu_peek: 0x008207d4 FUSE_SS_FMLA16                     = 0x00000000
+[92768.235450] nvidia 0000:01:00.0: gpu_peek: 0x008207d8 FUSE_SS_FMLA32                     = 0x00000001
+[92768.235453] nvidia 0000:01:00.0: gpu_peek: 0x008207dc FUSE_SS_IMLA0                      = 0x00000000
+[92768.235455] nvidia 0000:01:00.0: gpu_peek: 0x008207e0 FUSE_SS_IMLA1                      = 0x00000000
+[92768.235457] nvidia 0000:01:00.0: gpu_peek: 0x008207e4 FUSE_SS_IMLA2                      = 0x00000001
+[92768.235460] nvidia 0000:01:00.0: gpu_peek: 0x008207e8 FUSE_SS_IMLA3                      = 0x00000000
+[92768.235462] nvidia 0000:01:00.0: gpu_peek: 0x008207ec FUSE_SS_IMLA4                      = 0x00000001
+[92768.235465] nvidia 0000:01:00.0: gpu_peek: 0x00823800 FEAT_OVR_ECC_PLM                   = 0xffffff8f
+[92768.235467] nvidia 0000:01:00.0: gpu_peek: 0x00823804 FEAT_OVR_PLM                       = 0xffffff8f
+[92768.235469] nvidia 0000:01:00.0: gpu_peek: 0x00823808 FEAT_OVR_QUADRO                    = 0x01100082
+[92768.235472] nvidia 0000:01:00.0: gpu_peek: 0x0082380c FEAT_OVR_ECC                       = 0x00888888
+[92768.235474] nvidia 0000:01:00.0: gpu_peek: 0x00823810 FEAT_OVR_ECC_1                     = 0x00aaaaaa
+[92768.235477] nvidia 0000:01:00.0: gpu_peek: 0x00823814 FEAT_READOUT_0                     = 0x00000233
+[92768.235479] nvidia 0000:01:00.0: gpu_peek: 0x00823818 FEAT_READOUT_1 (SS effective)      = 0x00410080
+[92768.235482] nvidia 0000:01:00.0: gpu_peek: 0x0082381c FEAT_OVR_SM_SPEED_SELECT (SS0)     = 0x53123046
+[92768.235484] nvidia 0000:01:00.0: gpu_peek: 0x00823820 FEAT_OVR_SM_SPEED_SELECT_1(SS1)    = 0x00000003
+[92768.235486] nvidia 0000:01:00.0: gpu_peek: 0x00823824 FEAT_OVR_ROW_REMAPPER              = 0x00000000
+[92768.235489] nvidia 0000:01:00.0: gpu_peek: 0x00823828 FEAT_READOUT_2                     = 0x00000001
+[92768.235491] nvidia 0000:01:00.0: gpu_peek: 0x0082382c FEAT_OVR_ECC_2                     = 0x0000000a
+[92768.235494] nvidia 0000:01:00.0: gpu_peek: 0x00823830 FEAT_CLUSTER_0x823830              = 0x00000001
+[92768.235496] nvidia 0000:01:00.0: gpu_peek: 0x00823834 FEAT_CLUSTER_0x823834              = 0x00000000
+[92768.235498] nvidia 0000:01:00.0: gpu_peek: 0x00823838 FEAT_CLUSTER_0x823838              = 0x00000000
+[92768.235501] nvidia 0000:01:00.0: gpu_peek: 0x0082383c FEAT_CLUSTER_0x82383c              = 0x00000000
+[92768.235503] nvidia 0000:01:00.0: gpu_peek: 0x00823840 FEAT_CLUSTER_0x823840              = 0x00000000
+[92768.235505] nvidia 0000:01:00.0: gpu_peek: 0x00823844 FEAT_CLUSTER_0x823844              = 0xbadf5040
+[92768.235508] nvidia 0000:01:00.0: gpu_peek: 0x00823848 FEAT_CLUSTER_0x823848              = 0xbadf5040
+[92768.235510] nvidia 0000:01:00.0: gpu_peek: 0x0082384c FEAT_CLUSTER_0x82384c              = 0xbadf5040
+[92768.235512] nvidia 0000:01:00.0: gpu_peek: 0x00823850 FEAT_CLUSTER_0x823850              = 0xbadf5040
+[92768.235515] nvidia 0000:01:00.0: gpu_peek: 0x00823854 FEAT_CLUSTER_0x823854              = 0xbadf5040
+[92768.235517] nvidia 0000:01:00.0: gpu_peek: 0x00823858 FEAT_CLUSTER_0x823858              = 0xbadf5040
+[92768.235520] nvidia 0000:01:00.0: gpu_peek: 0x0082385c FEAT_CLUSTER_0x82385c              = 0xbadf5040
+[92768.235522] nvidia 0000:01:00.0: gpu_peek: 0x00823860 FEAT_CLUSTER_0x823860              = 0xbadf5040
+[92768.235524] nvidia 0000:01:00.0: gpu_peek: 0x00823864 FEAT_CLUSTER_0x823864              = 0xbadf5040
+[92768.235527] nvidia 0000:01:00.0: gpu_peek: 0x00823868 FEAT_CLUSTER_0x823868              = 0xbadf5040
+[92768.235529] nvidia 0000:01:00.0: gpu_peek: 0x0082386c FEAT_CLUSTER_0x82386c              = 0xbadf5040
+[92768.235531] nvidia 0000:01:00.0: gpu_peek: 0x00823870 FEAT_CLUSTER_0x823870              = 0xbadf5040
+[92768.235534] nvidia 0000:01:00.0: gpu_peek: 0x00823874 FEAT_CLUSTER_0x823874              = 0xbadf5040
+[92768.235536] nvidia 0000:01:00.0: gpu_peek: 0x00823878 FEAT_CLUSTER_0x823878              = 0xbadf5040
+[92768.235538] nvidia 0000:01:00.0: gpu_peek: 0x00409658 PGRAPH_PRI_FECS_0x409658           = 0xbadf5040
+[92768.235540] nvidia 0000:01:00.0: gpu_peek: 0x0040965c PGRAPH_PRI_FECS_0x40965c           = 0xbadf5040
+[92768.235543] nvidia 0000:01:00.0: gpu_peek: 0x00409660 PGRAPH_PRI_FECS_0x409660           = 0xbadf5040
+[92768.235545] nvidia 0000:01:00.0: gpu_peek: 0x00409664 FECS_FEAT_OVERRIDE_SM_SPEED_SEL    = 0xbadf5040
+[92768.235547] nvidia 0000:01:00.0: gpu_peek: 0x00409668 FECS_FEAT_READOUT_1                = 0xbadf5040
+[92768.235549] nvidia 0000:01:00.0: gpu_peek: 0x0040966c PGRAPH_PRI_FECS_0x40966c           = 0xbadf5040
+[92768.235552] nvidia 0000:01:00.0: gpu_peek: 0x00409670 PGRAPH_PRI_FECS_0x409670           = 0xbadf5040
+[92768.235554] nvidia 0000:01:00.0: gpu_peek: 0x00409674 PGRAPH_PRI_FECS_0x409674           = 0xbadf5040
+[92768.235556] nvidia 0000:01:00.0: gpu_peek: 0x00504200 GPC0_TPC0_SM_0x504200              = 0x00010000
+[92768.235558] nvidia 0000:01:00.0: gpu_peek: 0x00504204 SM_ISSUE_RATE_MODIFIER (TPC0)      = 0x00000005
+[92768.235560] nvidia 0000:01:00.0: gpu_peek: 0x00504208 GPC0_TPC0_SM_0x504208              = 0x00000221
+[92768.235562] nvidia 0000:01:00.0: gpu_peek: 0x0050420c GPC0_TPC0_SM_0x50420c              = 0x00100000
+[92768.235564] nvidia 0000:01:00.0: gpu_peek: 0x00504a04 SM_ISSUE_RATE_MODIFIER (TPC1)      = 0x00000005
+[92768.235566] nvidia 0000:01:00.0: gpu_peek: 0x00419e04 SM_ISSUE_RATE_MODIFIER (BCAST)     = 0x8004bd10
+[92768.235569] nvidia 0000:01:00.0: gpu_peek: 0x00824148 GU_FUSE_SEC2_UCODE1                = 0x00000001
+[92768.235572] nvidia 0000:01:00.0: gpu_peek: 0x008241e0 FWSEC fuse (ucode id 9)            = 0x00000001
+[92768.235574] nvidia 0000:01:00.0: gpu_peek: FEAT_READOUT_1 units (3-bit, 0=full): 0 0 2 0 0 2 0 2 0
+[92768.235578] nvidia 0000:01:00.0: gpu_peek: FEAT_OVR_SM_SPEED_SELECT nibbles: 6 4 0 3 2 1 3 5
+
+=== 3. MMA_BENCH OUTPUT ===
+# NVIDIA GeForce RTX 4050 Laptop GPU, 20 SMs, sm_89, iters=60000 reps=3
+mode       best TF/s   all runs
+f16/f16         50.8 50.8/50.8/50.8
+f16/f32         25.4 25.4/25.4/25.4
+bf16/f32        25.4 25.4/25.4/25.4
+s8/s32         101.2 101.2/101.2/101.2
+fp8/e4m3        50.6 50.6/50.6/46.5
+dp4a            24.4 17.1/24.4/24.1
+ffma            11.4 11.2/11.4/11.4
