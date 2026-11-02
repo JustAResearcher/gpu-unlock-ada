@@ -1,11 +1,14 @@
 # RTX 4070 Laptop / AD106M: bounded Windows Secure Boot result
 
-**Latest status, 2026-11-02:** a manually selected v0.8.4 startup completed
-and measured correct accelerated rates with Secure Boot enabled. It recorded
-zero pending-transfer observations, so the new waiting path was not exercised
-on hardware. The two preceding v0.8.3 automatic failures remain documented.
-Original Windows Boot Manager remains the permanent default; repeatable
-automatic startup, the intermittent fix and genuine sleep recovery are unqualified.
+**Latest status, 2026-11-02:** v0.8.4 completed a one-time automatic Windows
+Restart and measured correct accelerated rates with Secure Boot enabled and
+healthy desktop controls. Both its manual and automatic runs recorded zero
+pending-transfer observations, so the new waiting path remains unexercised on
+hardware. The two preceding v0.8.3 automatic failures remain documented.
+The local controls now target v0.8.4, with ON saved and its entry first for the
+next startup. That persistent-default configuration has not yet been physically
+booted. Repeatability, the intermittent fix and genuine sleep recovery remain
+unqualified.
 
 One ASUS TUF Gaming A15 FA507XI with an RTX 4070 Laptop 8 GB (`10de:2860`,
 AD106M) completed a locally developed preboot transaction, started the stock
@@ -324,11 +327,70 @@ passed, including the two observed failure positions and stuck-transfer cases.
 **The successful physical run recorded zero pending observations and no pending
 wait.** It therefore did not exercise that new path on hardware, despite sharing
 the initial selector pair of the failed attempts. This is one manual startup
-success, not proof that the intermittent failure has been repaired. Automatic
-Restart testing remains pending; original Windows Boot Manager remains the
-permanent default and the older installed unlock remains OFF. Genuine Windows
-sleep recovery is still unimplemented. No portable implementation or private
-hardware evidence is added to this contribution.
+success, not proof that the intermittent failure has been repaired. A subsequent
+one-time automatic Restart is recorded below. Genuine Windows sleep recovery is
+still unimplemented. No portable implementation or private hardware evidence is
+added to this contribution.
+
+### One-time automatic v0.8.4 Restart, 2026-11-02
+
+The unchanged v0.8.4 image subsequently completed a normal Windows Restart using
+a one-time automatic firmware entry. The owner did not select a boot entry or
+press a key: v0.8.4 showed READY and started Windows in the same boot. The fresh
+capture records automatic execution from the zero/zero initial selector pair,
+complete firmware preparation and payload, completed selectors and reset, and
+verified access restoration with no retained claim or containment. All six
+Secure Boot variables were byte-identical to the preceding manual success;
+Secure Boot and HVCI remained enabled.
+
+The fresh five-format dense-GEMM measurement passed all finite-output and sampled
+numerical checks:
+
+| Format | v0.8.4 one-time automatic Restart, TFLOP/s |
+|---|---:|
+| FP16 | 77.15 |
+| BF16 | 79.39 |
+| TF32 | 39.93 |
+| FP8 E4M3 | 142.12 |
+| FP32 control | 13.382 |
+
+Taskbar clicks, desktop menu selection, app switching and brightness worked
+before and after measurement. This is another bounded correct accelerated
+result, not a matched OFF/ON comparison or an application-speed measurement.
+
+The one-time firmware selection was consumed, and the complete permanent boot
+order was unchanged with original Windows Boot Manager first. The older
+installed unlock remained OFF. This proves one successful one-time automatic
+Restart, not a successful startup after making v0.8.4 the permanent default or
+repeatable Restart reliability.
+
+After that successful one-time test, the local controls were updated to target
+v0.8.4. The installation saved ON and placed its entry first in the permanent
+order, retaining original Windows Boot Manager and saving the older entries
+OFF. Readback confirmed the configured state; all six trust variables and the
+startup images, shared payload and Microsoft loader remained unchanged.
+
+The OFF qualification used explicit reuse of the unchanged startup OFF branch
+and host tests, bound to the prior physical v0.8.3 OFF result. A guarded live
+OFF-mode write/readback passed before final ON was restored. **This is not a
+physical v0.8.4 full-power OFF test.** The existing shortcuts now use v0.8.4, but
+a startup with the new permanent-default configuration remains to be tested.
+Installation does not change the running GPU or provide a sleep reapply path.
+
+A subsequent check through the newly installed Status tool in the same Windows
+boot also passed all five numerical cases: FP16 69.03, BF16 75.98, TF32 37.93,
+FP8 E4M3 141.70 and FP32 control 13.140 TFLOP/s. It correctly displayed v0.8.4,
+saved ON, automatic startup configured and Secure Boot enabled. These lower but
+still accelerated rates are retained as a second measurement, not a matched
+comparison or evidence of an installation-induced performance change. The
+owner's post-measurement desktop confirmation applies to the first measurement;
+no separate health confirmation was requested after this Status check.
+
+**Pending observations and pending wait were again zero.** Neither successful
+v0.8.4 boot has exercised the new pending-resampling path on hardware. The two
+failed v0.8.3 automatic attempts, their required power-off recovery and the
+unexplained older v0.8.2 failure remain relevant. The intermittent fix and genuine
+sleep recovery remain unqualified; no runtime reapply mechanism was installed.
 
 ### Earlier observations
 
