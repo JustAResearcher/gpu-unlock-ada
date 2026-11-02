@@ -84,8 +84,8 @@ the owner's reported stuttering after waking. No continuous performance trace
 exists between boot and the later measurement.
 
 A different retained startup capture refused an unreviewed initial selector
-state before payload, firmware, selector or reset writes. That refusal is a
-separate startup-admission problem; the existing guard has not been broadened.
+state before payload, firmware, selector or reset writes. That refusal was a
+separate startup-admission problem; at that stage the guard had not been broadened.
 The owner could not identify the corresponding boot-screen message, so it is
 not classified as a cold-start versus warm-restart failure.
 
@@ -175,6 +175,53 @@ full startup already restored acceleration without the policy. Prolonged normal
 use and sleep/resume remain unvalidated. No driver binary, EFI, Secure Boot
 configuration or system sleep policy was changed, and no GPU reset or automatic
 restart was performed.
+
+### Diagnostic startup success, 2026-11-02
+
+A later private v0.8.3 candidate completed firmware preparation, the unlock
+payload, final selector writes, function reset and verified cleanup, then handed
+off to normal Windows in the same boot. Secure Boot and Windows memory integrity
+(HVCI) were enabled. Local trust comparison confirmed exactly the intended new
+image-hash addition to `db`, preservation of every prior entry, and unchanged
+`PK`, `KEK` and `dbx`. The owner reported normal taskbar clicks, desktop menu
+selection, app switching and brightness.
+
+The fresh bounded 4096-square GEMM check measured:
+
+| Format | v0.8.3 same-boot result, TFLOP/s |
+|---|---:|
+| FP16 | 67.71 |
+| BF16 | 75.10 |
+| TF32 | 38.68 |
+| FP8 E4M3 | 138.87 |
+| FP32 control | 13.389 |
+
+All five finite-output and sampled numerical checks passed. These rates are
+consistent with the prior accelerated range. This is one fresh positive result,
+not a new matched OFF/ON comparison, application-speed result or long-duration
+qualification. The historical matched measurements above are unchanged.
+
+The preceding v0.8.2 candidate admitted an observed zero/zero initial selector
+pair, then failed a target-state guard during FWSEC firmware transfer after 195
+DMA blocks, before the firmware CPU or unlock payload started. It contained the
+transaction and required full power-off, which the owner completed. The exact
+failed observation was not retained by that version; a later cleanup mismatch
+does not establish the original cause.
+
+v0.8.3 adds first-failure state logging while preserving the hardware checks and
+access sequence. Its successful run entered a different, nonzero selector pair
+and recorded no FWSEC state failure. This is one successful
+physical run for the newly admitted nonzero case, **not a repair of the zero/zero
+failure**.
+Instrumentation can also affect timing. A direct Windows Restart into this
+unchanged, already authorized candidate remains to be tested without a BIOS
+setup visit or further key changes.
+
+The candidate remains separate from the default startup entry. Its own physical
+OFF control, restart reliability and genuine Windows sleep/wake recovery remain
+unqualified. No runtime reapply path or portable unlock implementation is added
+to this PR. Private capture contents, trust databases, individual fingerprints
+and exact activity timestamps remain excluded.
 
 ### Earlier observations
 
