@@ -136,9 +136,9 @@ Optimus laptops where the display server runs on the iGPU, fine-grained runtime
 seconds after boot, wiping the hardware unlock registers back to half rate
 while `NVreg_PreserveVideoMemoryAllocations=1` causes `tools/read_sm_rates.py`
 to keep reporting a cached `0 0 0` (full rate); set
-`NVreg_DynamicPowerManagement=0x00` (or lock the PCI device's `power/control`
-to `on`) to retain the 2× unlock across idle periods (see the
-[28a1 report](docs/ada-28a1-report.md)). Other Ada
+`NVreg_DynamicPowerManagement=0x00` to retain the 2× unlock across idle periods
+while allowing the card to reach P8 idle (~1.6 W) without entering D3cold (see
+the [28a1 report](docs/ada-28a1-report.md)). Other Ada
 IDs, professional RTX A-series and data-centre parts are not accepted. Shared
 firmware across Ada chips does not establish support for untested cards.
 

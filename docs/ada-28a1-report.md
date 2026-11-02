@@ -238,7 +238,13 @@ All 6 seeded FP16/FP32 and BF16/FP32 GEMM geometries (`256×256×256`,
    ```text
    options nvidia NVreg_DynamicPowerManagement=0x00
    ```
-   *(Alternatively, add a `udev` rule setting `/sys/bus/pci/devices/0000:01:00.0/power/control` to `on`.)*
+   *(Note: Rely on `NVreg_DynamicPowerManagement=0x00` rather than forcing PCI
+   `power/control="on"` via udev. `DynamicPowerManagement=0x00` disables runtime
+   D3cold inside the NVIDIA driver while still allowing GSP-RM to clock down to
+   P8 idle [210 MHz / ~1.6 W / silent fans]. Forcing `power/control="on"` at the
+   PCI sysfs level locks GSP-RM in P3 [1755 MHz / ~9.7 W] and causes
+   `GPS ACPI DSM` / `NV_ERR_NO_MEMORY` warning logs whenever NVML clients open
+   `/dev/nvidia0`.)*
 3. Rebuild initramfs (`sudo update-initramfs -u`) and boot from a cold power-off
    (or after an unbound `D3cold` cycle) with:
    ```text
