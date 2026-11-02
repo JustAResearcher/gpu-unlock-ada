@@ -1,10 +1,11 @@
 # RTX 4070 Laptop / AD106M: bounded Windows Secure Boot result
 
-**Latest status, 2026-11-02:** the v0.8.3 automatic-startup trial failed.
-The recovery control has saved the unlock OFF and restored original Windows
-Boot Manager first. The successful default-startup measurements below are
-historical; repeatable automatic startup and genuine sleep recovery remain
-unqualified. Details of the new failure and recovery are retained below.
+**Latest status, 2026-11-02:** a manually selected v0.8.4 startup completed
+and measured correct accelerated rates with Secure Boot enabled. It recorded
+zero pending-transfer observations, so the new waiting path was not exercised
+on hardware. The two preceding v0.8.3 automatic failures remain documented.
+Original Windows Boot Manager remains the permanent default; repeatable
+automatic startup, the intermittent fix and genuine sleep recovery are unqualified.
 
 One ASUS TUF Gaming A15 FA507XI with an RTX 4070 Laptop 8 GB (`10de:2860`,
 AD106M) completed a locally developed preboot transaction, started the stock
@@ -289,6 +290,45 @@ retained; they do not qualify repeatable automatic startup. Genuine Windows
 sleep/wake recovery is still unimplemented. No runtime reapply path or portable
 unlock implementation is added to this PR. Private capture contents, trust
 databases, individual fingerprints and exact activity timestamps remain excluded.
+
+### Manual v0.8.4 follow-up, 2026-11-02
+
+A separate private v0.8.4 candidate completed a manually selected startup from
+the same initial selector pair as both failed v0.8.3 automatic attempts.
+Firmware preparation, payload, selectors, reset and verified cleanup completed,
+then Windows started in the same boot. Secure Boot and HVCI were enabled. Local
+trust comparison confirmed exactly the intended new image-hash addition to
+`db`, no removed prior entries, and unchanged `PK`, `KEK` and `dbx`.
+
+The fresh 4096-square dense-GEMM check measured:
+
+| Format | v0.8.4 manual same-boot result, TFLOP/s |
+|---|---:|
+| FP16 | 71.13 |
+| BF16 | 79.92 |
+| TF32 | 39.65 |
+| FP8 E4M3 | 142.16 |
+| FP32 control | 13.467 |
+
+All five finite-output and sampled numerical checks passed. The owner confirmed
+normal taskbar clicks, desktop menu selection, app switching and brightness
+both before and after measurement. These are bounded dense-GEMM results, not a
+new matched OFF/ON speedup or an application-performance claim.
+
+The candidate adds bounded resampling of the sole pending-status change only
+inside a known in-flight FWSEC DMA poll. It retains the original transfer
+completion condition, other state checks, write boundaries and time budgets.
+Twenty new whole-entry software scenarios and the complete regression suite
+passed, including the two observed failure positions and stuck-transfer cases.
+
+**The successful physical run recorded zero pending observations and no pending
+wait.** It therefore did not exercise that new path on hardware, despite sharing
+the initial selector pair of the failed attempts. This is one manual startup
+success, not proof that the intermittent failure has been repaired. Automatic
+Restart testing remains pending; original Windows Boot Manager remains the
+permanent default and the older installed unlock remains OFF. Genuine Windows
+sleep recovery is still unimplemented. No portable implementation or private
+hardware evidence is added to this contribution.
 
 ### Earlier observations
 
