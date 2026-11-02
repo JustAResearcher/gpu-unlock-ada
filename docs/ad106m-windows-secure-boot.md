@@ -1,0 +1,501 @@
+# RTX 4070 Laptop / AD106M: bounded Windows Secure Boot result
+
+**Latest status, 2026-11-02:** the installed v0.8.4 permanent-default entry
+completed a normal Windows Restart without manual boot selection, reached READY
+and started Windows in the same boot. Fresh numerical checks passed at accelerated
+rates, with Secure Boot and HVCI enabled and healthy desktop controls. ON remains
+saved and v0.8.4 remains first in the permanent order. This follows its successful
+manual and one-time automatic boots. All three recorded zero FWSEC pending-status
+observations, so the new waiting path remains unexercised on hardware. The two
+preceding v0.8.3 automatic failures remain documented. This completed default boot
+does not establish long-term reliability, an intermittent fix or genuine sleep
+recovery.
+
+One ASUS TUF Gaming A15 FA507XI with an RTX 4070 Laptop 8 GB (`10de:2860`,
+AD106M) completed a locally developed preboot transaction, started the stock
+Windows driver and showed higher FP16, BF16, TF32 and FP8 dense GEMM rates.
+Secure Boot remained enabled during the successful internal ON/OFF and default
+startup tests. A full OFF startup restored stock rates.
+
+This is an owner-reported result from one laptop, with aggregate measurements
+and a reusable validation workflow. **It does not add a public unlock profile,
+portable EFI binary, generic installer, or Linux target admission.** The local
+transaction/installer is not included in this contribution. Other laptops,
+BIOS versions, display ownership graphs and driver lifecycles need independent
+review. Do not use the existing MSI desktop profile just because it runs Windows.
+
+This adds Windows evidence relevant to the questions in
+[#56](https://github.com/JustAResearcher/gpu-unlock-ada/issues/56) and
+[#20](https://github.com/JustAResearcher/gpu-unlock-ada/issues/20). It neither
+reproduces nor resolves the different Linux machine's post-driver half-rate
+report in #20.
+
+## Measured scope
+
+- Board family FA507XI, BIOS 314; stock RTX 4070 Laptop 8 GB.
+- Windows 11, stock NVIDIA 621.01; PyTorch 2.6.0+cu124, CUDA 12.4.
+- Hybrid AMD/NVIDIA graphics; no display or GPU-mode change between the final
+  internal ON/OFF/default-startup controls.
+- No GPU voltage/power change, driver patch, motherboard/VBIOS flash or TPM reset.
+- Dense 4096-square GEMM, ten warmups and three timing batches of forty calls.
+  These are application-kernel timings, not pure issue-rate or end-to-end AI gains.
+- FP16/BF16 reduced-precision reductions disabled; TF32 explicitly selected for
+  its case. FP8 E4M3 used FP32 unit scales, FP16 output and no fast accumulation;
+  quantization was excluded from timing.
+- All formats passed full-output finite checks and sampled FP64 references of
+  the actual inputs. Samples cover 1,024 output positions per format.
+
+| Format | Restored OFF, TFLOP/s | Default automatic ON, TFLOP/s | Change |
+|---|---:|---:|---:|
+| FP16 | 46.75 | 77.83 | +66.48% |
+| BF16 | 47.00 | 81.63 | +73.66% |
+| TF32 | 23.10 | 39.46 | +70.82% |
+| FP8 E4M3 | 93.89 | 142.30 | +51.55% |
+| FP32 control | 13.238 | 13.237 | -0.01% |
+
+These columns are one process per phase, each using three timing batches.
+The earlier manually selected internal ON boot measured FP16 70.77, BF16 81.24,
+TF32 38.91 and FP8 139.44 TFLOP/s; FP32 stayed near stock. Clock/thermal variation
+means the higher FP16 result is not evidence of a second improvement.
+
+The same installed image also passed a separate mixed workload on that earlier
+ON boot: five formats across 1536, 2048 and 4096 matrices, 15 cases and 105 sampled
+numerical checks over approximately 68 seconds, peak sampled temperature 76.8 C.
+It was not rerun on the final default startup. Desktop taskbar clicks, desktop
+menu selection and app switching worked before and after the final checks;
+the reviewed Windows desktop/graphics event queries were clean.
+
+The restored OFF rates were all within 0.2% of the earlier stock baseline.
+The [numeric-only summary](evidence/ad106m-windows/summary.json) includes the final
+pair's timing batches. Raw logs, captures and individual machine fingerprints
+are deliberately excluded.
+
+## Failures and limits retained
+
+### Subsequent persistence regression
+
+Later everyday use exposed failures beyond the bounded startup results above.
+With the saved preference still ON, the reviewed entry still first and the
+installed image and Windows loader unchanged, a later Windows session measured
+FP16 46.91, BF16 47.05, TF32 23.10 and FP8 93.51 TFLOP/s; FP32 control was 13.36.
+All five numerical checks passed, but the tensor rates were stock-like. A
+complete READY capture matched that session's startup. READY therefore does
+not establish that acceleration survived Windows initialization or later use.
+
+The same session included Modern Standby and engine-timeout reports.
+The underlying timeout timestamps preceded the recorded sleep, even though
+Windows reported them afterward. Local debugger analysis of the three retained
+current-session timeout dumps attributes them to AMD's NPU driver, `ipustack.sys`,
+rather than establishing an NVIDIA-driver timeout. Two older watchdog dumps,
+predating this unlock experiment, are a different graphics-kernel live-dump code
+(`0x193`) in desktop-compositor context; they are not the same NPU failure.
+These observations do not establish whether sleep, driver
+recovery, the transaction, or another factor caused the performance loss or
+the owner's reported stuttering after waking. No continuous performance trace
+exists between boot and the later measurement.
+
+A different retained startup capture refused an unreviewed initial selector
+state before payload, firmware, selector or reset writes. That refusal was a
+separate startup-admission problem; at that stage the guard had not been broadened.
+The owner could not identify the corresponding boot-screen message, so it is
+not classified as a cold-start versus warm-restart failure.
+
+**Always-on behavior, restart reliability and sleep/resume remain unresolved.**
+A status tool should show saved preference separately from a fresh performance
+measurement, report busy/error cases as unverified, and never reuse an earlier
+accelerated result after sleep or graphics recovery. This follow-up does not
+change the historical ON/OFF measurements or add a public runtime reapply path.
+
+### Controlled Modern Standby comparison
+
+A subsequent full shutdown/start restored acceleration with the same installed
+image, Windows loader and Secure Boot databases. The automatic same-boot report
+passed validation, and the owner reported a working desktop. Acceleration also
+survived more than five minutes without an agent GPU probe while Windows stayed
+awake. No intervening sleep was recorded.
+
+One recorded Modern Standby cycle then provided a direct before/after comparison
+in that same Windows kernel. Sleep lasted approximately four minutes. The
+recorder stopped before the post-wake CUDA check; it reported zero lost buffers
+and events. Both measurements used the same collector, software and arithmetic,
+and all five numerical checks passed.
+
+| Format | Awake after idle, TFLOP/s | After Modern Standby, TFLOP/s |
+|---|---:|---:|
+| FP16 | 72.26 | 46.81 |
+| BF16 | 81.40 | 47.09 |
+| TF32 | 38.16 | 23.07 |
+| FP8 E4M3 | 142.74 | 92.79 |
+| FP32 control | 13.235 | 13.104 |
+
+The tensor rates returned to the retained stock range across sleep, while the
+FP32 control changed by about 1%. The owner reported a normal-feeling desktop
+after this wake: lost acceleration need not be accompanied by visible stutter.
+The saved preference was still ON; resuming Windows does not execute the local
+preboot transaction again. Re-published NPU reports referenced the same older
+failures and are not evidence of new NVIDIA timeouts during this test.
+
+This is one controlled observation of lost acceleration across Modern Standby,
+not a direct post-resume register read or proof of a specific reset mechanism.
+It does not resolve the separate guarded-startup refusal, intermittent desktop
+stutter or warm-restart behavior. **This implementation does not maintain the
+unlock across the tested sleep/wake cycle.** No runtime register writes, driver
+patch, sleep-policy workaround or extra Secure Boot trust was installed.
+
+### Loss during normal use without a recorded system sleep
+
+A later same-kernel observation broadens the persistence problem. Three fresh
+checks showed accelerated rates during normal use; roughly six hours after the
+last successful check, two fresh checks showed stock-like rates. The owner
+reported normal use without a noticed power, lid, display or GPU-mode change.
+
+| Format | Earlier successful check, TFLOP/s | Later stock-like check, TFLOP/s |
+|---|---:|---:|
+| FP16 | 67.48 | 46.74 |
+| BF16 | 70.81 | 47.00 |
+| TF32 | 39.76 | 23.08 |
+| FP8 E4M3 | 141.57 | 92.64 |
+| FP32 control | 13.111 | 13.163 |
+
+All numerical checks passed. Driver, workload and Status component identity
+matched the retained reference. The bounded System-log query contained no
+sleep/wake, Display 4101 or NVIDIA-provider events between those measurements.
+Three error-report publications matched the already analyzed historical NPU
+reports. The exact loss time is unknown; this was not a continuous GPU-power
+trace and does not exclude an unlogged device-level transition or recovery.
+
+Preventing automatic system sleep is therefore not established as sufficient.
+[Issue #117](https://github.com/JustAResearcher/gpu-unlock-ada/issues/117) reports
+a targeted NVIDIA runtime-power workaround on a different laptop and driver.
+That is an experimental lead, not validation for this AD106M/621.01 case, and
+does not establish persistence across system sleep.
+
+The owner authorized a reversible NVIDIA-only policy trial after considering
+the possible idle/battery cost. The actual adapter class key was resolved
+dynamically, the installed signed driver was pinned, the absent original value
+was backed up, and DWORD `EnableRuntimePowerManagement=0` passed readback while
+the other adapter's value stayed unchanged. Static inspection found the option
+name and a code reference in 621.01; that does not establish runtime behavior.
+The first subsequent full startup completed with the same driver hash, the
+NVIDIA policy still DWORD 0, the other adapters' values unchanged and Secure
+Boot reported enabled. A fresh five-format check passed all numerical checks:
+FP16 72.86, BF16 77.45, TF32 38.37, FP8 141.64 and FP32 13.145 TFLOP/s. The owner
+confirmed normal taskbar/menu interaction, app switching and screen brightness.
+**This is startup success, not evidence that the trial prevents later loss:**
+full startup already restored acceleration without the policy. Prolonged normal
+use and sleep/resume remain unvalidated. No driver binary, EFI, Secure Boot
+configuration or system sleep policy was changed, and no GPU reset or automatic
+restart was performed.
+
+### Diagnostic startup success, 2026-11-02
+
+A later private v0.8.3 candidate completed firmware preparation, the unlock
+payload, final selector writes, function reset and verified cleanup, then handed
+off to normal Windows in the same boot. Secure Boot and Windows memory integrity
+(HVCI) were enabled. Local trust comparison confirmed exactly the intended new
+image-hash addition to `db`, preservation of every prior entry, and unchanged
+`PK`, `KEK` and `dbx`. The owner reported normal taskbar clicks, desktop menu
+selection, app switching and brightness.
+
+The fresh bounded 4096-square GEMM check measured:
+
+| Format | v0.8.3 same-boot result, TFLOP/s |
+|---|---:|
+| FP16 | 67.71 |
+| BF16 | 75.10 |
+| TF32 | 38.68 |
+| FP8 E4M3 | 138.87 |
+| FP32 control | 13.389 |
+
+All five finite-output and sampled numerical checks passed. These rates are
+consistent with the prior accelerated range. This is one fresh positive result,
+not a new matched OFF/ON comparison, application-speed result or long-duration
+qualification. The historical matched measurements above are unchanged.
+
+The preceding v0.8.2 candidate admitted an observed zero/zero initial selector
+pair, then failed a target-state guard during FWSEC firmware transfer after 195
+DMA blocks, before the firmware CPU or unlock payload started. It contained the
+transaction and required full power-off, which the owner completed. The exact
+failed observation was not retained by that version; a later cleanup mismatch
+does not establish the original cause.
+
+v0.8.3 adds first-failure state logging while preserving the hardware checks and
+access sequence. Its successful run entered a different, nonzero selector pair
+and recorded no FWSEC state failure. This is one successful
+physical run for the newly admitted nonzero case, **not a repair of the zero/zero
+failure**.
+Instrumentation can also affect timing.
+
+A subsequent ordinary Windows Restart into the same v0.8.3 image completed
+from the zero/zero initial state. Firmware preparation, payload, selectors,
+reset, cleanup and same-boot Windows handoff all passed. The complete Secure
+Boot variable set was unchanged from the preceding successful run, and Secure
+Boot and HVCI remained enabled. The owner confirmed normal desktop controls and
+brightness both on return and after the fresh numerical check:
+
+| Format | v0.8.3 zero-state Restart result, TFLOP/s |
+|---|---:|
+| FP16 | 74.13 |
+| BF16 | 82.16 |
+| TF32 | 39.92 |
+| FP8 E4M3 | 142.13 |
+| FP32 control | 13.332 |
+
+All five finite-output and sampled numerical checks passed. This establishes
+one successful manual Restart from zero/zero. No FWSEC failure occurred, so
+the original v0.8.2 failure remains unexplained; this result does not establish
+repeatability or attribute a performance change to a code change.
+
+The exact v0.8.3 candidate subsequently passed its own full-power OFF control.
+The owner confirmed full power-off before selecting that entry, and normal
+controls before and after measurement. The brief boot banner could not be read;
+OFF was instead supported by the saved-mode readback, unchanged prior captures
+and fresh stock-like performance. All five numerical checks passed:
+
+| Format | v0.8.3 full-power OFF result, TFLOP/s |
+|---|---:|
+| FP16 | 44.71 |
+| BF16 | 47.04 |
+| TF32 | 23.11 |
+| FP8 E4M3 | 93.40 |
+| FP32 control | 13.317 |
+
+The local controls were then installed and their Status/OFF/ON/Status actions
+verified, with v0.8.3 selected as the default for an automatic-startup trial.
+These settings checks did not establish successful automatic execution.
+The EFI images, shared payload and Secure Boot trust were unchanged.
+
+**The subsequent automatic-startup trial failed.** Two new captures identify
+automatic execution of the same v0.8.3 image. Both stopped during FWSEC firmware
+transfer: one after 30 DMA blocks and 99 successful writes, the other after
+189 blocks and 576 writes. In each case the first failing state check retained
+a successful configuration read whose only difference was the PCIe Device
+Status Transactions Pending bit changing from clear to set. The firmware CPU
+had not started, the unlock payload made no hardware writes, and no Windows
+handoff was approved. Both reports retained containment and required full
+power-off. The owner confirmed fully powering off after STOP, then skipping
+the unlock to reach Windows with all four desktop controls working. A fresh
+check of that recovered session was stock-like and passed all five numerical
+cases; it is not a successful same-boot result for either failed attempt.
+
+The recorded capability layout establishes which status bit changed. Microsoft
+[defines Transactions Pending](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/ns-ntddk-_pci_express_device_status_register)
+as outstanding non-posted requests; the bit can clear after either completion
+or completion timeout. These observations explain the immediate guard trigger
+in these two attempts. They do not establish successful DMA, justify ignoring
+the status bit, or prove that the older v0.8.2 failure had the same cause.
+The later parent-attribute cleanup mismatch is not the first failure.
+
+All six Secure Boot variables remained unchanged. Automatic qualification is
+still false. The installed recovery control saved OFF and restored original
+Windows Boot Manager as the first entry to prevent automatic repetition.
+The preceding successful manual ON/Restart and full-power OFF results remain
+retained; they do not qualify repeatable automatic startup. Genuine Windows
+sleep/wake recovery is still unimplemented. No runtime reapply path or portable
+unlock implementation is added to this PR. Private capture contents, trust
+databases, individual fingerprints and exact activity timestamps remain excluded.
+
+### Manual v0.8.4 follow-up, 2026-11-02
+
+A separate private v0.8.4 candidate completed a manually selected startup from
+the same initial selector pair as both failed v0.8.3 automatic attempts.
+Firmware preparation, payload, selectors, reset and verified cleanup completed,
+then Windows started in the same boot. Secure Boot and HVCI were enabled. Local
+trust comparison confirmed exactly the intended new image-hash addition to
+`db`, no removed prior entries, and unchanged `PK`, `KEK` and `dbx`.
+
+The fresh 4096-square dense-GEMM check measured:
+
+| Format | v0.8.4 manual same-boot result, TFLOP/s |
+|---|---:|
+| FP16 | 71.13 |
+| BF16 | 79.92 |
+| TF32 | 39.65 |
+| FP8 E4M3 | 142.16 |
+| FP32 control | 13.467 |
+
+All five finite-output and sampled numerical checks passed. The owner confirmed
+normal taskbar clicks, desktop menu selection, app switching and brightness
+both before and after measurement. These are bounded dense-GEMM results, not a
+new matched OFF/ON speedup or an application-performance claim.
+
+The candidate adds bounded resampling of the sole pending-status change only
+inside a known in-flight FWSEC DMA poll. It retains the original transfer
+completion condition, other state checks, write boundaries and time budgets.
+Twenty new whole-entry software scenarios and the complete regression suite
+passed, including the two observed failure positions and stuck-transfer cases.
+
+**The successful physical run recorded zero FWSEC pending observations and no pending
+wait.** It therefore did not exercise that new path on hardware, despite sharing
+the initial selector pair of the failed attempts. This is one manual startup
+success, not proof that the intermittent failure has been repaired. A subsequent
+one-time automatic Restart is recorded below. Genuine Windows sleep recovery is
+still unimplemented. No portable implementation or private hardware evidence is
+added to this contribution.
+
+### One-time automatic v0.8.4 Restart, 2026-11-02
+
+The unchanged v0.8.4 image subsequently completed a normal Windows Restart using
+a one-time automatic firmware entry. The owner did not select a boot entry or
+press a key: v0.8.4 showed READY and started Windows in the same boot. The fresh
+capture records automatic execution from the zero/zero initial selector pair,
+complete firmware preparation and payload, completed selectors and reset, and
+verified access restoration with no retained claim or containment. All six
+Secure Boot variables were byte-identical to the preceding manual success;
+Secure Boot and HVCI remained enabled.
+
+The fresh five-format dense-GEMM measurement passed all finite-output and sampled
+numerical checks:
+
+| Format | v0.8.4 one-time automatic Restart, TFLOP/s |
+|---|---:|
+| FP16 | 77.15 |
+| BF16 | 79.39 |
+| TF32 | 39.93 |
+| FP8 E4M3 | 142.12 |
+| FP32 control | 13.382 |
+
+Taskbar clicks, desktop menu selection, app switching and brightness worked
+before and after measurement. This is another bounded correct accelerated
+result, not a matched OFF/ON comparison or an application-speed measurement.
+
+The one-time firmware selection was consumed, and the complete permanent boot
+order was unchanged with original Windows Boot Manager first. The older
+installed unlock remained OFF. This proves one successful one-time automatic
+Restart, not a successful startup after making v0.8.4 the permanent default or
+repeatable Restart reliability.
+
+After that successful one-time test, the local controls were updated to target
+v0.8.4. The installation saved ON and placed its entry first in the permanent
+order, retaining original Windows Boot Manager and saving the older entries
+OFF. Readback confirmed the configured state; all six trust variables and the
+startup images, shared payload and Microsoft loader remained unchanged.
+
+The OFF qualification used explicit reuse of the unchanged startup OFF branch
+and host tests, bound to the prior physical v0.8.3 OFF result. A guarded live
+OFF-mode write/readback passed before final ON was restored. **This is not a
+physical v0.8.4 full-power OFF test.** The existing shortcuts now use v0.8.4, but
+the permanent-default configuration had not yet been booted at that point.
+That later startup result is recorded below. Installation does not change the
+running GPU or provide a sleep reapply path.
+
+A subsequent check through the newly installed Status tool in the same Windows
+boot also passed all five numerical cases: FP16 69.03, BF16 75.98, TF32 37.93,
+FP8 E4M3 141.70 and FP32 control 13.140 TFLOP/s. It correctly displayed v0.8.4,
+saved ON, automatic startup configured and Secure Boot enabled. These lower but
+still accelerated rates are retained as a second measurement, not a matched
+comparison or evidence of an installation-induced performance change. The
+owner's post-measurement desktop confirmation applies to the first measurement;
+no separate health confirmation was requested after this Status check.
+
+**FWSEC pending observations and pending wait were again zero.** Neither of those two
+successful v0.8.4 boots exercised the new pending-resampling path on hardware. The two
+failed v0.8.3 automatic attempts, their required power-off recovery and the
+unexplained older v0.8.2 failure remain relevant. The intermittent fix and genuine
+sleep recovery remain unqualified; no runtime reapply mechanism was installed.
+
+### Installed permanent-default v0.8.4 Restart, 2026-11-02
+
+The owner then used normal Windows Restart without selecting a boot entry or
+pressing a key. The unchanged v0.8.4 image ran from the installed permanent-first
+entry, displayed READY and started Windows in the same boot. A new capture
+completed firmware preparation, payload, selectors, reset and verified cleanup,
+with restored access, no retained claim or containment, and no power-off request.
+The saved preference remained ON; the complete permanent order was unchanged
+with v0.8.4 first, and no one-time firmware selection was pending. All six Secure
+Boot variables were unchanged; Secure Boot and HVCI remained enabled.
+
+The fresh installed-Status measurement passed finite-output and sampled numerical
+checks in all five formats:
+
+| Format | Permanent-default Restart, TFLOP/s |
+|---|---:|
+| FP16 | 69.14 |
+| BF16 | 71.23 |
+| TF32 | 37.92 |
+| FP8 E4M3 | 137.01 |
+| FP32 control | 13.182 |
+
+The owner confirmed that taskbar clicks, desktop menu selection, app switching
+and brightness worked before and after measurement. Status reported saved ON,
+automatic startup enabled and Secure Boot enabled separately from the fresh
+accelerated measurement. This qualifies this one actual permanent-default
+Restart; it is not a new matched OFF/ON comparison or an application-speed result.
+
+FWSEC pending observations and pending wait were again zero. The existing
+payload phase did observe transient pending status; that separate phase does
+not validate the new FWSEC waiting path. Three successful v0.8.4
+boots now cover manual, one-time automatic and permanent-default startup, but
+none exercised the new waiting path. They do not establish long-term or repeated
+default-start reliability, repair of the intermittent failure, or recovery after
+sleep or a GPU power reset. Genuine sleep recovery remains unimplemented. The
+earlier failed attempts, lower retained measurements and OFF-reuse limits are
+unchanged; no additional physical v0.8.4 OFF test is claimed.
+
+### Earlier observations
+
+The **first internal attempt reached READY but measured stock speed in two
+independent processes**. A subsequent full boot using the same image and unchanged
+Secure Boot trust accelerated, as did the later default startup. The failed and
+successful internal attempts shared the same admitted initial selector state.
+The cause remains unresolved; neither READY, enrollment nor a PIN reset explains
+or proves the performance outcome by itself.
+
+Earlier development included a malformed report and desktop click failures.
+The malformed report was rejected. The logging revision added full write/flush/
+close/reopen/byte/EOF verification before reporting readiness. Desktop recovery
+required restarting the Windows compositor on affected earlier boots; the cause
+was not established. No automatic compositor-restart workaround was installed.
+Later unchanged-trust boots, including the final ON/OFF/default controls, had
+healthy desktop interaction and no further PIN-reset prompt.
+
+This is not long-duration qualification. Sleep/resume, driver reload/reset,
+updates to the pinned Windows loader or BIOS, battery operation and other laptop
+models are unqualified. No real-model, game, NVENC, extra-VRAM, extra-SM or power-
+limit unlock is claimed. Full-rate selector/readback evidence and Windows gains
+must be checked separately. A performance report must retain unsuccessful boots.
+
+## Reusable Windows qualification sequence
+
+1. Keep an ordinary stock Windows startup available. Record hardware/firmware,
+   ownership, driver and benchmark identity locally; collect a stock baseline.
+   A desktop's NVIDIA GOP assumptions must not be applied to an iGPU-owned panel.
+2. Review a device-specific preboot transaction and its cleanup before staging.
+   The tested method used Ada firmware preparation, permission and selector
+   checks, a reset and verified cleanup before handing off to Windows. It did
+   not write registers from a running NVIDIA-owned Windows session.
+3. For a firmware that supports image-hash authorization, authorize only the
+   locally built, reviewed image in Secure Boot's allowed database. Preserve
+   existing trust. Enrollment changes can affect Windows Hello; do not infer
+   GPU state from a sign-in prompt. Other firmware may need a different reviewed
+   signing/enrollment procedure. Never distribute another owner's trust dump.
+4. Test an unchanged-image/trust full ON boot. Establish a fresh Windows kernel,
+   a complete same-boot report, healthy devices and interactive desktop, then
+   run matched correctness and performance checks. Disable Fast Startup during
+   qualification so a retained kernel cannot masquerade as a new full startup.
+5. Test OFF through the same startup entry, then verify stock performance.
+   A saved Off setting changes the next full initialization, not the running GPU.
+6. Only after ON/OFF pass, make the reviewed entry the default and verify a normal
+   full startup without a USB or manual boot-menu selection. In this setup,
+   hibernation was disabled too; retained-kernel initialization was not qualified.
+
+The tested local startup wrapper authenticated/preloaded the original Microsoft
+loader, applied the guarded transaction, then started that loader. It left the
+stock Microsoft executable in place. A missing/malformed mode file meant OFF;
+any key during a short countdown skipped one attempt. It limited attempts to one
+per firmware session, bound file I/O to its own reviewed volume, and kept a
+bounded rotating report set. Uncertain post-write cleanup halted for full power-
+off instead of returning to Windows. A changed loader hash skipped GPU work
+pending review while retaining the ordinary authenticated Windows path.
+
+These are design and validation requirements for another port, not permission
+to copy machine-specific addresses or remove admission checks. Keep ROM hashes,
+partition identifiers, driver-image fingerprints, logs, recovery material and
+private paths local. A public contribution should use generated local profile
+inputs with refusal tests; profile generation alone is not hardware qualification.
+
+The [Windows validation tools](../windows/validation/README.md) generalize the
+measurement and privacy workflow independently of the unpublished transaction.
+The historical measurements were made with the exact private collector; the
+public collector preserves the arithmetic/timing procedure while replacing its
+machine-specific identity assertion with a single-GPU precondition.

@@ -1,0 +1,97 @@
+{
+  "schema": "windows-gemm-public-summary-v1",
+  "rows": [
+    {
+      "format": "fp16",
+      "n": 4096,
+      "stock_tflops": 46.7491,
+      "trial_tflops": 77.8301,
+      "gain_percent": 66.48,
+      "stock_batch_ms": [
+        3.866291,
+        2.93993,
+        2.936525
+      ],
+      "trial_batch_ms": [
+        2.037248,
+        1.701171,
+        1.765885
+      ],
+      "numerical_checks_passed": true
+    },
+    {
+      "format": "bf16",
+      "n": 4096,
+      "stock_tflops": 47.0041,
+      "trial_tflops": 81.6261,
+      "gain_percent": 73.66,
+      "stock_batch_ms": [
+        2.92695,
+        2.920013,
+        2.923981
+      ],
+      "trial_batch_ms": [
+        1.73527,
+        1.599514,
+        1.683763
+      ],
+      "numerical_checks_passed": true
+    },
+    {
+      "format": "tf32",
+      "n": 4096,
+      "stock_tflops": 23.102,
+      "trial_tflops": 39.4636,
+      "gain_percent": 70.82,
+      "stock_batch_ms": [
+        5.949235,
+        5.942195,
+        5.957962
+      ],
+      "trial_batch_ms": [
+        3.387213,
+        3.601536,
+        3.482675
+      ],
+      "numerical_checks_passed": true
+    },
+    {
+      "format": "fp32_control",
+      "n": 4096,
+      "stock_tflops": 13.238,
+      "trial_tflops": 13.2365,
+      "gain_percent": -0.01,
+      "stock_batch_ms": [
+        10.247347,
+        10.514176,
+        10.382153
+      ],
+      "trial_batch_ms": [
+        10.434995,
+        10.237235,
+        10.383309
+      ],
+      "numerical_checks_passed": true
+    },
+    {
+      "format": "fp8_e4m3",
+      "n": 4096,
+      "stock_tflops": 93.8914,
+      "trial_tflops": 142.2966,
+      "gain_percent": 51.55,
+      "stock_batch_ms": [
+        1.469056,
+        1.463014,
+        1.463808
+      ],
+      "trial_batch_ms": [
+        0.989978,
+        0.965478,
+        0.965862
+      ],
+      "numerical_checks_passed": true
+    }
+  ],
+  "boot_or_unlock_success_inferred": false,
+  "scope": "One matched process pair; dense GEMM proxy, sampled FP64 correctness. Review boot evidence and clocks/thermals privately. Not application speed or long-term reliability."
+}
