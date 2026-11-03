@@ -1,6 +1,21 @@
 # GPU unlock 1.1.1 — RTX 4090 and experimental Ada GPUs
 
-New to this project? Start with the [copy-paste Quick Start](QUICKSTART.md).
+New to this project? Start with the [copy-paste Quick Start](QUICKSTART.md) · **[Fork enhancements](#fork-enhancements-dannybaanks--isyco-edition)** · **[Versión en español](README_es.md)**
+
+> [!NOTE]
+> **Fork Baseline & Divergence Information (DannyBaanks / ISyCo)**
+>
+> This repository is a specialized research and development fork maintained by DannyBaanks and the ISyCo research group (`https://github.com/DannyBaanks/gpu-unlock-ada`).
+>
+> - **Upstream Repository**: [JustAResearcher/gpu-unlock-ada](https://github.com/JustAResearcher/gpu-unlock-ada)
+> - **Base Upstream Commit**: `d28c485038cbbab2ebfa62ffeb5c179c37e6da48` ("bench: accept N/A as the expected power limit for laptops")
+> - **Active Pull Request**: [PR #134: feat(ad107): admit 10de:28a1 canary (RTX 4050 Laptop) and document Optimus D3cold power-rail trap](https://github.com/JustAResearcher/gpu-unlock-ada/pull/134)
+> - **Active Canary Branch**: `canary-28a1-ad107` (4 commits ahead of upstream main)
+> - **Key Improvements**:
+>   1. **AD107M Mobile Canary (`10de:28a1`)**: Admitted the RTX 4050 Laptop GPU under `ad107_experimental`, passing full PLM firmware transaction, PCIe FLR handoff, and zero-Xid driver bind.
+>   2. **Optimus `D3cold` Power-Rail Trap Discovery**: Uncovered the silent hardware reset where hybrid runtime D3cold cuts the dGPU power rail while `NVreg_PreserveVideoMemoryAllocations=1` causes GSP-RM to return cached `0 0 0` false-positive readouts.
+>   3. **Persistent 2.00× Tensor Execution (`DynamicPowerManagement=0x00`)**: Solved the rail-collapse trap without locking the GPU in high power states, demonstrating **2.002×** MMA issue rate (`f16_f32` 25.32 → 50.68 Top/s) and +36.2% to +61.6% cuBLAS speedups.
+>   4. **Tri-Repo Ecosystem Integration**: Native interoperability with the [Hardware Research Agent (IHRA)](https://github.com/DannyBaanks/hardware-research-agent) and the [REA Forensics Engine](https://github.com/DannyBaanks/rea).
 
 This Linux kernel module enables the SM speed-select override before the stock
 NVIDIA driver starts. RTX 4090 (`10de:2684`, AD102) support has demonstrated
@@ -149,6 +164,70 @@ effective speed-select readout before and after FLR. No patched NVIDIA driver or
 application is needed. The payload uses instruction addresses derived from
 published decrypted debug-booter analysis; the production booter is authenticated
 and decrypted inside the GPU.
+
+## Fork enhancements: DannyBaanks / ISyCo edition
+
+This fork contains experimental validation, architecture discoveries, and canary qualifications developed by DannyBaanks and the ISyCo research group.
+
+### 1. AD107M (`10de:28a1`) mobile canary qualification
+
+Validates the full four-PLM payload on the mobile Ada Lovelace AD107M architecture:
+- **Test platform**: HP Victus 15-fb3xxx (AMD Ryzen 5 8645HS w/ Radeon 760M Graphics, RTX 4050 Laptop GPU `10de:28a1`, 20 SMs, rev a1, subsystem `103c:8dd0`).
+- **Software environment**: Ubuntu 24.04 LTS (Linux kernel `7.0.0-42-generic`), NVIDIA `580.178.04` open kernel modules (`nvidia-driver-580-open`).
+- **Transactional integrity**: The device cleanly admits under `ad107_experimental`, survives PCIe FLR handoff to the stock open driver with zero Xid errors, and passes all mathematical and driver stability checks.
+
+### 2. The Optimus `D3cold` power-rail trap & resolution
+
+On hybrid/Optimus laptops where the desktop session is driven by the integrated GPU (AMD Radeon 760M via `amdgpu` or Intel i915/xe), standard Linux runtime power management (`NVreg_DynamicPowerManagement=0x02`) powers down the discrete NVIDIA GPU into runtime `D3cold` (`Video Memory: Off`, ACPI `LNXPOWER:00=0`) seconds after boot.
+
+#### The silent hardware reset trap
+1. When the dGPU enters `D3cold`, physical power is cut to the GPU die.
+2. Upon resume back to `D0`, the volatile speed-select override registers (`0x00823804`, `0x0082381c`, `0x00823820`) reset back to factory half-rate fuses (`NV_PFUSE_FEATURE_READOUT_1 = 0x00410080`).
+3. **The False-Positive Trap**: Because `NVreg_PreserveVideoMemoryAllocations=1` restores GSP-RM's cached `OBJGR` state across power cycles without re-reading the physical fuse register, the standard RM getter query (`tools/read_sm_rates.py`, ioctl `0x20801230`) continues returning cached `0 0 0` (full rate). Software reports an unlocked card while the physical silicon executes at 1.00× stock rate!
+
+#### The canonical resolution (`NVreg_DynamicPowerManagement=0x00`)
+To retain the hardware unlock persistently while preserving laptop acoustics and battery efficiency:
+```ini
+# /etc/modprobe.d/nvidia-gpu-unlock-nod3cold.conf
+options nvidia NVreg_DynamicPowerManagement=0x00
+```
+- **Why this works**: Setting `DynamicPowerManagement=0x00` disables runtime D3cold inside the NVIDIA driver while still permitting GSP-RM to throttle down to **P8 idle** (210 MHz core / ~1.6 W / silent cooling fans).
+- **Why PCI sysfs forcing fails**: Forcing `power/control="on"` at the PCI sysfs level locks GSP-RM in **P3** (1755 MHz / ~9.7 W) and generates spurious `GPS ACPI DSM` / `NV_ERR_NO_MEMORY` warning logs whenever NVML clients open `/dev/nvidia0`.
+
+### 3. Sustained 2.00× tensor issue rate & telemetry triangulation
+
+With `D3cold` prevented, the AD107M delivers a sustained **2.00×** tensor issue rate across all evaluated precision modes without thermal or numerical degradation:
+
+| Precision / Mode | Stock (D3cold rail-drop) | Unlocked (`DynamicPowerManagement=0x00`) | Measured Ratio |
+|---|---:|---:|---:|
+| **MMA `f16_f32`** | 25.320 Top/s | **50.682 Top/s** | **2.002×** |
+| **MMA `tf32`** | 12.660 Top/s | **25.281 Top/s** | **1.997×** |
+| **`mma_bench` `f16/f32`** | 25.5 TF/s | **50.9 TF/s** | **1.996×** |
+| **`mma_bench` `bf16/f32`** | 25.5 TF/s | **50.9 TF/s** | **1.996×** |
+| **`mma_bench` `fp8/e4m3`** | 50.9 TF/s | **101.4 TF/s** | **1.992×** |
+| **cuBLAS $4096^3$ GEMM FP16** | 19.82 TF/s | **27.00 TF/s** | **+36.2%** |
+| **cuBLAS $4096^3$ GEMM BF16** | 19.85 TF/s | **32.08 TF/s** | **+61.6%** |
+
+- **Numerical Parity**: 24/24 seeded FP16 and BF16 GEMM geometries (`256×256×256`, `64×96×128`, `127×65×95`) match the CPU FP64 reference bit-by-bit (`failures=0`, `max_abs=0`).
+- **Live No-Reboot Recovery**: Documented live cold rail resets via unbound ACPI `D3cold` → `D0` transitions without requiring reboot or EC reset.
+
+### 4. Tri-repo ecosystem bridge (IHRA + REA + Ada Unlock)
+
+This fork acts as the GPU acceleration pillar in the ISyCo research agent stack:
+- **[Hardware Research Agent (IHRA)](https://github.com/DannyBaanks/hardware-research-agent)**: Provides automated telemetry and canary validation through a unified zero-bloat CLI (`ihra ada` / `./bin/ihra.mjs ada`).
+- **[REA Reverse Tools](https://github.com/DannyBaanks/rea)**: Provides static binary analysis and compact progressive disclosure (`REA_MCP_TOOL_PROFILE=compact`), eliminating MCP token overhead.
+
+### 5. Upstream baseline & divergence state
+
+| Property | Value |
+| --- | --- |
+| Upstream Repository | [JustAResearcher/gpu-unlock-ada](https://github.com/JustAResearcher/gpu-unlock-ada) |
+| Fork Repository | [DannyBaanks/gpu-unlock-ada](https://github.com/DannyBaanks/gpu-unlock-ada) |
+| Base Upstream Commit | `d28c485038cbbab2ebfa62ffeb5c179c37e6da48` (Oct 31, 2026) |
+| Active Upstream Pull Request | [PR #134](https://github.com/JustAResearcher/gpu-unlock-ada/pull/134) |
+| Active Canary Branch | `canary-28a1-ad107` |
+| Commits Ahead of Upstream | 4 commits (`9d42480`, `0526169`, `12ec500`, `6e1035c`) |
+| Validation Suite Status | 33/33 tests green (`make test`) |
 
 ## Build and install
 
