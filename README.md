@@ -1,22 +1,28 @@
 # GPU unlock 1.1.1 — RTX 4090 and experimental Ada GPUs
 
-New to this project? Start with the [copy-paste Quick Start](QUICKSTART.md) · **[Fork enhancements](#fork-enhancements-dannybaanks--isyco-edition)** · **[Versión en español](README_es.md)**
+**DannyBaanks / ISyCo research fork** · [Upstream project](https://github.com/JustAResearcher/gpu-unlock-ada) · [PR #134](https://github.com/JustAResearcher/gpu-unlock-ada/pull/134) · [Español](README_es.md)
+
+> [!WARNING]
+> **Experimental kernel/firmware research — not a universal performance tweak.** These AD107M measurements come from one HP Victus RTX 4050 Laptop. Kernel modules, boot changes and NVIDIA power-management options can disrupt the display or boot. Review the [technical report](docs/ada-28a1-report.md), [raw evidence](docs/evidence/ada28a1/README.md) and recovery requirements first. **No 2× gain is guaranteed on other hardware or applications.**
+
+### RTX 4050 Laptop (AD107M) — results at a glance
+
+| Measured workload | Stock | Retained unlock | Result |
+|---|---:|---:|---:|
+| FP16/FP32 tensor instruction probe, **best** TOP/s | 25.320 | **50.682** | **2.002×** |
+| TF32 tensor instruction probe, **best** TOP/s | 12.660 | **25.281** | **1.997×** |
+| INT4 control, **best** TOP/s | 201.30 | 201.84 | **1.003×** (unchanged) |
+| cuBLAS 4096³ FP16, **median** TF/s | 22.47 | **30.54** | **+35.9%** |
+| cuBLAS 4096³ BF16, **median** TF/s | 21.48 | **31.85** | **+48.3%** |
+
+The 2× headline applies to a short **instruction-level benchmark**, not overall application speed. One of three unlocked FP16/FP32 repetitions produced **42.73 TOP/s**, while the other two were near 50.6 TOP/s; do not treat the best sample as a sustained minimum. The claimed GSP-RM cache mechanism is an explanation consistent with the measurements, not a direct source-level trace of the driver's internals.
+
+**Key forensic finding:** after runtime `D3cold`, the driver getter could still report full-rate selection while **physical BAR0 registers and measured throughput had returned to stock**. Software state alone is not proof of a hardware unlock.
+
+[Upstream quick start](QUICKSTART.md) · [Fork findings](#fork-enhancements-dannybaanks--isyco-edition) · [Raw results and checksums](docs/evidence/ada28a1/README.md)
 
 > [!NOTE]
-> **Fork Baseline & Divergence Information (DannyBaanks / ISyCo)**
->
-> This repository is a specialized research and development fork maintained by DannyBaanks and the ISyCo research group (`https://github.com/DannyBaanks/gpu-unlock-ada`).
->
-> - **Upstream Repository**: [JustAResearcher/gpu-unlock-ada](https://github.com/JustAResearcher/gpu-unlock-ada)
-> - **Base Upstream Commit**: `d28c485038cbbab2ebfa62ffeb5c179c37e6da48` ("bench: accept N/A as the expected power limit for laptops")
-> - **Active Pull Request**: [PR #134: feat(ad107): admit 10de:28a1 canary (RTX 4050 Laptop) and document Optimus D3cold power-rail trap](https://github.com/JustAResearcher/gpu-unlock-ada/pull/134)
-> - **Active Canary Branch**: `canary-28a1-ad107` (4 commits ahead of upstream main)
-> - **Key Improvements**:
->   1. **AD107M Mobile Canary (`10de:28a1`)**: Admitted the RTX 4050 Laptop GPU under `ad107_experimental`, passing full PLM firmware transaction, PCIe FLR handoff, and zero-Xid driver bind.
->   2. **Optimus `D3cold` Power-Rail Trap Discovery**: Uncovered the silent hardware reset where hybrid runtime D3cold cuts the dGPU power rail while `NVreg_PreserveVideoMemoryAllocations=1` causes GSP-RM to return cached `0 0 0` false-positive readouts.
->   3. **Persistent 2.00× Tensor Execution (`DynamicPowerManagement=0x00`)**: Solved the rail-collapse trap without locking the GPU in high power states, demonstrating **2.002×** MMA issue rate (`f16_f32` 25.32 → 50.68 Top/s) and +36.2% to +61.6% cuBLAS speedups.
->   4. **Tri-Repo Ecosystem Integration**: Native interoperability with the [Hardware Research Agent (IHRA)](https://github.com/DannyBaanks/hardware-research-agent) and the [REA Forensics Engine](https://github.com/DannyBaanks/rea).
-
+> This fork builds on [JustAResearcher/gpu-unlock-ada](https://github.com/JustAResearcher/gpu-unlock-ada), base commit [`d28c485`](https://github.com/JustAResearcher/gpu-unlock-ada/commit/d28c485038cbbab2ebfa62ffeb5c179c37e6da48). AD107M support is proposed in [PR #134](https://github.com/JustAResearcher/gpu-unlock-ada/pull/134), not an upstream stable release. The original project retains the authoritative distribution and release guidance.
 This Linux kernel module enables the SM speed-select override before the stock
 NVIDIA driver starts. RTX 4090 (`10de:2684`, AD102) support has demonstrated
 approximately **2× FP16 and BF16 tensor throughput with FP32 accumulation**:
@@ -194,9 +200,9 @@ options nvidia NVreg_DynamicPowerManagement=0x00
 - **Why this works**: Setting `DynamicPowerManagement=0x00` disables runtime D3cold inside the NVIDIA driver while still permitting GSP-RM to throttle down to **P8 idle** (210 MHz core / ~1.6 W / silent cooling fans).
 - **Why PCI sysfs forcing fails**: Forcing `power/control="on"` at the PCI sysfs level locks GSP-RM in **P3** (1755 MHz / ~9.7 W) and generates spurious `GPS ACPI DSM` / `NV_ERR_NO_MEMORY` warning logs whenever NVML clients open `/dev/nvidia0`.
 
-### 3. Sustained 2.00× tensor issue rate & telemetry triangulation
+### 3. Measured tensor instruction rate & cuBLAS application kernels
 
-With `D3cold` prevented, the AD107M delivers a sustained **2.00×** tensor issue rate across all evaluated precision modes without thermal or numerical degradation:
+In the captured run with the unlock retained, **best-of-run** instruction probes approached 2× while cuBLAS GEMM improved by smaller, shape-dependent amounts. Results are specific to this machine; extended thermal stability was not established:
 
 | Precision / Mode | Stock (D3cold rail-drop) | Unlocked (`DynamicPowerManagement=0x00`) | Measured Ratio |
 |---|---:|---:|---:|
@@ -205,17 +211,18 @@ With `D3cold` prevented, the AD107M delivers a sustained **2.00×** tensor issue
 | **`mma_bench` `f16/f32`** | 25.5 TF/s | **50.9 TF/s** | **1.996×** |
 | **`mma_bench` `bf16/f32`** | 25.5 TF/s | **50.9 TF/s** | **1.996×** |
 | **`mma_bench` `fp8/e4m3`** | 50.9 TF/s | **101.4 TF/s** | **1.992×** |
-| **cuBLAS $4096^3$ GEMM FP16** | 19.82 TF/s | **27.00 TF/s** | **+36.2%** |
-| **cuBLAS $4096^3$ GEMM BF16** | 19.85 TF/s | **32.08 TF/s** | **+61.6%** |
+| **cuBLAS $4096^3$ GEMM FP16, median** | 22.47 TF/s | **30.54 TF/s** | **+35.9%** |
+| **cuBLAS $4096^3$ GEMM BF16, median** | 21.48 TF/s | **31.85 TF/s** | **+48.3%** |
 
-- **Numerical Parity**: 24/24 seeded FP16 and BF16 GEMM geometries (`256×256×256`, `64×96×128`, `127×65×95`) match the CPU FP64 reference bit-by-bit (`failures=0`, `max_abs=0`).
+- **Numerical checks:** the recorded seeded FP16/BF16 GEMM cases reported `failures=0`, `max_abs=0` versus the CPU FP64 reference. This does not prove universal bitwise equivalence.
+- **Measurement discipline:** cuBLAS **+61.6%** BF16 is a *best-to-best* comparison; the median gain is **+48.3%**. Probe figures shown are best-of-three, not long-duration throughput. [Full comparison](docs/ada-28a1-report.md).
 - **Live No-Reboot Recovery**: Documented live cold rail resets via unbound ACPI `D3cold` → `D0` transitions without requiring reboot or EC reset.
 
-### 4. Tri-repo ecosystem bridge (IHRA + REA + Ada Unlock)
+### 4. Companion research projects (not automatic integration)
 
-This fork acts as the GPU acceleration pillar in the ISyCo research agent stack:
-- **[Hardware Research Agent (IHRA)](https://github.com/DannyBaanks/hardware-research-agent)**: Provides automated telemetry and canary validation through a unified zero-bloat CLI (`ihra ada` / `./bin/ihra.mjs ada`).
-- **[REA Reverse Tools](https://github.com/DannyBaanks/rea)**: Provides static binary analysis and compact progressive disclosure (`REA_MCP_TOOL_PROFILE=compact`), eliminating MCP token overhead.
+These independently maintained projects can support investigation, but this PR does **not** demonstrate end-to-end native integration:
+- **[Hardware Research Agent (IHRA)](https://github.com/DannyBaanks/hardware-research-agent)**: Related hardware research and telemetry tooling; install and validate separately.
+- **[REA Reverse Tools](https://github.com/DannyBaanks/rea)**: Related reverse-engineering and compact MCP tool-discovery research. The documented 99.8% catalog-size reduction is specific to that project's configuration, not a property of this unlock.
 
 ### 5. Upstream baseline & divergence state
 
@@ -226,8 +233,11 @@ This fork acts as the GPU acceleration pillar in the ISyCo research agent stack:
 | Base Upstream Commit | `d28c485038cbbab2ebfa62ffeb5c179c37e6da48` (Oct 31, 2026) |
 | Active Upstream Pull Request | [PR #134](https://github.com/JustAResearcher/gpu-unlock-ada/pull/134) |
 | Active Canary Branch | `canary-28a1-ad107` |
-| Commits Ahead of Upstream | 4 commits (`9d42480`, `0526169`, `12ec500`, `6e1035c`) |
-| Validation Suite Status | 33/33 tests green (`make test`) |
+| Divergence | See the [live comparison with upstream](https://github.com/JustAResearcher/gpu-unlock-ada/compare/main...DannyBaanks:gpu-unlock-ada:canary-28a1-ad107); do not rely on a fixed commit count |
+| Host-side tests (reported) | 33 passing, 3 optional PyCryptodome tests skipped; hardware validation remains machine-specific |
+
+> [!CAUTION]
+> **The commands below are upstream installation instructions, not a blanket recommendation to install this canary.** For `10de:28a1`, use the exact experimental branch and read the [risk, verification and recovery notes](docs/ada-28a1-report.md) first. Keep a known-good boot option. An unlock log or software getter alone is not physical proof.
 
 ## Build and install
 
