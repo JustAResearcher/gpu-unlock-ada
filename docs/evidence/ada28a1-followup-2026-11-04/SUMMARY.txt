@@ -1,0 +1,97 @@
+
+### run5_perf  profile=performance ac=1 DynamicPowerManagement: 0 pci=D0
+  mma f16/f32=50.9 bf16=50.9 s8=101.8 fp8=101.4 dp4a=25.3 ffma=12.0
+  tensor best f16_f32=50.69 tf32=25.34 u4=202.4 runs_f16=[50.7, 50.7, 50.7]
+  gemm median 1024FP16:33.72 1024BF16:33.91 4096FP16:34.04 4096BF16:32.31 8192FP16:28.15 8192BF16:27.83  failures=0 validate_ok=6
+  [validate_gemm] n=  9 SM mean=  1755 min= 1755 mem= 7001 W mean=  4.1 max=  4.8 limit=40.00 W Tmax=52 thr=[('0x0000000000000024', 9)]
+  [mma          ] n= 98 SM mean=  2457 min= 1755 mem= 6388 W mean= 28.2 max= 37.0 limit=40.00 W Tmax=65 thr=[('0x0000000000000001', 85), ('0x0000000000000004', 7), ('0x0000000000000024', 6)]
+  [gemm         ] n=119 SM mean=  1899 min= 1635 mem= 6593 W mean= 35.5 max= 40.1 limit=40.00 W Tmax=65 thr=[('0x0000000000000004', 99), ('0x0000000000000001', 10), ('0x0000000000000024', 10)]
+  [tensor       ] n= 17 SM mean=  2491 min= 2445 mem= 6469 W mean= 29.4 max= 37.8 limit=40.00 W Tmax=64 thr=[('0x0000000000000001', 13), ('0x0000000000000004', 4)]
+
+### run6_perf  profile=performance ac=1 DynamicPowerManagement: 0 pci=D0
+  mma f16/f32=50.9 bf16=50.8 s8=101.7 fp8=101.4 dp4a=25.2 ffma=11.9
+  tensor best f16_f32=50.70 tf32=25.35 u4=202.4 runs_f16=[39.1, 50.7, 50.7]
+  gemm median 1024FP16:23.98 1024BF16:23.90 4096FP16:30.98 4096BF16:30.44 8192FP16:28.07 8192BF16:27.76  failures=0 validate_ok=6
+  [validate_gemm] n= 17 SM mean=  1755 min= 1755 mem= 7001 W mean=  6.2 max=  8.6 limit=40.00 W Tmax=53 thr=[('0x0000000000000024', 17)]
+  [mma          ] n= 99 SM mean=  2443 min= 1755 mem= 6621 W mean= 28.4 max= 37.9 limit=40.00 W Tmax=65 thr=[('0x0000000000000001', 95), ('0x0000000000000024', 3), ('0x0000000000000004', 1)]
+  [gemm         ] n=164 SM mean=  1940 min=  300 mem= 6587 W mean= 29.8 max= 42.0 limit=40.00 W Tmax=65 thr=[('0x0000000000000004', 109), ('0x0000000000000024', 45), ('0x0000000000000001', 10)]
+  [tensor       ] n= 57 SM mean=  1254 min=  210 mem= 5454 W mean= 10.0 max= 24.0 limit=40.00 W Tmax=62 thr=[('0x0000000000000001', 33), ('0x0000000000000024', 24)]
+
+### run7_perf  profile=performance ac=1 DynamicPowerManagement: 0 pci=D0
+  mma f16/f32=50.9 bf16=50.9 s8=101.5 fp8=101.1 dp4a=25.2 ffma=11.8
+  tensor best f16_f32=50.71 tf32=25.27 u4=201.9 runs_f16=[47.1, 50.7, 50.6]
+  gemm median 1024FP16:23.86 1024BF16:23.93 4096FP16:31.03 4096BF16:32.43 8192FP16:28.05 8192BF16:27.84  failures=0 validate_ok=6
+  [validate_gemm] n= 15 SM mean=  1755 min= 1755 mem= 7001 W mean=  6.6 max=  8.6 limit=40.00 W Tmax=53 thr=[('0x0000000000000024', 15)]
+  [mma          ] n=101 SM mean=  2474 min= 1755 mem= 6344 W mean= 28.5 max= 36.9 limit=40.00 W Tmax=65 thr=[('0x0000000000000001', 90), ('0x0000000000000004', 7), ('0x0000000000000024', 4)]
+  [gemm         ] n=193 SM mean=  1934 min=  465 mem= 6673 W mean= 26.8 max= 41.1 limit=40.00 W Tmax=65 thr=[('0x0000000000000004', 103), ('0x0000000000000024', 75), ('0x0000000000000001', 15)]
+  [tensor       ] n= 21 SM mean=  2184 min= 1755 mem= 6355 W mean= 14.6 max= 27.9 limit=40.00 W Tmax=64 thr=[('0x0000000000000001', 12), ('0x0000000000000024', 9)]
+
+### diag_balanced_1  profile=balanced ac=1 DynamicPowerManagement: 0 pci=D0
+  mma f16/f32=50.9 bf16=50.9 s8=101.8 fp8=101.4 dp4a=25.2 ffma=11.9
+  tensor best f16_f32=50.72 tf32=25.36 u4=202.5 runs_f16=[42.0, 50.7, 50.7]
+  gemm median 1024FP16:23.95 1024BF16:23.71 4096FP16:30.99 4096BF16:32.49 8192FP16:28.15 8192BF16:27.88  failures=0 validate_ok=6
+  [validate_gemm] n= 17 SM mean=  1755 min= 1755 mem= 7001 W mean=  6.1 max=  8.5 limit=40.00 W Tmax=53 thr=[('0x0000000000000024', 17)]
+  [mma          ] n=102 SM mean=  2441 min= 1755 mem= 6494 W mean= 28.4 max= 37.1 limit=40.00 W Tmax=65 thr=[('0x0000000000000001', 85), ('0x0000000000000004', 9), ('0x0000000000000024', 8)]
+  [gemm         ] n=199 SM mean=  1975 min= 1635 mem= 6737 W mean= 26.2 max= 40.9 limit=40.00 W Tmax=65 thr=[('0x0000000000000004', 105), ('0x0000000000000024', 89), ('0x0000000000000001', 5)]
+  [tensor       ] n= 20 SM mean=  2092 min= 1755 mem= 6210 W mean= 14.3 max= 25.2 limit=40.00 W Tmax=62 thr=[('0x0000000000000001', 14), ('0x0000000000000024', 6)]
+
+### diag_power-saver_1  profile=power-saver ac=1 DynamicPowerManagement: 0 pci=D0
+  mma f16/f32=50.9 bf16=50.9 s8=101.8 fp8=101.5 dp4a=25.3 ffma=11.9
+  tensor best f16_f32=50.70 tf32=25.34 u4=202.4 runs_f16=[50.7, 50.7, 50.7]
+  gemm median 1024FP16:33.99 1024BF16:33.97 4096FP16:33.85 4096BF16:32.40 8192FP16:28.16 8192BF16:27.74  failures=0 validate_ok=6
+  [validate_gemm] n= 12 SM mean=  1755 min= 1755 mem= 7001 W mean=  6.3 max=  8.5 limit=40.00 W Tmax=53 thr=[('0x0000000000000024', 12)]
+  [mma          ] n= 99 SM mean=  2442 min= 1755 mem= 6399 W mean= 28.0 max= 37.3 limit=40.00 W Tmax=65 thr=[('0x0000000000000001', 85), ('0x0000000000000024', 8), ('0x0000000000000004', 6)]
+  [gemm         ] n=118 SM mean=  1911 min= 1665 mem= 6541 W mean= 36.0 max= 41.5 limit=40.00 W Tmax=65 thr=[('0x0000000000000004', 108), ('0x0000000000000001', 5), ('0x0000000000000024', 5)]
+  [tensor       ] n= 17 SM mean=  2496 min= 2490 mem= 5871 W mean= 27.5 max= 33.2 limit=40.00 W Tmax=63 thr=[('0x0000000000000004', 10), ('0x0000000000000001', 7)]
+
+### boot_wiped_1  profile=performance ac=1 DynamicPowerManagement: 2 pci=D0
+  mma f16/f32=25.5 bf16=25.5 s8=101.8 fp8=50.9 dp4a=25.3 ffma=11.8
+  tensor best f16_f32=25.40 tf32=12.70 u4=201.9 runs_f16=[25.4, 25.4, 25.4]
+  gemm median 1024FP16:19.90 1024BF16:20.44 4096FP16:22.49 4096BF16:21.55 8192FP16:20.56 8192BF16:20.06  failures=0 validate_ok=6
+  [validate_gemm] n=  8 SM mean=  1755 min= 1755 mem= 7001 W mean=  3.2 max=  4.2 limit=40.00 W Tmax=53 thr=[('0x0000000000000024', 8)]
+  [mma          ] n=153 SM mean=  2469 min= 1755 mem= 6368 W mean= 23.9 max= 34.7 limit=40.00 W Tmax=66 thr=[('0x0000000000000001', 139), ('0x0000000000000024', 7), ('0x0000000000000004', 7)]
+  [gemm         ] n=156 SM mean=  2122 min= 1965 mem= 6971 W mean= 36.7 max= 40.1 limit=40.00 W Tmax=66 thr=[('0x0000000000000004', 131), ('0x0000000000000001', 15), ('0x0000000000000024', 10)]
+  [tensor       ] n= 25 SM mean=  2463 min= 1980 mem= 6187 W mean= 26.1 max= 39.9 limit=40.00 W Tmax=65 thr=[('0x0000000000000001', 23), ('0x0000000000000004', 2)]
+
+### boot_wiped_2  profile=performance ac=1 DynamicPowerManagement: 2 pci=D0
+  mma f16/f32=25.5 bf16=25.5 s8=101.8 fp8=50.9 dp4a=25.3 ffma=11.9
+  tensor best f16_f32=25.40 tf32=12.70 u4=201.9 runs_f16=[25.4, 25.4, 25.4]
+  gemm median 1024FP16:20.01 1024BF16:19.95 4096FP16:22.65 4096BF16:21.72 8192FP16:20.76 8192BF16:20.14  failures=0 validate_ok=6
+  [mma          ] n=152 SM mean=  2479 min= 1755 mem= 5945 W mean= 23.0 max= 33.7 limit=40.00 W Tmax=64 thr=[('0x0000000000000001', 145), ('0x0000000000000024', 5), ('0x0000000000000004', 2)]
+  [gemm         ] n=154 SM mean=  2142 min= 1950 mem= 6938 W mean= 36.6 max= 40.1 limit=40.00 W Tmax=64 thr=[('0x0000000000000004', 139), ('0x0000000000000024', 10), ('0x0000000000000001', 5)]
+  [tensor       ] n= 25 SM mean=  2474 min= 2250 mem= 6233 W mean= 26.4 max= 39.9 limit=40.00 W Tmax=64 thr=[('0x0000000000000001', 22), ('0x0000000000000004', 3)]
+
+### boot_wiped_3  profile=performance ac=1 DynamicPowerManagement: 2 pci=D0
+  mma f16/f32=25.5 bf16=25.5 s8=101.8 fp8=50.9 dp4a=25.3 ffma=11.9
+  tensor best f16_f32=25.40 tf32=12.70 u4=201.9 runs_f16=[25.4, 25.4, 25.4]
+  gemm median 1024FP16:19.91 1024BF16:20.01 4096FP16:21.95 4096BF16:21.66 8192FP16:20.72 8192BF16:20.15  failures=0 validate_ok=6
+  [validate_gemm] n=  2 SM mean=  1755 min= 1755 mem= 7001 W mean=  2.6 max=  2.6 limit=40.00 W Tmax=52 thr=[('0x0000000000000024', 2)]
+  [mma          ] n=153 SM mean=  2466 min= 1755 mem= 6477 W mean= 23.6 max= 37.1 limit=40.00 W Tmax=65 thr=[('0x0000000000000001', 144), ('0x0000000000000024', 8), ('0x0000000000000004', 1)]
+  [gemm         ] n=154 SM mean=  2138 min= 1965 mem= 7032 W mean= 36.8 max= 40.4 limit=40.00 W Tmax=65 thr=[('0x0000000000000004', 144), ('0x0000000000000024', 10)]
+  [tensor       ] n= 25 SM mean=  2502 min= 2490 mem= 6323 W mean= 26.4 max= 37.2 limit=40.00 W Tmax=61 thr=[('0x0000000000000001', 20), ('0x0000000000000004', 5)]
+
+### boot_stock_1  profile=performance ac=1 DynamicPowerManagement: 0 pci=D0
+  mma f16/f32=25.5 bf16=25.5 s8=101.8 fp8=50.9 dp4a=25.3 ffma=11.8
+  tensor best f16_f32=25.31 tf32=12.66 u4=201.3 runs_f16=[25.3, 25.3, 25.3]
+  gemm median 1024FP16:20.03 1024BF16:20.05 4096FP16:21.84 4096BF16:21.53 8192FP16:20.40 8192BF16:19.81  failures=0 validate_ok=6
+  [validate_gemm] n= 13 SM mean=  1755 min= 1755 mem= 7001 W mean=  5.0 max=  8.3 limit=40.00 W Tmax=52 thr=[('0x0000000000000024', 13)]
+  [mma          ] n=152 SM mean=  2470 min= 1755 mem= 6525 W mean= 24.0 max= 32.6 limit=40.00 W Tmax=66 thr=[('0x0000000000000001', 140), ('0x0000000000000024', 7), ('0x0000000000000004', 5)]
+  [gemm         ] n=157 SM mean=  2092 min= 1920 mem= 6993 W mean= 36.7 max= 40.1 limit=40.00 W Tmax=67 thr=[('0x0000000000000004', 142), ('0x0000000000000001', 10), ('0x0000000000000024', 5)]
+  [tensor       ] n= 25 SM mean=  2449 min= 1980 mem= 6839 W mean= 26.9 max= 40.0 limit=40.00 W Tmax=67 thr=[('0x0000000000000001', 23), ('0x0000000000000004', 2)]
+
+### boot_stock_2  profile=performance ac=1 DynamicPowerManagement: 0 pci=D0
+  mma f16/f32=25.5 bf16=25.5 s8=101.8 fp8=50.9 dp4a=25.3 ffma=11.9
+  tensor best f16_f32=25.46 tf32=12.73 u4=202.4 runs_f16=[25.4, 25.5, 25.5]
+  gemm median 1024FP16:19.97 1024BF16:19.97 4096FP16:21.90 4096BF16:21.58 8192FP16:20.73 8192BF16:20.12  failures=0 validate_ok=6
+  [validate_gemm] n=  1 SM mean=  1755 min= 1755 mem= 7001 W mean=  3.6 max=  3.6 limit=40.00 W Tmax=53 thr=[('0x0000000000000024', 1)]
+  [mma          ] n=153 SM mean=  2485 min= 1755 mem= 6224 W mean= 23.4 max= 31.4 limit=40.00 W Tmax=64 thr=[('0x0000000000000001', 149), ('0x0000000000000024', 4)]
+  [gemm         ] n=154 SM mean=  2125 min= 1950 mem= 6989 W mean= 36.7 max= 40.2 limit=40.00 W Tmax=64 thr=[('0x0000000000000004', 138), ('0x0000000000000024', 10), ('0x0000000000000001', 6)]
+  [tensor       ] n= 25 SM mean=  2464 min= 1995 mem= 6187 W mean= 26.1 max= 39.9 limit=40.00 W Tmax=64 thr=[('0x0000000000000001', 23), ('0x0000000000000004', 2)]
+
+### boot_stock_3  profile=performance ac=1 DynamicPowerManagement: 0 pci=D0
+  mma f16/f32=25.5 bf16=25.5 s8=101.8 fp8=50.9 dp4a=25.3 ffma=11.9
+  tensor best f16_f32=25.46 tf32=12.73 u4=202.3 runs_f16=[25.5, 25.5, 25.5]
+  gemm median 1024FP16:20.10 1024BF16:19.96 4096FP16:22.67 4096BF16:21.59 8192FP16:20.72 8192BF16:20.16  failures=0 validate_ok=6
+  [mma          ] n=150 SM mean=  2479 min= 1755 mem= 6410 W mean= 23.8 max= 34.8 limit=40.00 W Tmax=65 thr=[('0x0000000000000001', 144), ('0x0000000000000024', 5), ('0x0000000000000004', 1)]
+  [gemm         ] n=154 SM mean=  2139 min= 1965 mem= 6967 W mean= 36.8 max= 40.9 limit=40.00 W Tmax=65 thr=[('0x0000000000000004', 129), ('0x0000000000000024', 15), ('0x0000000000000001', 10)]
+  [tensor       ] n= 25 SM mean=  2503 min= 2490 mem= 6278 W mean= 25.9 max= 37.4 limit=40.00 W Tmax=61 thr=[('0x0000000000000001', 21), ('0x0000000000000004', 4)]

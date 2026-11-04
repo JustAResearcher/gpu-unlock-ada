@@ -1,0 +1,364 @@
+=== STEP 1: CURRENT STATE (UNBOUND + D3cold) ===
+GPU power_state: D3cold
+GPU runtime_status: suspended
+Bridge real_power_state: D3cold
+LNXPOWER:00 in_use: 0
+
+=== STEP 2: UNLOAD IDLE NVIDIA MODULES (REFCOUNT=0, NO XORG IMPACT) ===
+
+=== STEP 3: WAKE TO D0 & LOCK POWER=ON (BLOCK D3cold!) ===
+After wake to D0 (virgin cold GPU state before gpu_unlock):
+[94314.440044] pci 0000:01:00.0: gpu_peek: driver=none BAR0=0xfb000000 len=0x1000000 command=0x3
+[94314.440056] pci 0000:01:00.0: gpu_peek: 0x00000000 PMC_BOOT_0 (chip id)               = 0x197000a1
+[94314.440062] pci 0000:01:00.0: gpu_peek: 0x00118128 GFW PLM                            = 0x00008b8f
+[94314.440068] pci 0000:01:00.0: gpu_peek: 0x00118234 GFW boot progress                  = 0x000003ff
+[94314.440073] pci 0000:01:00.0: gpu_peek: 0x00110100 GFW falcon CPUCTL                  = 0x00000010
+[94314.440078] pci 0000:01:00.0: gpu_peek: 0x001fa824 WPR2 lo                            = 0x1ffffe00
+[94314.440082] pci 0000:01:00.0: gpu_peek: 0x001fa828 WPR2 hi                            = 0x00000000
+[94314.440087] pci 0000:01:00.0: gpu_peek: 0x001fa7cc WPR_CFG PLM                        = 0x0004cb8f
+[94314.440092] pci 0000:01:00.0: gpu_peek: 0x009a0148 FBPA PLM                           = 0xffffff0f
+[94314.440097] pci 0000:01:00.0: gpu_peek: 0x001fa7c4 WPR PLM                            = 0x0004cb8f
+[94314.440102] pci 0000:01:00.0: gpu_peek: 0x00820000 FUSECTRL                           = 0xe0040000
+[94314.440106] pci 0000:01:00.0: gpu_peek: 0x00820040 EN_SW_OVERRIDE                     = 0x00000001
+[94314.440111] pci 0000:01:00.0: gpu_peek: 0x00820078 ENABLE_FUSE_PROGRAM_STATUS         = 0x00000001
+[94314.440116] pci 0000:01:00.0: gpu_peek: 0x0082007c DISABLE_FUSE_PROGRAM               = 0xbadf5040
+[94314.440121] pci 0000:01:00.0: gpu_peek: 0x00820084 DISABLE_SW_OVERRIDE_STATUS         = 0x00000001
+[94314.440126] pci 0000:01:00.0: gpu_peek: 0x008200fc FUSE_SS_PLM (speed-select PLM)     = 0xffffffff
+[94314.440131] pci 0000:01:00.0: gpu_peek: 0x00820224 FUSE_SS_DP                         = 0x00000000
+[94314.440136] pci 0000:01:00.0: gpu_peek: 0x0082038c SECURE_FEAT_OVR_QUADRO_WR_SEC      = 0x00000001
+[94314.440140] pci 0000:01:00.0: gpu_peek: 0x0082059c FUSE_SS_FFMA                       = 0x00000000
+[94314.440145] pci 0000:01:00.0: gpu_peek: 0x008207d4 FUSE_SS_FMLA16                     = 0x00000000
+[94314.440150] pci 0000:01:00.0: gpu_peek: 0x008207d8 FUSE_SS_FMLA32                     = 0x00000001
+[94314.440155] pci 0000:01:00.0: gpu_peek: 0x008207dc FUSE_SS_IMLA0                      = 0x00000000
+[94314.440160] pci 0000:01:00.0: gpu_peek: 0x008207e0 FUSE_SS_IMLA1                      = 0x00000000
+[94314.440165] pci 0000:01:00.0: gpu_peek: 0x008207e4 FUSE_SS_IMLA2                      = 0x00000001
+[94314.440169] pci 0000:01:00.0: gpu_peek: 0x008207e8 FUSE_SS_IMLA3                      = 0x00000000
+[94314.440174] pci 0000:01:00.0: gpu_peek: 0x008207ec FUSE_SS_IMLA4                      = 0x00000001
+[94314.440179] pci 0000:01:00.0: gpu_peek: 0x00823800 FEAT_OVR_ECC_PLM                   = 0xffffff8f
+[94314.440184] pci 0000:01:00.0: gpu_peek: 0x00823804 FEAT_OVR_PLM                       = 0xffffff8f
+[94314.440188] pci 0000:01:00.0: gpu_peek: 0x00823808 FEAT_OVR_QUADRO                    = 0x01100082
+[94314.440193] pci 0000:01:00.0: gpu_peek: 0x0082380c FEAT_OVR_ECC                       = 0x00888888
+[94314.440198] pci 0000:01:00.0: gpu_peek: 0x00823810 FEAT_OVR_ECC_1                     = 0x00aaaaaa
+[94314.440203] pci 0000:01:00.0: gpu_peek: 0x00823814 FEAT_READOUT_0                     = 0x00000233
+[94314.440208] pci 0000:01:00.0: gpu_peek: 0x00823818 FEAT_READOUT_1 (SS effective)      = 0x00410080
+[94314.440213] pci 0000:01:00.0: gpu_peek: 0x0082381c FEAT_OVR_SM_SPEED_SELECT (SS0)     = 0x53323046
+[94314.440218] pci 0000:01:00.0: gpu_peek: 0x00823820 FEAT_OVR_SM_SPEED_SELECT_1(SS1)    = 0x00000003
+[94314.440223] pci 0000:01:00.0: gpu_peek: 0x00823824 FEAT_OVR_ROW_REMAPPER              = 0x00000000
+[94314.440227] pci 0000:01:00.0: gpu_peek: 0x00823828 FEAT_READOUT_2                     = 0x00000001
+[94314.440232] pci 0000:01:00.0: gpu_peek: 0x0082382c FEAT_OVR_ECC_2                     = 0x0000000a
+[94314.440237] pci 0000:01:00.0: gpu_peek: 0x00823830 FEAT_CLUSTER_0x823830              = 0x00000001
+[94314.440242] pci 0000:01:00.0: gpu_peek: 0x00823834 FEAT_CLUSTER_0x823834              = 0x00000000
+[94314.440247] pci 0000:01:00.0: gpu_peek: 0x00823838 FEAT_CLUSTER_0x823838              = 0x00000000
+[94314.440251] pci 0000:01:00.0: gpu_peek: 0x0082383c FEAT_CLUSTER_0x82383c              = 0x00000000
+[94314.440256] pci 0000:01:00.0: gpu_peek: 0x00823840 FEAT_CLUSTER_0x823840              = 0x00000000
+[94314.440261] pci 0000:01:00.0: gpu_peek: 0x00823844 FEAT_CLUSTER_0x823844              = 0xbadf5040
+[94314.440266] pci 0000:01:00.0: gpu_peek: 0x00823848 FEAT_CLUSTER_0x823848              = 0xbadf5040
+[94314.440271] pci 0000:01:00.0: gpu_peek: 0x0082384c FEAT_CLUSTER_0x82384c              = 0xbadf5040
+[94314.440279] pci 0000:01:00.0: gpu_peek: 0x00823850 FEAT_CLUSTER_0x823850              = 0xbadf5040
+[94314.440281] pci 0000:01:00.0: gpu_peek: 0x00823854 FEAT_CLUSTER_0x823854              = 0xbadf5040
+[94314.440283] pci 0000:01:00.0: gpu_peek: 0x00823858 FEAT_CLUSTER_0x823858              = 0xbadf5040
+[94314.440286] pci 0000:01:00.0: gpu_peek: 0x0082385c FEAT_CLUSTER_0x82385c              = 0xbadf5040
+[94314.440288] pci 0000:01:00.0: gpu_peek: 0x00823860 FEAT_CLUSTER_0x823860              = 0xbadf5040
+[94314.440290] pci 0000:01:00.0: gpu_peek: 0x00823864 FEAT_CLUSTER_0x823864              = 0xbadf5040
+[94314.440293] pci 0000:01:00.0: gpu_peek: 0x00823868 FEAT_CLUSTER_0x823868              = 0xbadf5040
+[94314.440295] pci 0000:01:00.0: gpu_peek: 0x0082386c FEAT_CLUSTER_0x82386c              = 0xbadf5040
+[94314.440298] pci 0000:01:00.0: gpu_peek: 0x00823870 FEAT_CLUSTER_0x823870              = 0xbadf5040
+[94314.440300] pci 0000:01:00.0: gpu_peek: 0x00823874 FEAT_CLUSTER_0x823874              = 0xbadf5040
+[94314.440302] pci 0000:01:00.0: gpu_peek: 0x00823878 FEAT_CLUSTER_0x823878              = 0xbadf5040
+[94314.440304] pci 0000:01:00.0: gpu_peek: 0x00409658 PGRAPH_PRI_FECS_0x409658           = 0xbadf5040
+[94314.440307] pci 0000:01:00.0: gpu_peek: 0x0040965c PGRAPH_PRI_FECS_0x40965c           = 0xbadf5040
+[94314.440309] pci 0000:01:00.0: gpu_peek: 0x00409660 PGRAPH_PRI_FECS_0x409660           = 0xbadf5040
+[94314.440311] pci 0000:01:00.0: gpu_peek: 0x00409664 FECS_FEAT_OVERRIDE_SM_SPEED_SEL    = 0xbadf5040
+[94314.440313] pci 0000:01:00.0: gpu_peek: 0x00409668 FECS_FEAT_READOUT_1                = 0xbadf5040
+[94314.440315] pci 0000:01:00.0: gpu_peek: 0x0040966c PGRAPH_PRI_FECS_0x40966c           = 0xbadf5040
+[94314.440317] pci 0000:01:00.0: gpu_peek: 0x00409670 PGRAPH_PRI_FECS_0x409670           = 0xbadf5040
+[94314.440319] pci 0000:01:00.0: gpu_peek: 0x00409674 PGRAPH_PRI_FECS_0x409674           = 0xbadf5040
+[94314.440321] pci 0000:01:00.0: gpu_peek: 0x00504200 GPC0_TPC0_SM_0x504200              = 0x00090000
+[94314.440324] pci 0000:01:00.0: gpu_peek: 0x00504204 SM_ISSUE_RATE_MODIFIER (TPC0)      = 0x00000005
+[94314.440326] pci 0000:01:00.0: gpu_peek: 0x00504208 GPC0_TPC0_SM_0x504208              = 0x00000221
+[94314.440328] pci 0000:01:00.0: gpu_peek: 0x0050420c GPC0_TPC0_SM_0x50420c              = 0x00100000
+[94314.440331] pci 0000:01:00.0: gpu_peek: 0x00504a04 SM_ISSUE_RATE_MODIFIER (TPC1)      = 0x00000005
+[94314.440333] pci 0000:01:00.0: gpu_peek: 0x00419e04 SM_ISSUE_RATE_MODIFIER (BCAST)     = 0x00000000
+[94314.440336] pci 0000:01:00.0: gpu_peek: 0x00824148 GU_FUSE_SEC2_UCODE1                = 0x00000001
+[94314.440338] pci 0000:01:00.0: gpu_peek: 0x008241e0 FWSEC fuse (ucode id 9)            = 0x00000001
+[94314.440341] pci 0000:01:00.0: gpu_peek: FEAT_READOUT_1 units (3-bit, 0=full): 0 0 2 0 0 2 0 2 0
+[94314.440344] pci 0000:01:00.0: gpu_peek: FEAT_OVR_SM_SPEED_SELECT nibbles: 6 4 0 3 2 3 3 5
+
+=== STEP 4: RUN GPU_UNLOCK IN LIVE SESSION ===
+[94314.722737] pci 0000:01:00.0: asset cache cleanup: gpu-unlock/610.43.03/gsp_ga10x.bin devres_released=1
+[94314.722784] pci 0000:01:00.0: driver probe resources: phase=entry empty=1
+[94314.722793] pci 0000:01:00.0: asset request: gpu-unlock/610.43.03/v67-ad102-610.43.03-four-plm.bin
+[94314.726242] pci 0000:01:00.0: asset result: gpu-unlock/610.43.03/v67-ad102-610.43.03-four-plm.bin error=0 bytes=64000
+[94314.726250] pci 0000:01:00.0: asset cache cleanup: gpu-unlock/610.43.03/v67-ad102-610.43.03-four-plm.bin devres_released=1
+[94314.726261] pci 0000:01:00.0: asset request: gpu-unlock/610.43.03/gsp_boot_ad102.bin
+[94314.726885] pci 0000:01:00.0: asset result: gpu-unlock/610.43.03/gsp_boot_ad102.bin error=0 bytes=36864
+[94314.726893] pci 0000:01:00.0: asset cache cleanup: gpu-unlock/610.43.03/gsp_boot_ad102.bin devres_released=1
+[94314.726898] pci 0000:01:00.0: asset request: gpu-unlock/610.43.03/gsp_boot_desc_ad102.bin
+[94314.727135] pci 0000:01:00.0: asset result: gpu-unlock/610.43.03/gsp_boot_desc_ad102.bin error=0 bytes=84
+[94314.727139] pci 0000:01:00.0: asset cache cleanup: gpu-unlock/610.43.03/gsp_boot_desc_ad102.bin devres_released=1
+[94314.727141] pci 0000:01:00.0: asset geometry: image=84226048 signature=4096 boot=36864 code=0x4800 data=0x800 manifest=0x0 parse=0
+[94314.727146] pci 0000:01:00.0: asset request: gpu-unlock/610.43.03/booter_load_ad102.bin
+[94314.727784] pci 0000:01:00.0: asset result: gpu-unlock/610.43.03/booter_load_ad102.bin error=0 bytes=57672
+[94314.727787] pci 0000:01:00.0: asset cache cleanup: gpu-unlock/610.43.03/booter_load_ad102.bin devres_released=1
+[94314.727789] pci 0000:01:00.0: claim: power=0 pm_cap=0x60 flags=0x0
+[94314.727799] pci 0000:01:00.0: claim: command=0x3 capability=0x112c8de1 BAR_mask=0x4b
+[94314.727868] pci 0000:01:00.0: layout inputs: fb_mb=0x17fd vga=0x1 mmu_plm=0x45cb8f mmu_lo=0x100000 mmu_hi=0x16fcff0 image=84226048 boot=36864
+[94314.727870] pci 0000:01:00.0: layout mmu: lo=0x10000000 hi=0x16fcff000 hi_exclusive=0x16fd00000 constrain=0
+[94314.727873] pci 0000:01:00.0: mmu lock ignored: high address is not the FB top
+[94314.727874] pci 0000:01:00.0: layout decoded: fb=0x17fd00000 vga=0x17fc00000 mmu_valid=0 mmu_low=0x10000000 frts=0x100000 heap=0x5800000 result=0
+[94314.727876] pci 0000:01:00.0: layout ranges: nonwpr=0x175000000 wpr=0x175100000 heap=0x175200000 gsp=0x17aaa0000 boot=0x17faf7000 frts=0x17fb00000 end=0x17fc00000 scrub_floor=0x16fd00000
+[94314.727878] pci 0000:01:00.0: DMA masks: streaming=0x7fffffffffff coherent=0x7fffffffffff requested=0xffffffff
+[94314.727912] pci 0000:01:00.0: Booter signature: fuse_raw=0x1 version=1 signatures=2 size=768
+[94314.763488] pci 0000:01:00.0: entry: plm=0xffffff8f ss0=0x53323046 ss1=0x3 wpr2_hi=0x0
+[94314.763497] pci 0000:01:00.0: AD102 permission before-firmware: WPR_CFG[0x1fa7cc]=0x4cb8f before=0x4cb8f expected=0xfffff0ff required=1 valid=1 pci=0x28a110de chip=0x197000a1
+[94314.763501] pci 0000:01:00.0: AD102 permission before-firmware: FBPA[0x9a0148]=0xffffff0f before=0xffffff0f expected=0xffffffff required=0 valid=1 pci=0x28a110de chip=0x197000a1
+[94314.763505] pci 0000:01:00.0: AD102 permission before-firmware: WPR[0x1fa7c4]=0x4cb8f before=0x4cb8f expected=0xffffffff required=1 valid=1 pci=0x28a110de chip=0x197000a1
+[94314.763509] pci 0000:01:00.0: AD102 permission before-firmware: FEAT[0x823804]=0xffffff8f before=0xffffff8f expected=0xffffffff required=1 valid=1 pci=0x28a110de chip=0x197000a1
+[94314.763520] pci 0000:01:00.0: AD102 before-firmware: readout1=0x410080 fields=0 0 2 0 0 2 0 2 0 valid=1 full=0
+[94314.763523] pci 0000:01:00.0: FWSEC: reading PROM at 0x300000
+[94314.962801] pci 0000:01:00.0: FWSEC: PROM bytes=1048576 signature=0xaa55
+[94314.962807] gpu_unlock: ROM chain: pos=0x0 data=0x52494350 bytes=64512 type=0x0 last=0
+[94314.962810] gpu_unlock: ROM chain: pos=0xfc00 data=0x5344504e bytes=24576 type=0xe0 last=0
+[94314.962812] gpu_unlock: ROM chain: pos=0x15c00 data=0x5344504e bytes=491008 type=0xe0 last=128
+[94314.962813] gpu_unlock: ROM expansion: base=0xfc00 ext=0xfc00 adjust=0x0
+[94314.962815] gpu_unlock: ROM BIT: offset=0x1b0 size=12 stride=6 tokens=19 adjust=0x0
+[94314.962817] gpu_unlock: ROM ucode table: offset=0x8d82d version=1 header=6 stride=6 entries=16
+[94314.962818] gpu_unlock: FWSEC descriptor: offset=0x3081c ROM_bytes=1048576 header=0x32c0301
+[94314.962820] gpu_unlock: FWSEC geometry: image_off=0x30b48 size=0x10500 imem=0xf700 va=0x0 pa=0x0 dmem=0xd80 pa=0x0 pkc=0xb24 interface=0x1c engine=0x400 ucode=9 signatures=2 versions=0x3 bytes=768
+[94314.962842] gpu_unlock: FWSEC interface: offset=0x1c version=1 header=4 stride=8 entries=2 FRTS=0x17fb00000
+[94314.962844] gpu_unlock: FWSEC mapper: version=3 size=64 cmd_offset=0xd40 cmd_size=64
+[94314.962847] pci 0000:01:00.0: FWSEC fuse: raw=0x1 version=1
+[94314.962849] gpu_unlock: FWSEC signature selection: versions=0x3 fuse_version=1 sig_bytes=384
+[94314.962854] pci 0000:01:00.0: Falcon reset begin: base=0x110000
+[94314.963922] pci 0000:01:00.0: poll timeout tolerated: reg=0x1100f4 last=0x47b7 mask=0x80000000 expected=0x80000000 budget_us=1000
+[94314.963930] pci 0000:01:00.0: Falcon pre-reset timeout tolerated per HW bug 3419321
+[94314.964062] pci 0000:01:00.0: Falcon reset done: base=0x110000 hwcfg=0x67b7 chip=0x197000a1
+[94314.964068] pci 0000:01:00.0: Falcon DMA: base=0x110000 dest=0x0 offset=0x0 src=0x9e000000 size=0xf700 cmd=0x614
+[94314.964425] pci 0000:01:00.0: Falcon DMA: base=0x110000 dest=0x0 offset=0x0 src=0x9e00f700 size=0xd80 cmd=0x600
+[94314.964523] pci 0000:01:00.0: Falcon start: base=0x110000 cpuctl=0x10 code_va=0x0 sig_dmem=0xb24 engine_mask=0x400 ucode=9 mailbox=0x0:0x0
+[94315.075376] pci 0000:01:00.0: FWSEC result: scratch=0x0 expected_hi16=0
+[94315.075385] pci 0000:01:00.0: FWSEC WPR2: low=0x17fb000 high=0x17fbe00 expected_page=0x17fb00 end=0x17fc00000
+[94315.075398] pci 0000:01:00.0: Falcon reset begin: base=0x840000
+[94315.076497] pci 0000:01:00.0: poll timeout tolerated: reg=0x8400f4 last=0x67b7 mask=0x80000000 expected=0x80000000 budget_us=1000
+[94315.076501] pci 0000:01:00.0: Falcon pre-reset timeout tolerated per HW bug 3419321
+[94315.076634] pci 0000:01:00.0: Falcon reset done: base=0x840000 hwcfg=0x67b7 chip=0x197000a1
+[94315.076645] pci 0000:01:00.0: Falcon DMA: base=0x840000 dest=0x0 offset=0x100 src=0xffd70000 size=0x7d00 cmd=0x614
+[94315.076890] pci 0000:01:00.0: Falcon DMA: base=0x840000 dest=0x0 offset=0x0 src=0xffd77e00 size=0x6000 cmd=0x600
+[94315.077092] pci 0000:01:00.0: Falcon start: base=0x840000 cpuctl=0x10 code_va=0x100 sig_dmem=0x10 engine_mask=0x1 ucode=3 mailbox=0x0:0x93a05000
+[94315.161471] pci 0000:01:00.0: AD102 permission after-payload: WPR_CFG[0x1fa7cc]=0xfffff0ff before=0x4cb8f expected=0xfffff0ff required=1 valid=1 pci=0x28a110de chip=0x197000a1
+[94315.161483] pci 0000:01:00.0: AD102 permission after-payload: FBPA[0x9a0148]=0xffffff0f before=0xffffff0f expected=0xffffffff required=0 valid=1 pci=0x28a110de chip=0x197000a1
+[94315.161490] pci 0000:01:00.0: AD102 permission after-payload: WPR[0x1fa7c4]=0xffffffff before=0x4cb8f expected=0xffffffff required=1 valid=1 pci=0x28a110de chip=0x197000a1
+[94315.161496] pci 0000:01:00.0: AD102 permission after-payload: FEAT[0x823804]=0xffffffff before=0xffffff8f expected=0xffffffff required=1 valid=1 pci=0x28a110de chip=0x197000a1
+[94315.161504] pci 0000:01:00.0: AD102 after-payload: readout1=0x410080 fields=0 0 2 0 0 2 0 2 0 valid=1 full=0
+[94315.161518] pci 0000:01:00.0: AD102 payload result: boot=0 halt=0 marker=0x67b00001 expected=0x67b00001 marker_ok=1 required_permissions=1 cpuctl=0x10 halted=1 debug=0xda550000 ss0=0x53323046 ss1=0x3
+[94315.161530] pci 0000:01:00.0: selector read: SS0=0x53323046 expected_unlock=0x88888888
+[94315.161535] pci 0000:01:00.0: selector write: SS0=0x88888888
+[94315.161541] pci 0000:01:00.0: selector result: SS0=0x88888888 expected=0x88888888 matched=1
+[94315.161551] pci 0000:01:00.0: selector read: SS1=0x3 expected_unlock=0x8
+[94315.161554] pci 0000:01:00.0: selector write: SS1=0x8
+[94315.161558] pci 0000:01:00.0: selector result: SS1=0x8 expected=0x8 matched=1
+[94315.161563] pci 0000:01:00.0: AD102 selectors-applied: readout1=0x0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+[94315.161570] pci 0000:01:00.0: pre-FLR selectors: ss0=0x88888888 expected=0x88888888 ss1=0x8 expected=0x8
+[94315.161575] pci 0000:01:00.0: AD102 pre-FLR: readout1=0x0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+[94315.161604] pci 0000:01:00.0: PCIe FLR begin: BME=0 DMA retained, chip=0x197000a1
+[94315.269558] pci 0000:01:00.0: PCIe FLR returned: result=0
+[94315.269659] pci 0000:01:00.0: post-FLR BAR ready: chip=0x197000a1
+[94315.523534] pci 0000:01:00.0: post-FLR GFW result: error=0 pci=0x28a110de plm=0x8b8f boot=0x3ff cpuctl=0x10 budget_us=2050000
+[94315.523550] pci 0000:01:00.0: engine reset assert: phase=post-FLR base=0x840000 before=0x0 write=0x1
+[94315.523563] pci 0000:01:00.0: engine reset propagation: phase=post-FLR base=0x840000 first=0x1 tenth=0x1
+[94315.523574] pci 0000:01:00.0: engine reset asserted: phase=post-FLR base=0x840000 error=0 last=0x1
+[94315.523580] pci 0000:01:00.0: engine reset release: phase=post-FLR base=0x840000 before=0x1 write=0x0
+[94315.523708] pci 0000:01:00.0: engine reset released: phase=post-FLR base=0x840000 engine=0x0 hwcfg2=0x67b7
+[94315.523720] pci 0000:01:00.0: post-FLR SEC2 reset released, GSP halted, BME=0 pending=0 WPR2=1ffffe00:00000000 SS0=88888888 SS1=00000008
+[94315.523728] pci 0000:01:00.0: AD102 permission post-FLR: WPR_CFG[0x1fa7cc]=0x4cb8f before=0x4cb8f expected=0xfffff0ff required=1 valid=1 pci=0x28a110de chip=0x197000a1
+[94315.523736] pci 0000:01:00.0: AD102 permission post-FLR: FBPA[0x9a0148]=0xffffff0f before=0xffffff0f expected=0xffffffff required=0 valid=1 pci=0x28a110de chip=0x197000a1
+[94315.523743] pci 0000:01:00.0: AD102 permission post-FLR: WPR[0x1fa7c4]=0x4cb8f before=0x4cb8f expected=0xffffffff required=1 valid=1 pci=0x28a110de chip=0x197000a1
+[94315.523750] pci 0000:01:00.0: AD102 permission post-FLR: FEAT[0x823804]=0xffffffff before=0xffffff8f expected=0xffffffff required=1 valid=1 pci=0x28a110de chip=0x197000a1
+[94315.523757] pci 0000:01:00.0: AD102 post-FLR: readout1=0x0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+[94315.543907] pci 0000:01:00.0: driver probe resources: phase=handoff empty=1
+[94315.543917] pci 0000:01:00.0: restore streaming mask: actual=0x7fffffffffff expected=0x7fffffffffff
+[94315.543920] pci 0000:01:00.0: restore coherent mask: actual=0x7fffffffffff expected=0x7fffffffffff
+[94315.543931] pci 0000:01:00.0: restore PCI command: actual=0x3 original=0x3 mask=0x6
+[94315.543935] pci 0000:01:00.0: gpu_unlock: unlocked
+
+=== STEP 5: PEEK IMMEDIATELY AFTER GPU_UNLOCK (BEFORE NVIDIA DRIVER) ===
+[94315.579417] pci 0000:01:00.0: gpu_peek: driver=none BAR0=0xfb000000 len=0x1000000 command=0x3
+[94315.579424] pci 0000:01:00.0: gpu_peek: 0x00000000 PMC_BOOT_0 (chip id)               = 0x197000a1
+[94315.579428] pci 0000:01:00.0: gpu_peek: 0x00118128 GFW PLM                            = 0x00008b8f
+[94315.579431] pci 0000:01:00.0: gpu_peek: 0x00118234 GFW boot progress                  = 0x000003ff
+[94315.579433] pci 0000:01:00.0: gpu_peek: 0x00110100 GFW falcon CPUCTL                  = 0x00000010
+[94315.579435] pci 0000:01:00.0: gpu_peek: 0x001fa824 WPR2 lo                            = 0x1ffffe00
+[94315.579438] pci 0000:01:00.0: gpu_peek: 0x001fa828 WPR2 hi                            = 0x00000000
+[94315.579440] pci 0000:01:00.0: gpu_peek: 0x001fa7cc WPR_CFG PLM                        = 0x0004cb8f
+[94315.579442] pci 0000:01:00.0: gpu_peek: 0x009a0148 FBPA PLM                           = 0xffffff0f
+[94315.579445] pci 0000:01:00.0: gpu_peek: 0x001fa7c4 WPR PLM                            = 0x0004cb8f
+[94315.579447] pci 0000:01:00.0: gpu_peek: 0x00820000 FUSECTRL                           = 0xe0040000
+[94315.579450] pci 0000:01:00.0: gpu_peek: 0x00820040 EN_SW_OVERRIDE                     = 0x00000001
+[94315.579452] pci 0000:01:00.0: gpu_peek: 0x00820078 ENABLE_FUSE_PROGRAM_STATUS         = 0x00000001
+[94315.579455] pci 0000:01:00.0: gpu_peek: 0x0082007c DISABLE_FUSE_PROGRAM               = 0xbadf5040
+[94315.579457] pci 0000:01:00.0: gpu_peek: 0x00820084 DISABLE_SW_OVERRIDE_STATUS         = 0x00000001
+[94315.579460] pci 0000:01:00.0: gpu_peek: 0x008200fc FUSE_SS_PLM (speed-select PLM)     = 0xffffffff
+[94315.579462] pci 0000:01:00.0: gpu_peek: 0x00820224 FUSE_SS_DP                         = 0x00000000
+[94315.579465] pci 0000:01:00.0: gpu_peek: 0x0082038c SECURE_FEAT_OVR_QUADRO_WR_SEC      = 0x00000001
+[94315.579467] pci 0000:01:00.0: gpu_peek: 0x0082059c FUSE_SS_FFMA                       = 0x00000000
+[94315.579470] pci 0000:01:00.0: gpu_peek: 0x008207d4 FUSE_SS_FMLA16                     = 0x00000000
+[94315.579472] pci 0000:01:00.0: gpu_peek: 0x008207d8 FUSE_SS_FMLA32                     = 0x00000001
+[94315.579475] pci 0000:01:00.0: gpu_peek: 0x008207dc FUSE_SS_IMLA0                      = 0x00000000
+[94315.579477] pci 0000:01:00.0: gpu_peek: 0x008207e0 FUSE_SS_IMLA1                      = 0x00000000
+[94315.579479] pci 0000:01:00.0: gpu_peek: 0x008207e4 FUSE_SS_IMLA2                      = 0x00000001
+[94315.579482] pci 0000:01:00.0: gpu_peek: 0x008207e8 FUSE_SS_IMLA3                      = 0x00000000
+[94315.579484] pci 0000:01:00.0: gpu_peek: 0x008207ec FUSE_SS_IMLA4                      = 0x00000001
+[94315.579487] pci 0000:01:00.0: gpu_peek: 0x00823800 FEAT_OVR_ECC_PLM                   = 0xffffff8f
+[94315.579489] pci 0000:01:00.0: gpu_peek: 0x00823804 FEAT_OVR_PLM                       = 0xffffffff
+[94315.579492] pci 0000:01:00.0: gpu_peek: 0x00823808 FEAT_OVR_QUADRO                    = 0x01100082
+[94315.579494] pci 0000:01:00.0: gpu_peek: 0x0082380c FEAT_OVR_ECC                       = 0x00888888
+[94315.579497] pci 0000:01:00.0: gpu_peek: 0x00823810 FEAT_OVR_ECC_1                     = 0x00aaaaaa
+[94315.579499] pci 0000:01:00.0: gpu_peek: 0x00823814 FEAT_READOUT_0                     = 0x00000233
+[94315.579502] pci 0000:01:00.0: gpu_peek: 0x00823818 FEAT_READOUT_1 (SS effective)      = 0x00000000
+[94315.579504] pci 0000:01:00.0: gpu_peek: 0x0082381c FEAT_OVR_SM_SPEED_SELECT (SS0)     = 0x88888888
+[94315.579517] pci 0000:01:00.0: gpu_peek: 0x00823820 FEAT_OVR_SM_SPEED_SELECT_1(SS1)    = 0x00000008
+[94315.579520] pci 0000:01:00.0: gpu_peek: 0x00823824 FEAT_OVR_ROW_REMAPPER              = 0x00000000
+[94315.579523] pci 0000:01:00.0: gpu_peek: 0x00823828 FEAT_READOUT_2                     = 0x00000001
+[94315.579525] pci 0000:01:00.0: gpu_peek: 0x0082382c FEAT_OVR_ECC_2                     = 0x0000000a
+[94315.579528] pci 0000:01:00.0: gpu_peek: 0x00823830 FEAT_CLUSTER_0x823830              = 0x00000001
+[94315.579530] pci 0000:01:00.0: gpu_peek: 0x00823834 FEAT_CLUSTER_0x823834              = 0x00000000
+[94315.579533] pci 0000:01:00.0: gpu_peek: 0x00823838 FEAT_CLUSTER_0x823838              = 0x00000000
+[94315.579535] pci 0000:01:00.0: gpu_peek: 0x0082383c FEAT_CLUSTER_0x82383c              = 0x00000000
+[94315.579538] pci 0000:01:00.0: gpu_peek: 0x00823840 FEAT_CLUSTER_0x823840              = 0x00000000
+[94315.579540] pci 0000:01:00.0: gpu_peek: 0x00823844 FEAT_CLUSTER_0x823844              = 0xbadf5040
+[94315.579543] pci 0000:01:00.0: gpu_peek: 0x00823848 FEAT_CLUSTER_0x823848              = 0xbadf5040
+[94315.579545] pci 0000:01:00.0: gpu_peek: 0x0082384c FEAT_CLUSTER_0x82384c              = 0xbadf5040
+[94315.579548] pci 0000:01:00.0: gpu_peek: 0x00823850 FEAT_CLUSTER_0x823850              = 0xbadf5040
+[94315.579550] pci 0000:01:00.0: gpu_peek: 0x00823854 FEAT_CLUSTER_0x823854              = 0xbadf5040
+[94315.579553] pci 0000:01:00.0: gpu_peek: 0x00823858 FEAT_CLUSTER_0x823858              = 0xbadf5040
+[94315.579556] pci 0000:01:00.0: gpu_peek: 0x0082385c FEAT_CLUSTER_0x82385c              = 0xbadf5040
+[94315.579558] pci 0000:01:00.0: gpu_peek: 0x00823860 FEAT_CLUSTER_0x823860              = 0xbadf5040
+[94315.579561] pci 0000:01:00.0: gpu_peek: 0x00823864 FEAT_CLUSTER_0x823864              = 0xbadf5040
+[94315.579563] pci 0000:01:00.0: gpu_peek: 0x00823868 FEAT_CLUSTER_0x823868              = 0xbadf5040
+[94315.579566] pci 0000:01:00.0: gpu_peek: 0x0082386c FEAT_CLUSTER_0x82386c              = 0xbadf5040
+[94315.579568] pci 0000:01:00.0: gpu_peek: 0x00823870 FEAT_CLUSTER_0x823870              = 0xbadf5040
+[94315.579571] pci 0000:01:00.0: gpu_peek: 0x00823874 FEAT_CLUSTER_0x823874              = 0xbadf5040
+[94315.579573] pci 0000:01:00.0: gpu_peek: 0x00823878 FEAT_CLUSTER_0x823878              = 0xbadf5040
+[94315.579575] pci 0000:01:00.0: gpu_peek: 0x00409658 PGRAPH_PRI_FECS_0x409658           = 0xbadf5040
+[94315.579577] pci 0000:01:00.0: gpu_peek: 0x0040965c PGRAPH_PRI_FECS_0x40965c           = 0xbadf5040
+[94315.579580] pci 0000:01:00.0: gpu_peek: 0x00409660 PGRAPH_PRI_FECS_0x409660           = 0xbadf5040
+[94315.579582] pci 0000:01:00.0: gpu_peek: 0x00409664 FECS_FEAT_OVERRIDE_SM_SPEED_SEL    = 0xbadf5040
+[94315.579585] pci 0000:01:00.0: gpu_peek: 0x00409668 FECS_FEAT_READOUT_1                = 0xbadf5040
+[94315.579588] pci 0000:01:00.0: gpu_peek: 0x0040966c PGRAPH_PRI_FECS_0x40966c           = 0xbadf5040
+[94315.579591] pci 0000:01:00.0: gpu_peek: 0x00409670 PGRAPH_PRI_FECS_0x409670           = 0xbadf5040
+[94315.579594] pci 0000:01:00.0: gpu_peek: 0x00409674 PGRAPH_PRI_FECS_0x409674           = 0xbadf5040
+[94315.579597] pci 0000:01:00.0: gpu_peek: 0x00504200 GPC0_TPC0_SM_0x504200              = 0x00090000
+[94315.579600] pci 0000:01:00.0: gpu_peek: 0x00504204 SM_ISSUE_RATE_MODIFIER (TPC0)      = 0x00000005
+[94315.579603] pci 0000:01:00.0: gpu_peek: 0x00504208 GPC0_TPC0_SM_0x504208              = 0x00000221
+[94315.579606] pci 0000:01:00.0: gpu_peek: 0x0050420c GPC0_TPC0_SM_0x50420c              = 0x00100000
+[94315.579609] pci 0000:01:00.0: gpu_peek: 0x00504a04 SM_ISSUE_RATE_MODIFIER (TPC1)      = 0x00000005
+[94315.579612] pci 0000:01:00.0: gpu_peek: 0x00419e04 SM_ISSUE_RATE_MODIFIER (BCAST)     = 0x00000000
+[94315.579616] pci 0000:01:00.0: gpu_peek: 0x00824148 GU_FUSE_SEC2_UCODE1                = 0x00000001
+[94315.579619] pci 0000:01:00.0: gpu_peek: 0x008241e0 FWSEC fuse (ucode id 9)            = 0x00000001
+[94315.579623] pci 0000:01:00.0: gpu_peek: FEAT_READOUT_1 units (3-bit, 0=full): 0 0 0 0 0 0 0 0 0
+[94315.579627] pci 0000:01:00.0: gpu_peek: FEAT_OVR_SM_SPEED_SELECT nibbles: 8 8 8 8 8 8 8 8
+
+=== STEP 6: LOAD NVIDIA WITH DynamicPowerManagement=0 (NO D3cold!) ===
+
+=== STEP 7: PEEK + BENCHMARK WITH CUDA ACTIVE AND D3cold BLOCKED ===
+{"gpu": "GPU-REDACTED-AD107M, NVIDIA GeForce RTX 4050 Laptop GPU, 00000000:01:00.0, 580.178.04, [N/A], 1755, 7001", "command": "0x20801230", "rates": {"imla0": 0, "fmla16": 0, "dp": 0, "fmla32": 0, "ffma": 0, "imla1": 0, "imla2": 0, "imla3": 0, "imla4": 0}, "meaning": "0=full; 1=half; 2=quarter; higher values are further reductions", "hardware_changes": false}
+Runtime D3 status:          ?
+Video Memory:               ?
+
+GPU Hardware Support:
+ Video Memory Self Refresh: ?
+ Video Memory Off:          ?
+
+S0ix Power Management:
+ Platform Support:          Supported
+ Status:                    ?
+
+Notebook Dynamic Boost:     ?
+name, pci.bus_id, pstate, clocks.current.graphics [MHz], power.draw [W]
+NVIDIA GeForce RTX 4050 Laptop GPU, 00000000:01:00.0, P3, 1755 MHz, 8.85 W
+[94323.629630] nvidia 0000:01:00.0: gpu_peek: driver=nvidia BAR0=0xfb000000 len=0x1000000 command=0x407
+[94323.629637] nvidia 0000:01:00.0: gpu_peek: 0x00000000 PMC_BOOT_0 (chip id)               = 0x197000a1
+[94323.629641] nvidia 0000:01:00.0: gpu_peek: 0x00118128 GFW PLM                            = 0x00008b8f
+[94323.629645] nvidia 0000:01:00.0: gpu_peek: 0x00118234 GFW boot progress                  = 0x000003ff
+[94323.629647] nvidia 0000:01:00.0: gpu_peek: 0x00110100 GFW falcon CPUCTL                  = 0xbadf5720
+[94323.629649] nvidia 0000:01:00.0: gpu_peek: 0x001fa824 WPR2 lo                            = 0x01733000
+[94323.629651] nvidia 0000:01:00.0: gpu_peek: 0x001fa828 WPR2 hi                            = 0x017fbe00
+[94323.629654] nvidia 0000:01:00.0: gpu_peek: 0x001fa7cc WPR_CFG PLM                        = 0x0004cb8f
+[94323.629656] nvidia 0000:01:00.0: gpu_peek: 0x009a0148 FBPA PLM                           = 0xffffff0f
+[94323.629658] nvidia 0000:01:00.0: gpu_peek: 0x001fa7c4 WPR PLM                            = 0x0004cb8f
+[94323.629661] nvidia 0000:01:00.0: gpu_peek: 0x00820000 FUSECTRL                           = 0xe0040000
+[94323.629663] nvidia 0000:01:00.0: gpu_peek: 0x00820040 EN_SW_OVERRIDE                     = 0x00000001
+[94323.629666] nvidia 0000:01:00.0: gpu_peek: 0x00820078 ENABLE_FUSE_PROGRAM_STATUS         = 0x00000001
+[94323.629668] nvidia 0000:01:00.0: gpu_peek: 0x0082007c DISABLE_FUSE_PROGRAM               = 0xbadf5040
+[94323.629671] nvidia 0000:01:00.0: gpu_peek: 0x00820084 DISABLE_SW_OVERRIDE_STATUS         = 0x00000001
+[94323.629673] nvidia 0000:01:00.0: gpu_peek: 0x008200fc FUSE_SS_PLM (speed-select PLM)     = 0xffffffff
+[94323.629676] nvidia 0000:01:00.0: gpu_peek: 0x00820224 FUSE_SS_DP                         = 0x00000000
+[94323.629678] nvidia 0000:01:00.0: gpu_peek: 0x0082038c SECURE_FEAT_OVR_QUADRO_WR_SEC      = 0x00000001
+[94323.629681] nvidia 0000:01:00.0: gpu_peek: 0x0082059c FUSE_SS_FFMA                       = 0x00000000
+[94323.629683] nvidia 0000:01:00.0: gpu_peek: 0x008207d4 FUSE_SS_FMLA16                     = 0x00000000
+[94323.629686] nvidia 0000:01:00.0: gpu_peek: 0x008207d8 FUSE_SS_FMLA32                     = 0x00000001
+[94323.629688] nvidia 0000:01:00.0: gpu_peek: 0x008207dc FUSE_SS_IMLA0                      = 0x00000000
+[94323.629690] nvidia 0000:01:00.0: gpu_peek: 0x008207e0 FUSE_SS_IMLA1                      = 0x00000000
+[94323.629693] nvidia 0000:01:00.0: gpu_peek: 0x008207e4 FUSE_SS_IMLA2                      = 0x00000001
+[94323.629695] nvidia 0000:01:00.0: gpu_peek: 0x008207e8 FUSE_SS_IMLA3                      = 0x00000000
+[94323.629698] nvidia 0000:01:00.0: gpu_peek: 0x008207ec FUSE_SS_IMLA4                      = 0x00000001
+[94323.629700] nvidia 0000:01:00.0: gpu_peek: 0x00823800 FEAT_OVR_ECC_PLM                   = 0xffffff8f
+[94323.629703] nvidia 0000:01:00.0: gpu_peek: 0x00823804 FEAT_OVR_PLM                       = 0xffffffff
+[94323.629705] nvidia 0000:01:00.0: gpu_peek: 0x00823808 FEAT_OVR_QUADRO                    = 0x01100082
+[94323.629708] nvidia 0000:01:00.0: gpu_peek: 0x0082380c FEAT_OVR_ECC                       = 0x00888888
+[94323.629710] nvidia 0000:01:00.0: gpu_peek: 0x00823810 FEAT_OVR_ECC_1                     = 0x00aaaaaa
+[94323.629713] nvidia 0000:01:00.0: gpu_peek: 0x00823814 FEAT_READOUT_0                     = 0x00000233
+[94323.629715] nvidia 0000:01:00.0: gpu_peek: 0x00823818 FEAT_READOUT_1 (SS effective)      = 0x00000000
+[94323.629718] nvidia 0000:01:00.0: gpu_peek: 0x0082381c FEAT_OVR_SM_SPEED_SELECT (SS0)     = 0x88888888
+[94323.629720] nvidia 0000:01:00.0: gpu_peek: 0x00823820 FEAT_OVR_SM_SPEED_SELECT_1(SS1)    = 0x00000008
+[94323.629723] nvidia 0000:01:00.0: gpu_peek: 0x00823824 FEAT_OVR_ROW_REMAPPER              = 0x00000000
+[94323.629725] nvidia 0000:01:00.0: gpu_peek: 0x00823828 FEAT_READOUT_2                     = 0x00000001
+[94323.629728] nvidia 0000:01:00.0: gpu_peek: 0x0082382c FEAT_OVR_ECC_2                     = 0x0000000a
+[94323.629730] nvidia 0000:01:00.0: gpu_peek: 0x00823830 FEAT_CLUSTER_0x823830              = 0x00000001
+[94323.629732] nvidia 0000:01:00.0: gpu_peek: 0x00823834 FEAT_CLUSTER_0x823834              = 0x00000000
+[94323.629735] nvidia 0000:01:00.0: gpu_peek: 0x00823838 FEAT_CLUSTER_0x823838              = 0x00000000
+[94323.629738] nvidia 0000:01:00.0: gpu_peek: 0x0082383c FEAT_CLUSTER_0x82383c              = 0x00000000
+[94323.629740] nvidia 0000:01:00.0: gpu_peek: 0x00823840 FEAT_CLUSTER_0x823840              = 0x00000000
+[94323.629743] nvidia 0000:01:00.0: gpu_peek: 0x00823844 FEAT_CLUSTER_0x823844              = 0xbadf5040
+[94323.629745] nvidia 0000:01:00.0: gpu_peek: 0x00823848 FEAT_CLUSTER_0x823848              = 0xbadf5040
+[94323.629748] nvidia 0000:01:00.0: gpu_peek: 0x0082384c FEAT_CLUSTER_0x82384c              = 0xbadf5040
+[94323.629750] nvidia 0000:01:00.0: gpu_peek: 0x00823850 FEAT_CLUSTER_0x823850              = 0xbadf5040
+[94323.629753] nvidia 0000:01:00.0: gpu_peek: 0x00823854 FEAT_CLUSTER_0x823854              = 0xbadf5040
+[94323.629755] nvidia 0000:01:00.0: gpu_peek: 0x00823858 FEAT_CLUSTER_0x823858              = 0xbadf5040
+[94323.629758] nvidia 0000:01:00.0: gpu_peek: 0x0082385c FEAT_CLUSTER_0x82385c              = 0xbadf5040
+[94323.629760] nvidia 0000:01:00.0: gpu_peek: 0x00823860 FEAT_CLUSTER_0x823860              = 0xbadf5040
+[94323.629763] nvidia 0000:01:00.0: gpu_peek: 0x00823864 FEAT_CLUSTER_0x823864              = 0xbadf5040
+[94323.629765] nvidia 0000:01:00.0: gpu_peek: 0x00823868 FEAT_CLUSTER_0x823868              = 0xbadf5040
+[94323.629767] nvidia 0000:01:00.0: gpu_peek: 0x0082386c FEAT_CLUSTER_0x82386c              = 0xbadf5040
+[94323.629770] nvidia 0000:01:00.0: gpu_peek: 0x00823870 FEAT_CLUSTER_0x823870              = 0xbadf5040
+[94323.629772] nvidia 0000:01:00.0: gpu_peek: 0x00823874 FEAT_CLUSTER_0x823874              = 0xbadf5040
+[94323.629775] nvidia 0000:01:00.0: gpu_peek: 0x00823878 FEAT_CLUSTER_0x823878              = 0xbadf5040
+[94323.629777] nvidia 0000:01:00.0: gpu_peek: 0x00409658 PGRAPH_PRI_FECS_0x409658           = 0xbadf5040
+[94323.629779] nvidia 0000:01:00.0: gpu_peek: 0x0040965c PGRAPH_PRI_FECS_0x40965c           = 0xbadf5040
+[94323.629781] nvidia 0000:01:00.0: gpu_peek: 0x00409660 PGRAPH_PRI_FECS_0x409660           = 0xbadf5040
+[94323.629783] nvidia 0000:01:00.0: gpu_peek: 0x00409664 FECS_FEAT_OVERRIDE_SM_SPEED_SEL    = 0xbadf5040
+[94323.629785] nvidia 0000:01:00.0: gpu_peek: 0x00409668 FECS_FEAT_READOUT_1                = 0xbadf5040
+[94323.629788] nvidia 0000:01:00.0: gpu_peek: 0x0040966c PGRAPH_PRI_FECS_0x40966c           = 0xbadf5040
+[94323.629790] nvidia 0000:01:00.0: gpu_peek: 0x00409670 PGRAPH_PRI_FECS_0x409670           = 0xbadf5040
+[94323.629792] nvidia 0000:01:00.0: gpu_peek: 0x00409674 PGRAPH_PRI_FECS_0x409674           = 0xbadf5040
+[94323.629794] nvidia 0000:01:00.0: gpu_peek: 0x00504200 GPC0_TPC0_SM_0x504200              = 0x00010000
+[94323.629796] nvidia 0000:01:00.0: gpu_peek: 0x00504204 SM_ISSUE_RATE_MODIFIER (TPC0)      = 0x00000005
+[94323.629799] nvidia 0000:01:00.0: gpu_peek: 0x00504208 GPC0_TPC0_SM_0x504208              = 0x00000221
+[94323.629801] nvidia 0000:01:00.0: gpu_peek: 0x0050420c GPC0_TPC0_SM_0x50420c              = 0x00100000
+[94323.629803] nvidia 0000:01:00.0: gpu_peek: 0x00504a04 SM_ISSUE_RATE_MODIFIER (TPC1)      = 0x00000005
+[94323.629805] nvidia 0000:01:00.0: gpu_peek: 0x00419e04 SM_ISSUE_RATE_MODIFIER (BCAST)     = 0x8004bd10
+[94323.629808] nvidia 0000:01:00.0: gpu_peek: 0x00824148 GU_FUSE_SEC2_UCODE1                = 0x00000001
+[94323.629811] nvidia 0000:01:00.0: gpu_peek: 0x008241e0 FWSEC fuse (ucode id 9)            = 0x00000001
+[94323.629814] nvidia 0000:01:00.0: gpu_peek: FEAT_READOUT_1 units (3-bit, 0=full): 0 0 0 0 0 0 0 0 0
+[94323.629817] nvidia 0000:01:00.0: gpu_peek: FEAT_OVR_SM_SPEED_SELECT nibbles: 8 8 8 8 8 8 8 8
+
+=== STEP 8: MMA_BENCH OUTPUT (UNLOCKED, NO D3cold) ===
+# NVIDIA GeForce RTX 4050 Laptop GPU, 20 SMs, sm_89, iters=60000 reps=3
+mode       best TF/s   all runs
+f16/f16         50.9 50.9/50.9/50.9
+f16/f32         50.9 50.9/50.9/50.9
+bf16/f32        50.6 50.6/50.6/50.6
+s8/s32         101.2 101.2/101.2/101.2
+fp8/e4m3       100.9 100.8/100.9/100.9
+dp4a            24.9 24.9/24.8/24.2
+ffma            11.6 11.4/11.5/11.6

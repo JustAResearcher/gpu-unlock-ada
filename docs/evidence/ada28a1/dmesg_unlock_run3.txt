@@ -1,0 +1,3 @@
+[    3.880862] pci 0000:01:00.0: PCIe FLR returned: result=0
+[    4.139242] pci 0000:01:00.0: post-FLR GFW result: error=0 pci=0x28a110de plm=0x8b8f boot=0x3ff cpuctl=0x10 budget_us=2050000
+[    4.161954] pci 0000:01:00.0: gpu_unlock: unlocked

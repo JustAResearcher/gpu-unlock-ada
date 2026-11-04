@@ -27,6 +27,7 @@
 #define RTX_4070TI GU_AD104_RTX_4070_TI
 #define RTX_4070TIS_AD102 GU_AD102_RTX_4070_TI_SUPER
 #define RTX_4060_LAPTOP GU_AD107_RTX_4060_LAPTOP
+#define RTX_4050_LAPTOP GU_AD107_RTX_4050_LAPTOP
 #define RTX_4070_SUPER GU_AD104_RTX_4070_SUPER
 #define RTX_4090_LAPTOP GU_AD103M_RTX_4090_MOBILE
 #define RTX_4060 GU_AD107_RTX_4060
@@ -594,6 +595,24 @@ int main(void)
 	reset("0000:01:00.0");
 	ad107_experimental = true;
 	add("0000:01:00.0", RTX_4060_MOBILE, false);
+	fake.expected_concurrent = 1;
+	run();
+	assert(fake.loads == 1 && fake.started == 1 && fake.unlocks[0]);
+	/* The OEM-split RTX 4050 Laptop SKU shares the AD107 gate and profile. */
+	reset("0000:01:00.0");
+	add("0000:01:00.0", RTX_4050_LAPTOP, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	assert(logged("no supported card at \"0000:01:00.0\""));
+	reset("all");
+	ad107_experimental = true;
+	add("0000:01:00.0", RTX_4050_LAPTOP, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	assert(logged("experimental AD107 requires its exact PCI address in the list"));
+	reset("0000:01:00.0");
+	ad107_experimental = true;
+	add("0000:01:00.0", RTX_4050_LAPTOP, false);
 	fake.expected_concurrent = 1;
 	run();
 	assert(fake.loads == 1 && fake.started == 1 && fake.unlocks[0]);

@@ -1,0 +1,116 @@
+2026-10-31T03:26:10.400226-06:00 HOST kernel: Command line: BOOT_IMAGE=/boot/vmlinuz-7.0.0-42-generic root=UUID=DISK-UUID-REDACTED ro quiet splash nvidia_drm.modeset=0 gpu_unlock.targets=0000:01:00.0 gpu_unlock.ad107_experimental=1
+2026-10-31T03:26:10.400756-06:00 HOST kernel: Kernel command line: BOOT_IMAGE=/boot/vmlinuz-7.0.0-42-generic root=UUID=DISK-UUID-REDACTED ro quiet splash nvidia_drm.modeset=0 gpu_unlock.targets=0000:01:00.0 gpu_unlock.ad107_experimental=1
+2026-10-31T03:26:10.401199-06:00 HOST kernel: pci 0000:01:00.0: [10de:28a1] type 00 class 0x030000 PCIe Legacy Endpoint
+2026-10-31T03:26:10.401199-06:00 HOST kernel: pci 0000:01:00.0: BAR 0 [mem 0xfb000000-0xfbffffff]
+2026-10-31T03:26:10.401200-06:00 HOST kernel: pci 0000:01:00.0: BAR 1 [mem 0x7c00000000-0x7dffffffff 64bit pref]
+2026-10-31T03:26:10.401204-06:00 HOST kernel: pci 0000:01:00.0: BAR 3 [mem 0x7e00000000-0x7e01ffffff 64bit pref]
+2026-10-31T03:26:10.401204-06:00 HOST kernel: pci 0000:01:00.0: BAR 5 [io  0xf000-0xf07f]
+2026-10-31T03:26:10.401205-06:00 HOST kernel: pci 0000:01:00.0: ROM [mem 0xfc000000-0xfc07ffff pref]
+2026-10-31T03:26:10.401205-06:00 HOST kernel: pci 0000:01:00.0: PME# supported from D0 D3hot
+2026-10-31T03:26:10.401403-06:00 HOST kernel: pci 0000:01:00.0: vgaarb: setting as boot VGA device
+2026-10-31T03:26:10.401407-06:00 HOST kernel: pci 0000:01:00.0: vgaarb: bridge control possible
+2026-10-31T03:26:10.401407-06:00 HOST kernel: pci 0000:01:00.0: vgaarb: VGA device added: decodes=io+mem,owns=none,locks=none
+2026-10-31T03:26:10.401684-06:00 HOST kernel: pci 0000:01:00.1: D0 power state depends on 0000:01:00.0
+2026-10-31T03:26:10.401717-06:00 HOST kernel: pci 0000:01:00.0: Adding to iommu group 15
+2026-10-31T03:26:10.402182-06:00 HOST kernel: gpu_unlock: loading out-of-tree module taints kernel.
+2026-10-31T03:26:10.402182-06:00 HOST kernel: gpu_unlock: module verification failed: signature and/or required key missing - tainting kernel
+2026-10-31T03:26:10.402183-06:00 HOST kernel: pci 0000:01:00.0: asset request: gpu-unlock/610.43.03/gsp_ga10x.bin
+2026-10-31T03:26:10.402187-06:00 HOST kernel: pci 0000:01:00.0: asset result: gpu-unlock/610.43.03/gsp_ga10x.bin error=0 bytes=84277400
+2026-10-31T03:26:10.402187-06:00 HOST kernel: pci 0000:01:00.0: asset cache cleanup: gpu-unlock/610.43.03/gsp_ga10x.bin devres_released=1
+2026-10-31T03:26:10.402188-06:00 HOST kernel: pci 0000:01:00.0: driver probe resources: phase=entry empty=1
+2026-10-31T03:26:10.402189-06:00 HOST kernel: pci 0000:01:00.0: asset request: gpu-unlock/610.43.03/v67-ad102-610.43.03-four-plm.bin
+2026-10-31T03:26:10.402189-06:00 HOST kernel: pci 0000:01:00.0: asset result: gpu-unlock/610.43.03/v67-ad102-610.43.03-four-plm.bin error=0 bytes=64000
+2026-10-31T03:26:10.402190-06:00 HOST kernel: pci 0000:01:00.0: asset cache cleanup: gpu-unlock/610.43.03/v67-ad102-610.43.03-four-plm.bin devres_released=1
+2026-10-31T03:26:10.402194-06:00 HOST kernel: pci 0000:01:00.0: asset request: gpu-unlock/610.43.03/gsp_boot_ad102.bin
+2026-10-31T03:26:10.402194-06:00 HOST kernel: pci 0000:01:00.0: asset result: gpu-unlock/610.43.03/gsp_boot_ad102.bin error=0 bytes=36864
+2026-10-31T03:26:10.402195-06:00 HOST kernel: pci 0000:01:00.0: asset cache cleanup: gpu-unlock/610.43.03/gsp_boot_ad102.bin devres_released=1
+2026-10-31T03:26:10.402195-06:00 HOST kernel: pci 0000:01:00.0: asset request: gpu-unlock/610.43.03/gsp_boot_desc_ad102.bin
+2026-10-31T03:26:10.402195-06:00 HOST kernel: pci 0000:01:00.0: asset result: gpu-unlock/610.43.03/gsp_boot_desc_ad102.bin error=0 bytes=84
+2026-10-31T03:26:10.402245-06:00 HOST kernel: pci 0000:01:00.0: asset cache cleanup: gpu-unlock/610.43.03/gsp_boot_desc_ad102.bin devres_released=1
+2026-10-31T03:26:10.402250-06:00 HOST kernel: pci 0000:01:00.0: asset geometry: image=84226048 signature=4096 boot=36864 code=0x4800 data=0x800 manifest=0x0 parse=0
+2026-10-31T03:26:10.402251-06:00 HOST kernel: pci 0000:01:00.0: asset request: gpu-unlock/610.43.03/booter_load_ad102.bin
+2026-10-31T03:26:10.402251-06:00 HOST kernel: pci 0000:01:00.0: asset result: gpu-unlock/610.43.03/booter_load_ad102.bin error=0 bytes=57672
+2026-10-31T03:26:10.402252-06:00 HOST kernel: pci 0000:01:00.0: asset cache cleanup: gpu-unlock/610.43.03/booter_load_ad102.bin devres_released=1
+2026-10-31T03:26:10.402252-06:00 HOST kernel: pci 0000:01:00.0: claim: power=0 pm_cap=0x60 flags=0x0
+2026-10-31T03:26:10.402252-06:00 HOST kernel: pci 0000:01:00.0: claim: command=0x2 capability=0x112c8de1 BAR_mask=0x4b
+2026-10-31T03:26:10.402258-06:00 HOST kernel: pci 0000:01:00.0: layout inputs: fb_mb=0x17fd vga=0x1 mmu_plm=0x45cb8f mmu_lo=0x100000 mmu_hi=0x16fcff0 image=84226048 boot=36864
+2026-10-31T03:26:10.402259-06:00 HOST kernel: pci 0000:01:00.0: layout mmu: lo=0x10000000 hi=0x16fcff000 hi_exclusive=0x16fd00000 constrain=0
+2026-10-31T03:26:10.402259-06:00 HOST kernel: pci 0000:01:00.0: mmu lock ignored: high address is not the FB top
+2026-10-31T03:26:10.402259-06:00 HOST kernel: pci 0000:01:00.0: layout decoded: fb=0x17fd00000 vga=0x17fc00000 mmu_valid=0 mmu_low=0x10000000 frts=0x100000 heap=0x5800000 result=0
+2026-10-31T03:26:10.402260-06:00 HOST kernel: pci 0000:01:00.0: layout ranges: nonwpr=0x175000000 wpr=0x175100000 heap=0x175200000 gsp=0x17aaa0000 boot=0x17faf7000 frts=0x17fb00000 end=0x17fc00000 scrub_floor=0x16fd00000
+2026-10-31T03:26:10.402260-06:00 HOST kernel: pci 0000:01:00.0: DMA masks: streaming=0xffffffff coherent=0xffffffff requested=0xffffffff
+2026-10-31T03:26:10.402264-06:00 HOST kernel: pci 0000:01:00.0: Booter signature: fuse_raw=0x1 version=1 signatures=2 size=768
+2026-10-31T03:26:10.402266-06:00 HOST kernel: pci 0000:01:00.0: entry: plm=0xffffff8f ss0=0x53123046 ss1=0x3 wpr2_hi=0x0
+2026-10-31T03:26:10.402266-06:00 HOST kernel: pci 0000:01:00.0: AD102 permission before-firmware: WPR_CFG[0x1fa7cc]=0x4cb8f before=0x4cb8f expected=0xfffff0ff required=1 valid=1 pci=0x28a110de chip=0x197000a1
+2026-10-31T03:26:10.402268-06:00 HOST kernel: pci 0000:01:00.0: AD102 permission before-firmware: FBPA[0x9a0148]=0xffffff0f before=0xffffff0f expected=0xffffffff required=0 valid=1 pci=0x28a110de chip=0x197000a1
+2026-10-31T03:26:10.402269-06:00 HOST kernel: pci 0000:01:00.0: AD102 permission before-firmware: WPR[0x1fa7c4]=0x4cb8f before=0x4cb8f expected=0xffffffff required=1 valid=1 pci=0x28a110de chip=0x197000a1
+2026-10-31T03:26:10.402273-06:00 HOST kernel: pci 0000:01:00.0: AD102 permission before-firmware: FEAT[0x823804]=0xffffff8f before=0xffffff8f expected=0xffffffff required=1 valid=1 pci=0x28a110de chip=0x197000a1
+2026-10-31T03:26:10.402274-06:00 HOST kernel: pci 0000:01:00.0: AD102 before-firmware: readout1=0x410080 fields=0 0 2 0 0 2 0 2 0 valid=1 full=0
+2026-10-31T03:26:10.402274-06:00 HOST kernel: pci 0000:01:00.0: FWSEC: reading PROM at 0x300000
+2026-10-31T03:26:10.402281-06:00 HOST kernel: pci 0000:01:00.0: FWSEC: PROM bytes=1048576 signature=0xaa55
+2026-10-31T03:26:10.402281-06:00 HOST kernel: gpu_unlock: ROM chain: pos=0x0 data=0x52494350 bytes=64512 type=0x0 last=0
+2026-10-31T03:26:10.402282-06:00 HOST kernel: gpu_unlock: ROM chain: pos=0xfc00 data=0x5344504e bytes=24576 type=0xe0 last=0
+2026-10-31T03:26:10.402282-06:00 HOST kernel: gpu_unlock: ROM chain: pos=0x15c00 data=0x5344504e bytes=491008 type=0xe0 last=128
+2026-10-31T03:26:10.402283-06:00 HOST kernel: gpu_unlock: ROM expansion: base=0xfc00 ext=0xfc00 adjust=0x0
+2026-10-31T03:26:10.402283-06:00 HOST kernel: gpu_unlock: ROM BIT: offset=0x1b0 size=12 stride=6 tokens=19 adjust=0x0
+2026-10-31T03:26:10.402284-06:00 HOST kernel: gpu_unlock: ROM ucode table: offset=0x8d82d version=1 header=6 stride=6 entries=16
+2026-10-31T03:26:10.402288-06:00 HOST kernel: gpu_unlock: FWSEC descriptor: offset=0x3081c ROM_bytes=1048576 header=0x32c0301
+2026-10-31T03:26:10.402290-06:00 HOST kernel: gpu_unlock: FWSEC geometry: image_off=0x30b48 size=0x10500 imem=0xf700 va=0x0 pa=0x0 dmem=0xd80 pa=0x0 pkc=0xb24 interface=0x1c engine=0x400 ucode=9 signatures=2 versions=0x3 bytes=768
+2026-10-31T03:26:10.402291-06:00 HOST kernel: gpu_unlock: FWSEC interface: offset=0x1c version=1 header=4 stride=8 entries=2 FRTS=0x17fb00000
+2026-10-31T03:26:10.402291-06:00 HOST kernel: gpu_unlock: FWSEC mapper: version=3 size=64 cmd_offset=0xd40 cmd_size=64
+2026-10-31T03:26:10.402294-06:00 HOST kernel: pci 0000:01:00.0: FWSEC fuse: raw=0x1 version=1
+2026-10-31T03:26:10.402294-06:00 HOST kernel: gpu_unlock: FWSEC signature selection: versions=0x3 fuse_version=1 sig_bytes=384
+2026-10-31T03:26:10.402298-06:00 HOST kernel: pci 0000:01:00.0: Falcon reset begin: base=0x110000
+2026-10-31T03:26:10.402299-06:00 HOST kernel: pci 0000:01:00.0: poll timeout tolerated: reg=0x1100f4 last=0x47b7 mask=0x80000000 expected=0x80000000 budget_us=1000
+2026-10-31T03:26:10.402299-06:00 HOST kernel: pci 0000:01:00.0: Falcon pre-reset timeout tolerated per HW bug 3419321
+2026-10-31T03:26:10.402300-06:00 HOST kernel: pci 0000:01:00.0: Falcon reset done: base=0x110000 hwcfg=0x67b7 chip=0x197000a1
+2026-10-31T03:26:10.402300-06:00 HOST kernel: pci 0000:01:00.0: Falcon DMA: base=0x110000 dest=0x0 offset=0x0 src=0xede20000 size=0xf700 cmd=0x614
+2026-10-31T03:26:10.402300-06:00 HOST kernel: pci 0000:01:00.0: Falcon DMA: base=0x110000 dest=0x0 offset=0x0 src=0xede2f700 size=0xd80 cmd=0x600
+2026-10-31T03:26:10.402305-06:00 HOST kernel: pci 0000:01:00.0: Falcon start: base=0x110000 cpuctl=0x10 code_va=0x0 sig_dmem=0xb24 engine_mask=0x400 ucode=9 mailbox=0x0:0x0
+2026-10-31T03:26:10.402306-06:00 HOST kernel: pci 0000:01:00.0: FWSEC result: scratch=0x0 expected_hi16=0
+2026-10-31T03:26:10.402306-06:00 HOST kernel: pci 0000:01:00.0: FWSEC WPR2: low=0x17fb000 high=0x17fbe00 expected_page=0x17fb00 end=0x17fc00000
+2026-10-31T03:26:10.402307-06:00 HOST kernel: pci 0000:01:00.0: Falcon reset begin: base=0x840000
+2026-10-31T03:26:10.402307-06:00 HOST kernel: pci 0000:01:00.0: poll timeout tolerated: reg=0x8400f4 last=0x67b7 mask=0x80000000 expected=0x80000000 budget_us=1000
+2026-10-31T03:26:10.402308-06:00 HOST kernel: pci 0000:01:00.0: Falcon pre-reset timeout tolerated per HW bug 3419321
+2026-10-31T03:26:10.402312-06:00 HOST kernel: pci 0000:01:00.0: Falcon reset done: base=0x840000 hwcfg=0x67b7 chip=0x197000a1
+2026-10-31T03:26:10.402312-06:00 HOST kernel: pci 0000:01:00.0: Falcon DMA: base=0x840000 dest=0x0 offset=0x100 src=0xffff0000 size=0x7d00 cmd=0x614
+2026-10-31T03:26:10.402313-06:00 HOST kernel: pci 0000:01:00.0: Falcon DMA: base=0x840000 dest=0x0 offset=0x0 src=0xffff7e00 size=0x6000 cmd=0x600
+2026-10-31T03:26:10.402313-06:00 HOST kernel: pci 0000:01:00.0: Falcon start: base=0x840000 cpuctl=0x10 code_va=0x100 sig_dmem=0x10 engine_mask=0x1 ucode=3 mailbox=0x0:0xfffdf000
+2026-10-31T03:26:10.402313-06:00 HOST kernel: pci 0000:01:00.0: AD102 permission after-payload: WPR_CFG[0x1fa7cc]=0xfffff0ff before=0x4cb8f expected=0xfffff0ff required=1 valid=1 pci=0x28a110de chip=0x197000a1
+2026-10-31T03:26:10.402318-06:00 HOST kernel: pci 0000:01:00.0: AD102 permission after-payload: FBPA[0x9a0148]=0xffffff0f before=0xffffff0f expected=0xffffffff required=0 valid=1 pci=0x28a110de chip=0x197000a1
+2026-10-31T03:26:10.402318-06:00 HOST kernel: pci 0000:01:00.0: AD102 permission after-payload: WPR[0x1fa7c4]=0xffffffff before=0x4cb8f expected=0xffffffff required=1 valid=1 pci=0x28a110de chip=0x197000a1
+2026-10-31T03:26:10.402320-06:00 HOST kernel: pci 0000:01:00.0: AD102 permission after-payload: FEAT[0x823804]=0xffffffff before=0xffffff8f expected=0xffffffff required=1 valid=1 pci=0x28a110de chip=0x197000a1
+2026-10-31T03:26:10.402321-06:00 HOST kernel: pci 0000:01:00.0: AD102 after-payload: readout1=0x410080 fields=0 0 2 0 0 2 0 2 0 valid=1 full=0
+2026-10-31T03:26:10.402321-06:00 HOST kernel: pci 0000:01:00.0: AD102 payload result: boot=0 halt=0 marker=0x67b00001 expected=0x67b00001 marker_ok=1 required_permissions=1 cpuctl=0x10 halted=1 debug=0xda550000 ss0=0x53123046 ss1=0x3
+2026-10-31T03:26:10.402322-06:00 HOST kernel: pci 0000:01:00.0: selector read: SS0=0x53123046 expected_unlock=0x88888888
+2026-10-31T03:26:10.402326-06:00 HOST kernel: pci 0000:01:00.0: selector write: SS0=0x88888888
+2026-10-31T03:26:10.402326-06:00 HOST kernel: pci 0000:01:00.0: selector result: SS0=0x88888888 expected=0x88888888 matched=1
+2026-10-31T03:26:10.402327-06:00 HOST kernel: pci 0000:01:00.0: selector read: SS1=0x3 expected_unlock=0x8
+2026-10-31T03:26:10.402327-06:00 HOST kernel: pci 0000:01:00.0: selector write: SS1=0x8
+2026-10-31T03:26:10.402327-06:00 HOST kernel: pci 0000:01:00.0: selector result: SS1=0x8 expected=0x8 matched=1
+2026-10-31T03:26:10.402328-06:00 HOST kernel: pci 0000:01:00.0: AD102 selectors-applied: readout1=0x0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+2026-10-31T03:26:10.402333-06:00 HOST kernel: pci 0000:01:00.0: pre-FLR selectors: ss0=0x88888888 expected=0x88888888 ss1=0x8 expected=0x8
+2026-10-31T03:26:10.402334-06:00 HOST kernel: pci 0000:01:00.0: AD102 pre-FLR: readout1=0x0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+2026-10-31T03:26:10.402335-06:00 HOST kernel: pci 0000:01:00.0: PCIe FLR begin: BME=0 DMA retained, chip=0x197000a1
+2026-10-31T03:26:10.402335-06:00 HOST kernel: pci 0000:01:00.0: PCIe FLR returned: result=0
+2026-10-31T03:26:10.402335-06:00 HOST kernel: pci 0000:01:00.0: post-FLR BAR ready: chip=0x197000a1
+2026-10-31T03:26:10.402380-06:00 HOST kernel: pci 0000:01:00.0: post-FLR GFW result: error=0 pci=0x28a110de plm=0x8b8f boot=0x3ff cpuctl=0x10 budget_us=2050000
+2026-10-31T03:26:10.402385-06:00 HOST kernel: pci 0000:01:00.0: engine reset assert: phase=post-FLR base=0x840000 before=0x0 write=0x1
+2026-10-31T03:26:10.402386-06:00 HOST kernel: pci 0000:01:00.0: engine reset propagation: phase=post-FLR base=0x840000 first=0x1 tenth=0x1
+2026-10-31T03:26:10.402386-06:00 HOST kernel: pci 0000:01:00.0: engine reset asserted: phase=post-FLR base=0x840000 error=0 last=0x1
+2026-10-31T03:26:10.402386-06:00 HOST kernel: pci 0000:01:00.0: engine reset release: phase=post-FLR base=0x840000 before=0x1 write=0x0
+2026-10-31T03:26:10.402387-06:00 HOST kernel: pci 0000:01:00.0: engine reset released: phase=post-FLR base=0x840000 engine=0x0 hwcfg2=0x67b7
+2026-10-31T03:26:10.402387-06:00 HOST kernel: pci 0000:01:00.0: post-FLR SEC2 reset released, GSP halted, BME=0 pending=0 WPR2=1ffffe00:00000000 SS0=88888888 SS1=00000008
+2026-10-31T03:26:10.402391-06:00 HOST kernel: pci 0000:01:00.0: AD102 permission post-FLR: WPR_CFG[0x1fa7cc]=0x4cb8f before=0x4cb8f expected=0xfffff0ff required=1 valid=1 pci=0x28a110de chip=0x197000a1
+2026-10-31T03:26:10.402392-06:00 HOST kernel: pci 0000:01:00.0: AD102 permission post-FLR: FBPA[0x9a0148]=0xffffff0f before=0xffffff0f expected=0xffffffff required=0 valid=1 pci=0x28a110de chip=0x197000a1
+2026-10-31T03:26:10.402392-06:00 HOST kernel: pci 0000:01:00.0: AD102 permission post-FLR: WPR[0x1fa7c4]=0x4cb8f before=0x4cb8f expected=0xffffffff required=1 valid=1 pci=0x28a110de chip=0x197000a1
+2026-10-31T03:26:10.402393-06:00 HOST kernel: pci 0000:01:00.0: AD102 permission post-FLR: FEAT[0x823804]=0xffffffff before=0xffffff8f expected=0xffffffff required=1 valid=1 pci=0x28a110de chip=0x197000a1
+2026-10-31T03:26:10.402393-06:00 HOST kernel: pci 0000:01:00.0: AD102 post-FLR: readout1=0x0 fields=0 0 0 0 0 0 0 0 0 valid=1 full=1
+2026-10-31T03:26:10.402393-06:00 HOST kernel: pci 0000:01:00.0: driver probe resources: phase=handoff empty=1
+2026-10-31T03:26:10.402398-06:00 HOST kernel: pci 0000:01:00.0: restore streaming mask: actual=0xffffffff expected=0xffffffff
+2026-10-31T03:26:10.402398-06:00 HOST kernel: pci 0000:01:00.0: restore coherent mask: actual=0xffffffff expected=0xffffffff
+2026-10-31T03:26:10.402400-06:00 HOST kernel: pci 0000:01:00.0: restore PCI command: actual=0x2 original=0x2 mask=0x6
+2026-10-31T03:26:10.402401-06:00 HOST kernel: pci 0000:01:00.0: gpu_unlock: unlocked
+2026-10-31T03:26:10.402765-06:00 HOST kernel: nvidia 0000:01:00.0: enabling device (0002 -> 0003)
+2026-10-31T03:26:10.402769-06:00 HOST kernel: nvidia 0000:01:00.0: vgaarb: VGA decodes changed: olddecodes=io+mem,decodes=none:owns=none
+2026-10-31T03:26:10.402869-06:00 HOST kernel: [drm] Initialized nvidia-drm 0.0.0 for 0000:01:00.0 on minor 1

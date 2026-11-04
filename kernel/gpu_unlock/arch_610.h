@@ -23,6 +23,7 @@ enum gpu_unlock_booter_arch {
 #define GU_AD106_RTX_4060_TI_16GB 0x2805u
 #define GU_AD107_RTX_4060 0x2882u
 #define GU_AD107_RTX_4060_LAPTOP 0x28a0u
+#define GU_AD107_RTX_4050_LAPTOP 0x28a1u /* same AD107M silicon as 0x28e1, OEM SKU split */
 #define GU_AD107_RTX_4060_MOBILE 0x28e0u
 #define GU_AD107_RTX_4050_MOBILE 0x28e1u
 

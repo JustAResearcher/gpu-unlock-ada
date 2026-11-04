@@ -1,0 +1,9 @@
+# Telemetry summary (nvidia-smi --loop-ms=100 sampler during collect)
+# columns: run, samples, max_SM_MHz, max_power_W, throttle_histogram
+stock/run2 samples=36 max_SM_MHz=2490 max_W=35.16 throttle=[     24 0x0000000000000001;      2 0x0000000000000004;     10 0x0000000000000024;]
+stock/run3 samples=37 max_SM_MHz=2490 max_W=25.49 throttle=[     17 0x0000000000000001;     20 0x0000000000000024;]
+unlock/run2 samples=35 max_SM_MHz=2505 max_W=27.22 throttle=[     22 0x0000000000000001;      3 0x0000000000000004;     10 0x0000000000000024;]
+unlock/run3 samples=36 max_SM_MHz=2505 max_W=26.53 throttle=[     15 0x0000000000000001;      6 0x0000000000000004;     15 0x0000000000000024;]
+
+# Note: sampler coverage is partial (stdout buffering); throttle codes:
+# 0x1=GPU_IDLE 0x4=SW_POWER_CAP 0x24=GPU_IDLE|SW_POWER_CAP

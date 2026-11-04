@@ -1,0 +1,3 @@
+build/matched-bench/mma_bench: La suma coincide
+build/matched-bench/validate_gemm: La suma coincide
+build/matched-bench/gemm_bench: La suma coincide
