@@ -215,7 +215,7 @@ In the captured run with the unlock retained, **best-of-run** instruction probes
 | **cuBLAS $4096^3$ GEMM BF16, median** | 21.48 TF/s | **31.85 TF/s** | **+48.3%** |
 
 - **Numerical checks:** the recorded seeded FP16/BF16 GEMM cases reported `failures=0`, `max_abs=0` versus the CPU FP64 reference. This does not prove universal bitwise equivalence.
-- **Measurement discipline:** cuBLAS **+61.6%** BF16 is a *best-to-best* comparison; the median gain is **+48.3%**. Probe figures shown are best-of-three, not long-duration throughput. The `D3cold`-wiped negative-control runs were not neutral for cuBLAS: they ran 13–19% *below* stock at $4096^3$/$8192^3$ (cause not measured). [Full comparison](docs/ada-28a1-report.md).
+- **Measurement discipline:** cuBLAS **+61.6%** BF16 is a *best-to-best* comparison; the median gain is **+48.3%**. Probe figures shown are best-of-three, not long-duration throughput. A [follow-up](docs/evidence/ada28a1-followup-2026-11-04/README.md) repeated the retained unlock in 5/5 runs (tensor 1.99×, cuBLAS 4096³ +42% FP16 / +50% BF16 vs same-day stock) and showed the `D3cold`-wiped state equals stock; an earlier 13–19% wiped-run slowdown did not reproduce. [Full comparison](docs/ada-28a1-report.md).
 - **Live No-Reboot Recovery**: Documented live cold rail resets via unbound ACPI `D3cold` → `D0` transitions without requiring reboot or EC reset.
 
 ### 4. Companion research projects (not automatic integration)

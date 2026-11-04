@@ -210,16 +210,33 @@ non-gated controls (`f16/f16`, `s8/s32`, `dp4a`, `ffma`) remain at `1.00×`.
 > and Unlock `run2` that did not match `gemm_stock_run3.jsonl` and `gemm_unlock_run2.jsonl`.
 > Every cell above is now generated directly from the five `gemm_*.jsonl` files (all `failures=0`);
 > the Stock `run2` and `run4_nod3cold` columns, and therefore the headline speedups, were already correct.
-> The raw files show the `D3cold`-wiped runs were **not** neutral for cuBLAS: at $4096^3$ and $8192^3$
-> they ran **13–19 % below stock** (`run2`), while the tensor probes stayed at `1.00×` and the non-gated
-> `mma_bench` controls (`s8/s32`, `dp4a`, `ffma`) were also 5–12 % lower. The cause of that slowdown
-> (clocks, thermals or power state after the rail cut) was not measured and is `NOT_DEMONSTRATED`.
+> In these 2026-10-31 files the `D3cold`-wiped runs were 13–19 % below stock on cuBLAS at $4096^3$/$8192^3$,
+> and the non-gated `mma_bench` controls were 5–12 % lower. **A controlled repetition on 2026-11-04 did not
+> reproduce this:** 3 wiped vs 3 stock runs were equal within noise (see *Follow-up* below). The slowdown was
+> specific to that session, not a property of `D3cold`; its cause is `NOT_DEMONSTRATED`.
 
 ### 4. Seeded numerical validation (`validate_gemm`)
 
 All 6 seeded FP16/FP32 and BF16/FP32 GEMM geometries (`256×256×256`,
 `64×96×128`, `127×65×95`) matched the CPU FP64 reference with `failures=0` and
 `max_abs=0` across all stock and unlocked runs (`numerical_unlock_run4_nod3cold.txt`).
+
+## Follow-up (2026-11-03/04): repetition and D3cold diagnosis
+
+Raw data, scripts and telemetry: [`docs/evidence/ada28a1-followup-2026-11-04/`](evidence/ada28a1-followup-2026-11-04/README.md).
+Same laptop, kernel, driver and benchmark binaries; 11 runs, every numerical check `failures=0`.
+
+| Group | n | Tensor `f16_f32` best | cuBLAS 4096³ FP16 / BF16 median | cuBLAS 8192³ FP16 / BF16 median | RM getter `fmla32` |
+|---|---:|---:|---:|---:|---|
+| Stock | 3 | 25.46 Top/s | 21.90 / 21.58 TF/s | 20.72 / 20.12 TF/s | `1` (half) |
+| `D3cold`-wiped (`DPM=0x02`) | 3 | 25.40 (0.998×) | 22.49 / 21.66 (+2.7 % / +0.4 %) | 20.72 / 20.14 (±0 %) | `0` (**false full**) |
+| Unlocked, `D3cold` blocked | 5 | **50.70 (1.992×)** | **31.03 / 32.40 (+41.7 % / +50.2 %)** | **28.15 / 27.83 (+35.8 % / +38.3 %)** | `0` (full) |
+
+- The retained unlock reproduces in 5/5 runs; the CPU platform profile (`performance` / `balanced` / `power-saver`) does not change GPU results (40 W enforced limit in all).
+- The `D3cold` false positive reproduces: the getter reports full rate while throughput is stock.
+- The 13–19 % wiped-run slowdown seen on 2026-10-31 does **not** reproduce; wiped equals stock.
+- cuBLAS runs at the 40 W power cap (SM clock ~1.9–2.1 GHz), which bounds its gain below the 2× instruction rate.
+- The first tensor-probe repetition can read low while clocks ramp (e.g. the `42.73` sample in `run4`); `1024³` cuBLAS is bimodal and not used for conclusions.
 
 ## Updated hypothesis ledger
 
