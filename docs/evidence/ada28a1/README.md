@@ -22,7 +22,8 @@ The bundle preserves both experimental phases:
    `NVreg_DynamicPowerManagement=0x00`), demonstrating the **2.00× tensor
    issue-rate speedup** (`25.320 → 50.682 Top/s` FP16/FP32, `12.660 → 25.281
    Top/s` TF32, `25.5 → 50.9 TF/s` MMA FP16/BF16, `50.9 → 101.4 TF/s` FP8 E4M3,
-   and `+36.2%` FP16 / `+61.6%` BF16 cuBLAS $4096^3$ GEMM).
+   and median `+35.9%` FP16 / `+48.3%` BF16 cuBLAS $4096^3$ GEMM; best-to-best
+   `+36.2%` / `+61.6%`).
 
 ## Boot timeline
 
@@ -78,7 +79,7 @@ All runs used the same three binaries (`binaries_sha256.txt`) and the same
 - `tensor_unlock_run4_nod3cold.json` — **Phase 2 unlocked with `D3cold` blocked** (`f16_f32 = 50.682 Top/s` [**2.002×**], `tf32 = 25.281 Top/s` [**1.997×**], `u4_s32 = 201.84 Top/s` [**1.003×**], `mismatches = 0`).
 - `gemm_stock_run2.jsonl`, `gemm_stock_run3.jsonl` — stock cuBLAS GEMM ($1024^3, 4096^3, 8192^3$ FP16/FP32 and BF16/FP32).
 - `gemm_unlock_run2.jsonl`, `gemm_unlock_run3.jsonl` — Phase 1 `D3cold`-wiped negative control.
-- `gemm_unlock_run4_nod3cold.jsonl` — **Phase 2 unlocked with `D3cold` blocked** ($4096^3$ FP16/FP32 `+36.2%`, BF16/FP32 `+61.6%`; $8192^3$ FP16/FP32 `+36.3%`, BF16/FP32 `+38.3%`, `failures = 0`).
+- `gemm_unlock_run4_nod3cold.jsonl` — **Phase 2 unlocked with `D3cold` blocked** (median vs stock `run2`: $4096^3$ FP16/FP32 `+35.9%`, BF16/FP32 `+48.3%`; $8192^3$ FP16/FP32 `+35.6%`, BF16/FP32 `+38.4%`; best-to-best `+36.2%` / `+61.6%` / `+36.3%` / `+38.3%`; `failures = 0`).
 - `numerical_stock_run2.txt`, `numerical_stock_run3.txt`, `numerical_unlock_run2.txt`, `numerical_unlock_run3.txt`, `numerical_unlock_run4_nod3cold.txt` — `validate_gemm` results (6 seeded shapes vs CPU FP64 reference, `failures=0, max_abs=0` in every run).
 
 ## Telemetry

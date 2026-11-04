@@ -15,7 +15,7 @@ dGPU power rail after boot:
 | :--- | :--- | :--- |
 | **Supported transactionally** (payload installs, gates pass, driver binds, system stable) | **DEMONSTRATED** | 3 boot unlock cycles + 1 live `D3cold`→`D0` cycle, zero Xid errors, 24/24 `validate_gemm` cases + all `gemm_bench` / tensor checks exact (`failures=0`) |
 | **Optimus `D3cold` (`NVreg_DynamicPowerManagement=0x02`) wipes hardware unlock while RM getter still reports `0 0 0` (full rate)** | **DEMONSTRATED** | `gpu_peek` BAR0 readback (`gpu_peek_stock_run4.txt`): after `D3cold` (`LNXPOWER:00=0`, `Video Memory: Off`), `SS0` resets to `0x53123046` and `FEAT_READOUT_1` (`0x00823818`) resets to `0x00410080` (`0 0 2 0 0 2 0 2 0`), while `ioctl 0x20801230` returns cached `0 0 0` (`NVreg_PreserveVideoMemoryAllocations=1`) and benchmarks measure `1.00×` (`run2`, `run3`) |
-| **Performance unlocked (2.00× issue rate) when `D3cold` is inhibited (`run4_nod3cold`)** | **DEMONSTRATED** | With `power/control=on` + `NVreg_DynamicPowerManagement=0x00`: `SS0=0x88888888` and `FEAT_READOUT_1=0x00000000` persist during active CUDA (`dmesg_unlock_run4_nod3cold.txt`); tensor `f16_f32` **25.320 → 50.682 Top/s (2.002×)**, `tf32` **12.660 → 25.281 Top/s (1.997×)**, `mma_bench` `f16/f32` & `bf16/f32` **25.5 → 50.9 TF/s (1.996×)**, `fp8/e4m3` **50.9 → 101.4 TF/s (1.992×)**, cuBLAS $4096^3$ GEMM **+36.2% FP16 / +61.6% BF16** |
+| **Performance unlocked (2.00× issue rate) when `D3cold` is inhibited (`run4_nod3cold`)** | **DEMONSTRATED** | With `power/control=on` + `NVreg_DynamicPowerManagement=0x00`: `SS0=0x88888888` and `FEAT_READOUT_1=0x00000000` persist during active CUDA (`dmesg_unlock_run4_nod3cold.txt`); tensor `f16_f32` **25.320 → 50.682 Top/s (2.002×)**, `tf32` **12.660 → 25.281 Top/s (1.997×)**, `mma_bench` `f16/f32` & `bf16/f32` **25.5 → 50.9 TF/s (1.996×)**, `fp8/e4m3` **50.9 → 101.4 TF/s (1.992×)**, cuBLAS $4096^3$ GEMM median **+35.9% FP16 / +48.3% BF16** (best-to-best +36.2% / +61.6%) |
 | **Live no-reboot cold reset via unbound `D3cold` → `D0` transition** | **DEMONSTRATED** | Cycling `0000:01:00.0` through ACPI `D3cold` (`LNXPOWER:00` 0→1) while unbound clears `WPR2_HI` to `0x00000000`, allowing `gpu_unlock` to run in a live session without rebooting or EC reset |
 
 > [!IMPORTANT]
@@ -197,14 +197,23 @@ non-gated controls (`f16/f16`, `s8/s32`, `dp4a`, `ffma`) remain at `1.00×`.
 
 ### 3. cuBLAS large matrix multiplication (`gemm_bench`, 5 reps, 10 warmups, 20 iterations)
 
-| Shape ($M=N=K$) | Mode | Stock `run2` median / best (TF/s) | Stock `run3` median / best (TF/s) | Unlock `run2` (`D3cold`-wiped) median / best | **Unlock `run4_nod3cold` median / best (TF/s)** | **Δ median / Δ best (`run4` vs Stock `run2`)** | Failures |
-| :--- | :--- | ---: | ---: | ---: | ---: | ---: | ---: |
-| $1024^3$ | FP16/FP32 | 20.65 / 20.69 | 20.73 / 20.84 | 20.72 / 20.82 | **23.13 / 23.34** | **+12.0% / +12.8%** | 0 |
-| $1024^3$ | BF16/FP32 | 20.57 / 20.63 | 20.68 / 20.77 | 20.65 / 20.71 | **23.23 / 23.52** | **+12.9% / +14.0%** | 0 |
-| $4096^3$ | FP16/FP32 | 22.47 / 22.55 | 22.39 / 22.57 | 22.40 / 22.44 | **30.54 / 30.72** | **+35.9% / +36.2%** | 0 |
-| $4096^3$ | BF16/FP32 | 21.48 / 21.50 | 21.46 / 21.56 | 21.56 / 21.60 | **31.85 / 34.75** | **+48.3% / +61.6%** | 0 |
-| $8192^3$ | FP16/FP32 | 20.42 / 20.48 | 20.38 / 20.46 | 20.65 / 20.75 | **27.69 / 27.92** | **+35.6% / +36.3%** | 0 |
-| $8192^3$ | BF16/FP32 | 19.76 / 19.84 | 19.81 / 19.85 | 19.91 / 19.99 | **27.35 / 27.44** | **+38.4% / +38.3%** | 0 |
+| Shape ($M=N=K$) | Mode | Stock `run2` median / best (TF/s) | Stock `run3` median / best (TF/s) | Unlock `run2` (`D3cold`-wiped) median / best | Unlock `run3` (`D3cold`-wiped) median / best | **Unlock `run4_nod3cold` median / best (TF/s)** | **Δ median / Δ best (`run4` vs Stock `run2`)** | Wiped `run2` median vs Stock `run2` | Failures |
+| :--- | :--- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| $1024^3$ | FP16/FP32 | 20.65 / 20.69 | 20.18 / 20.22 | 20.37 / 20.44 | 20.53 / 20.64 | **23.13 / 23.34** | **+12.0% / +12.8%** | -1.4% | 0 |
+| $1024^3$ | BF16/FP32 | 20.57 / 20.63 | 20.10 / 20.31 | 20.51 / 20.55 | 20.38 / 20.57 | **23.23 / 23.52** | **+12.9% / +14.0%** | -0.3% | 0 |
+| $4096^3$ | FP16/FP32 | 22.47 / 22.55 | 21.99 / 22.03 | 18.74 / 18.85 | 18.50 / 18.55 | **30.54 / 30.72** | **+35.9% / +36.2%** | -16.6% | 0 |
+| $4096^3$ | BF16/FP32 | 21.48 / 21.50 | 21.05 / 21.13 | 17.39 / 17.41 | 17.26 / 17.29 | **31.85 / 34.75** | **+48.3% / +61.6%** | -19.0% | 0 |
+| $8192^3$ | FP16/FP32 | 20.42 / 20.48 | 19.85 / 20.03 | 17.62 / 17.72 | 17.46 / 17.48 | **27.69 / 27.92** | **+35.6% / +36.3%** | -13.7% | 0 |
+| $8192^3$ | BF16/FP32 | 19.76 / 19.84 | 19.49 / 19.54 | 17.28 / 17.35 | 17.12 / 17.21 | **27.35 / 27.44** | **+38.4% / +38.3%** | -12.6% | 0 |
+
+> **Correction (2026-11-03):** an earlier version of this table showed values for Stock `run3`
+> and Unlock `run2` that did not match `gemm_stock_run3.jsonl` and `gemm_unlock_run2.jsonl`.
+> Every cell above is now generated directly from the five `gemm_*.jsonl` files (all `failures=0`);
+> the Stock `run2` and `run4_nod3cold` columns, and therefore the headline speedups, were already correct.
+> The raw files show the `D3cold`-wiped runs were **not** neutral for cuBLAS: at $4096^3$ and $8192^3$
+> they ran **13–19 % below stock** (`run2`), while the tensor probes stayed at `1.00×` and the non-gated
+> `mma_bench` controls (`s8/s32`, `dp4a`, `ffma`) were also 5–12 % lower. The cause of that slowdown
+> (clocks, thermals or power state after the rail cut) was not measured and is `NOT_DEMONSTRATED`.
 
 ### 4. Seeded numerical validation (`validate_gemm`)
 

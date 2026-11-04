@@ -80,7 +80,7 @@ En las pruebas capturadas, las **mejores** muestras de emisión de instrucciones
 | **cuBLAS $4096^3$ GEMM BF16, mediana** | 21.48 TF/s | **31.85 TF/s** | **+48.3%** |
 
 - **Verificación numérica:** los casos GEMM con semilla registran `failures=0` y `max_abs=0` frente a CPU FP64. No demuestra equivalencia bit a bit universal.
-- **Alcance:** **+61.6 %** BF16 es una comparación *mejor contra mejor*; la mejora de la **mediana** es **+48.3 %**. El 2× de las pruebas de instrucciones tampoco es un mínimo sostenido.
+- **Alcance:** **+61.6 %** BF16 es una comparación *mejor contra mejor*; la mejora de la **mediana** es **+48.3 %**. El 2× de las pruebas de instrucciones tampoco es un mínimo sostenido. Los controles negativos con `D3cold` no fueron neutrales en cuBLAS: quedaron entre 13 % y 19 % *por debajo* de stock en $4096^3$/$8192^3$ (causa no medida).
 - **Recuperación en Caliente sin Reinicio**: Se documentó el restablecimiento en frío mediante transiciones ACPI `D3cold` → `D0` sin necesidad de reiniciar la máquina ni restablecer el controlador embebido (EC).
 
 ### 4. Proyectos relacionados (sin integración automática demostrada)
