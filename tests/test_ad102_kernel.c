@@ -254,6 +254,22 @@ int main(int argc, char **argv)
         puts("AD107 0x28e0 profile dispatch under mocked registers PASS");
         }
         {
+        /* Same AD102-family payload through the exact 0x27a0 profile under
+         * synthetic AD104 A1 / 12 GiB-class registers. Not captured silicon data. */
+        ad102_setup(&w);dev.device=GU_AD104M_RTX_4080_LAPTOP;load_rom(argv[1]);regs[0]=0x194000a1;
+        regs[0x1183a4/4]=0x2ff4;regs[0x625f04/4]=1;regs[0x1fa7c8/4]=0x45cb8f;
+        regs[0x1fa82c/4]=0x100000;regs[0x1fa830/4]=0x2cf3ff0;
+        regs[(GU_FUSE_SEC2_UCODE1+2*4)/4]=1;
+        fake.fwsec_wpr=1;fake.fwsec_wpr_lo=0x2ff2000;fake.fwsec_wpr_hi=0x2ff2e00;
+        struct gpu_unlock_610_shared shared104m={0};last_work=NULL;
+        assert(!gpu_unlock_610_load_shared(&dev,&shared104m));
+        ret=gpu_unlock_610_unlock(&dev,&shared104m);
+        gpu_unlock_610_release_shared(&shared104m);
+        assert(!ret && fake.starts==1 && fake.gsp_starts==1 && fake.flrs==1);
+        assert(!fake.live && !fake.fw_live && dev.refs==1);
+        puts("AD104M 0x27a0 profile dispatch under mocked registers PASS");
+        }
+        {
         /* Same AD102-family payload through the exact 0x2782 profile under
          * mocked registers. This is not silicon proof. */
         ad102_setup(&w);dev.device=GU_AD104_RTX_4070_TI;load_rom(argv[1]);

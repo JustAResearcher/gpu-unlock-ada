@@ -1,0 +1,22 @@
+{
+  "telemetry.csv": {
+    "temperature.gpu": {
+      "max": 75.0,
+      "median": 68.0
+    },
+    "power.draw [W]": {
+      "max": 119.08,
+      "median": 80.48
+    }
+  },
+  "strata/telemetry.csv": {
+    "temperature.gpu": {
+      "max": 81.0,
+      "median": 71.5
+    },
+    "power.draw [W]": {
+      "max": 117.33,
+      "median": 100.755
+    }
+  }
+}

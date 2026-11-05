@@ -219,6 +219,7 @@ static void reset(char *list)
 	ad103_experimental = false;
 	ad106_experimental = false;
 	ad104_experimental = false;
+	ad104m_experimental = false;
 	rtx4070tis_ad102_experimental = false;
 	ad107_experimental = false;
 	ad103m_experimental = false;
@@ -360,6 +361,31 @@ int main(void)
 	run();
 	assert(fake.loads == 1 && fake.started == 1 && fake.unlocks[0]);
 	puts("ad103: gated exact-card dispatch PASS");
+
+	/* Mobile admission is independent of desktop flags. Check both target
+	 * forms, default-off, wrong address, all, and an already bound GPU. */
+	char *mobile_targets[] = {NULL, "all", "0000:02:00.0", "0000:01:00.0",
+		"0000:01:00.0,0000:02:00.0"};
+	for (unsigned int enabled = 0; enabled < 2; enabled++) {
+		for (unsigned int bound = 0; bound < 2; bound++) {
+			for (unsigned int t = 0; t < ARRAY_SIZE(mobile_targets); t++) {
+				reset(mobile_targets[t]);
+				ad104m_experimental = enabled;
+				ad104_experimental = ad103m_experimental = true;
+				add("0000:01:00.0", GU_AD104M_RTX_4080_LAPTOP, bound);
+				bool expected = enabled && !bound && t >= 3;
+				fake.expected_concurrent = expected;
+				run();
+				assert(fake.started == expected && fake.unlocks[0] == expected);
+			}
+		}
+	}
+	reset("0000:01:00.0");
+	ad104m_experimental = true;
+	add("0000:01:00.0", 0x27e0, false);
+	run();
+	assert(!fake.loads && !fake.started);
+	puts("AD104M 27a0 independent opt-in/exact address/bound-device guards PASS");
 
 	/* AD104 must stay opt-in, reject all, wrong BDFs and bound cards, and
 	 * accept its exact BDF alone or in a list. */

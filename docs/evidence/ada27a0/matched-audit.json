@@ -1,0 +1,46 @@
+{
+  "phases": {
+    "stock": {
+      "compute_complete": true,
+      "strata_complete": true,
+      "soak_complete": false,
+      "fmla32": 1,
+      "large_gemm_cases": 18,
+      "large_gemm_cells_checked": 509607936,
+      "large_gemm_failures": 0,
+      "tensor_mismatches": 0,
+      "seeded_cases_passed": 6,
+      "strata_requests": 10,
+      "cached_tokens": 0
+    },
+    "unlocked": {
+      "compute_complete": true,
+      "strata_complete": true,
+      "soak_complete": true,
+      "fmla32": 0,
+      "large_gemm_cases": 18,
+      "large_gemm_cells_checked": 509607936,
+      "large_gemm_failures": 0,
+      "tensor_mismatches": 0,
+      "seeded_cases_passed": 6,
+      "strata_requests": 10,
+      "cached_tokens": 0,
+      "soak_gemms": 216400
+    },
+    "recovered": {
+      "compute_complete": true,
+      "strata_complete": true,
+      "soak_complete": true,
+      "fmla32": 1,
+      "large_gemm_cases": 18,
+      "large_gemm_cells_checked": 509607936,
+      "large_gemm_failures": 0,
+      "tensor_mismatches": 0,
+      "seeded_cases_passed": 6,
+      "strata_requests": 10,
+      "cached_tokens": 0,
+      "soak_gemms": 136400
+    }
+  },
+  "all_requests_identical": true
+}
