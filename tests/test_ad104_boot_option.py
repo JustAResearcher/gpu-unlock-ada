@@ -30,3 +30,11 @@ class AD104BootOptionTests(unittest.TestCase):
         lines = output.getvalue().splitlines()
         self.assertIn("RTX 4070 (experimental) at 0000:01:00.0 [10de:2786]:", lines)
         self.assertIn("gpu_unlock.targets=0000:01:00.0 gpu_unlock.ad104_experimental=1", lines)
+
+    def test_mobile_27a0_uses_independent_flag(self):
+        result = subprocess.CompletedProcess([], 0, "0000:01:00.0 VGA [10de:27a0]\n0000:02:00.0 VGA [10de:27e0]\n")
+        output = io.StringIO()
+        with mock.patch.object(boot.subprocess, "run", return_value=result), contextlib.redirect_stdout(output):
+            self.assertEqual(boot.main(), 0)
+        self.assertIn("gpu_unlock.targets=0000:01:00.0 gpu_unlock.ad104m_experimental=1", output.getvalue())
+        self.assertNotIn("0000:02:00.0", output.getvalue())

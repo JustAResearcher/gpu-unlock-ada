@@ -42,3 +42,6 @@
 
 # Preserve exact native RTX 4070 evidence bytes across platforms.
 /docs/evidence/ada2786/* -text
+
+# Preserve published MSI 27a0 A/B/A observations byte-for-byte.
+/docs/evidence/ada27a0/** -text whitespace=cr-at-eol

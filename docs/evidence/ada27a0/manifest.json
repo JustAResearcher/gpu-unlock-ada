@@ -1,0 +1,35 @@
+{
+  "gpu": [
+    "GPU-REDACTED, NVIDIA GeForce RTX 4080 Laptop GPU, 00000000:01:00.0, 610.57.04, [N/A]"
+  ],
+  "kernel": "7.1.5+kali-amd64",
+  "hashes": {
+    "gemm_bench": "dd1b724e71bb23312a0c7a74756fc97048c85ed65e1428cd3c6b0241f7120713",
+    "validate_gemm": "466782dbcae2aa9d5f41d1f463b86116f4442ac05092a6d98640b36b3774d349",
+    "tensor_modes.cubin": "267963e693e2beba7aba9b29a6f517478cffe676851a3eb3154011c160f0b194",
+    "mma_bench": "796a6c3cd888a1e2687621ec953f462b6791ca0d98fa8dba1fc5f4c9fb68ee12",
+    "torch_bench.py": "45bb4c5104774e9dea28f570353a55d5919a8ca7b15d259424cc89dfa1c188ab",
+    "run_compute.py": "3b5e5df71bc9136181298d74af10a51d12a38c072039fd69dda2ba2c86449edb",
+    "tensor_modes_driver_runner.py": "b8dc74765959a9102f5bda7c396ea7457b5669dcefa4fbaf326bc3046d2920aa"
+  },
+  "torch_python": "<TORCH_PYTHON>",
+  "hardware_tested_source_commit": "6b87a74",
+  "hardware_tested_module_sha256": "c8f8be866fd6f4be2119685195049087b4424c346f4b993602375e1aa4de8fa4",
+  "strata_inputs": [
+    {
+      "name": "Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-00001-of-00002.gguf",
+      "size": 47039860096,
+      "sha256": "219ea929900dfa9ef091f3aa473fdba6874b65fcb36526d7d851ac9e95856d15"
+    },
+    {
+      "name": "Qwen3.8-Flash-Next-GSQ-RCO-IQ3_XXS-00002-of-00002.gguf",
+      "size": 28800138432,
+      "sha256": "316b46f3a2dbd68c900f43136ab9449f9dcc3725dfd8c794847c204bc161e113"
+    },
+    {
+      "name": "expert-profile.bin",
+      "size": 196632,
+      "sha256": "8f59b4aa8873209dff11c11e37bcda9529a1335b724a1afeea37bf6388975baf"
+    }
+  ]
+}
