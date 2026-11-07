@@ -132,6 +132,14 @@ static const struct cluster_reg cluster_regs[] = {
 	{ "FWSEC fuse (ucode id 9)",         0x008241e0 },
 };
 
+/* FEAT_READOUT_1's nine 3-bit fields are not contiguous: they sit at these
+ * bit offsets, with gaps at bit 6 and bits 27:25. A plain `3 * field` shift
+ * slips by one bit from the third field onward and prints values up to 6
+ * for a field that is only ever 0-5 (#136). */
+static const unsigned char feat_readout_1_shift[9] = {
+	0, 3, 7, 10, 13, 16, 19, 22, 28
+};
+
 static void peek_cluster(struct pci_dev *pdev, void __iomem *bar)
 {
 	unsigned int i, field;
@@ -150,7 +158,7 @@ static void peek_cluster(struct pci_dev *pdev, void __iomem *bar)
 	build = 0;
 	for (field = 0; field < 9; field++)
 		build += scnprintf(decoded + build, sizeof(decoded) - build, " %u",
-				   (value >> (3 * field)) & 7u);
+				   (value >> feat_readout_1_shift[field]) & 7u);
 	dev_info(&pdev->dev, "gpu_peek: FEAT_READOUT_1 units (3-bit, 0=full):%s\n", decoded);
 
 	/* Override words: one nibble per unit, bit 3 = enable, bits 2:0 = value. */
