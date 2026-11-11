@@ -10,6 +10,12 @@ INT4 did not speed up in the 2705 tests. One matched FP8/FP32 GEMM on the 2705
 was effectively unchanged (59.326 → 59.495 TF/s), but it ran far below the FP8
 peak; the README lists the FP8 issue-rate results.
 
+Not on Linux, or want the transaction before any OS loads? An independent
+UEFI application exists:
+[physicsdolphin/nv-uefi-unlocker](https://github.com/physicsdolphin/nv-uefi-unlocker)
+(see the README section
+[Independent pre-driver UEFI unlocker](README.md#independent-pre-driver-uefi-unlocker-any-os)).
+
 ## 1. Find your GPU's PCI address
 
 ```sh
