@@ -36,3 +36,8 @@ Module.symvers
 *.exe
 *.obj
 *.a
+
+# AD103/Z790 Windows port: private inputs and build outputs
+/windows/ad103-z790/local/
+/windows/ad103-z790/build/
+/windows/ad103-z790/combined_probe/build/

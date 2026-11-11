@@ -1,0 +1,8 @@
+label=stock seconds=300 loops=20 samples=598 busy=524
+power W: max=277.07 avg(busy)=212.1
+sm MHz: min(busy)=2055 avg(busy)=2725  max=2940
+temp C: max=75
+throttle 0x0000000000000000: 233
+throttle 0x0000000000000001: 88
+throttle 0x0000000000000004: 266
+throttle 0x0000000000000024: 11

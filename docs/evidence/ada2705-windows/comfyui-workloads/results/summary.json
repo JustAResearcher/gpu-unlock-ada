@@ -1,0 +1,169 @@
+{
+ "a_label": "default",
+ "b_label": "unlocked",
+ "workloads": {
+  "Wan2.2 I2V A14B": {
+   "a_runs": [
+    66.2,
+    66.1,
+    66.2
+   ],
+   "b_runs": [
+    66.3,
+    46.2,
+    46.2
+   ],
+   "a_median": 66.2,
+   "b_median": 46.2,
+   "a_mean": 66.2,
+   "b_mean": 52.9,
+   "gpu_a": {
+    "sm_mhz": 2912,
+    "power_w": 228,
+    "max_temp_c": 71,
+    "peak_vram_gb": 13.9
+   },
+   "gpu_b": {
+    "sm_mhz": 2811,
+    "power_w": 237,
+    "max_temp_c": 73,
+    "peak_vram_gb": 14.4
+   },
+   "speedup_median_pct": 43.3,
+   "speedup_mean_pct": 25.1,
+   "time_saved_pct": 30.2
+  },
+  "LTX-2.5 22B I2V": {
+   "a_runs": [
+    14.1,
+    14.0,
+    14.1
+   ],
+   "b_runs": [
+    14.0,
+    12.4,
+    12.4
+   ],
+   "a_median": 14.1,
+   "b_median": 12.4,
+   "a_mean": 14.1,
+   "b_mean": 12.9,
+   "gpu_a": {
+    "sm_mhz": 2920,
+    "power_w": 193,
+    "max_temp_c": 67,
+    "peak_vram_gb": 15.2
+   },
+   "gpu_b": {
+    "sm_mhz": 2924,
+    "power_w": 204,
+    "max_temp_c": 66,
+    "peak_vram_gb": 15.3
+   },
+   "speedup_median_pct": 13.7,
+   "speedup_mean_pct": 9.3,
+   "time_saved_pct": 12.1
+  },
+  "MiniMax H3 I2V (turbo)": {
+   "a_runs": [
+    28.1,
+    28.1,
+    28.1
+   ],
+   "b_runs": [
+    24.1,
+    24.1,
+    22.2
+   ],
+   "a_median": 28.1,
+   "b_median": 24.1,
+   "a_mean": 28.1,
+   "b_mean": 23.5,
+   "gpu_a": {
+    "sm_mhz": 2878,
+    "power_w": 227,
+    "max_temp_c": 71,
+    "peak_vram_gb": 15.2
+   },
+   "gpu_b": {
+    "sm_mhz": 2858,
+    "power_w": 233,
+    "max_temp_c": 70,
+    "peak_vram_gb": 15.2
+   },
+   "speedup_median_pct": 16.6,
+   "speedup_mean_pct": 19.6,
+   "time_saved_pct": 14.2
+  },
+  "FLUX.1 dev fp8 T2I": {
+   "a_runs": [
+    28.2,
+    22.1,
+    22.1,
+    22.1,
+    22.1
+   ],
+   "b_runs": [
+    16.0,
+    16.0,
+    16.1,
+    16.1,
+    16.1
+   ],
+   "a_median": 22.1,
+   "b_median": 16.1,
+   "a_mean": 23.3,
+   "b_mean": 16.1,
+   "gpu_a": {
+    "sm_mhz": 2915,
+    "power_w": 222,
+    "max_temp_c": 72,
+    "peak_vram_gb": 15.3
+   },
+   "gpu_b": {
+    "sm_mhz": 2863,
+    "power_w": 248,
+    "max_temp_c": 71,
+    "peak_vram_gb": 14.7
+   },
+   "speedup_median_pct": 37.3,
+   "speedup_mean_pct": 44.7,
+   "time_saved_pct": 27.1
+  },
+  "Qwen-Image-Edit 2511": {
+   "a_runs": [
+    12.1,
+    12.0,
+    12.1,
+    12.1,
+    12.1
+   ],
+   "b_runs": [
+    10.1,
+    10.1,
+    10.1,
+    10.0,
+    10.0
+   ],
+   "a_median": 12.1,
+   "b_median": 10.1,
+   "a_mean": 12.1,
+   "b_mean": 10.1,
+   "gpu_a": {
+    "sm_mhz": 2896,
+    "power_w": 223,
+    "max_temp_c": 70,
+    "peak_vram_gb": 15.4
+   },
+   "gpu_b": {
+    "sm_mhz": 2902,
+    "power_w": 223,
+    "max_temp_c": 68,
+    "peak_vram_gb": 15.3
+   },
+   "speedup_median_pct": 19.8,
+   "speedup_mean_pct": 19.8,
+   "time_saved_pct": 16.5
+  }
+ }
+}

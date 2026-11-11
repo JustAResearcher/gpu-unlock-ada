@@ -1,0 +1,44 @@
+{
+ "label": "flux_unlocked",
+ "w": 832,
+ "h": 480,
+ "length": 49,
+ "seed": 20261109,
+ "runs": [
+  {
+   "run": 1,
+   "wall_s": 16.0,
+   "server_s": 15.4,
+   "status": "success",
+   "cached": true
+  },
+  {
+   "run": 2,
+   "wall_s": 16.0,
+   "server_s": 15.3,
+   "status": "success",
+   "cached": true
+  },
+  {
+   "run": 3,
+   "wall_s": 16.1,
+   "server_s": 15.3,
+   "status": "success",
+   "cached": true
+  },
+  {
+   "run": 4,
+   "wall_s": 16.1,
+   "server_s": 15.3,
+   "status": "success",
+   "cached": true
+  },
+  {
+   "run": 5,
+   "wall_s": 16.1,
+   "server_s": 15.3,
+   "status": "success",
+   "cached": true
+  }
+ ]
+}
