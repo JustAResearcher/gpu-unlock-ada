@@ -1,7 +1,7 @@
 """Generate the benchmark start image (2048x1152) deterministically, as an optional stand-in.
   python scripts/make_start_image.py            -> assets/bench_start.png
 Any 2048x1152 image works: all five workloads have fixed tensor shapes, step counts and seeds, so the compute cost does not depend on image content.
-(The original image used for the published numbers is not shipped; this script only makes a stand-in.)"""
+(The repo already ships assets/bench_start.png, the image used for the published numbers; this script only makes a stand-in.)"""
 import os, numpy as np
 from PIL import Image, ImageDraw, ImageFilter
 

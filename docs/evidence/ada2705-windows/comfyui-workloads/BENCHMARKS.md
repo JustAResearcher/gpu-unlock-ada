@@ -103,14 +103,14 @@ Read these before quoting the numbers.
 5. **SeedVR2 was not benchmarked.** It was started (3B fp16, 49 frames to 1728x960) but stalled with VRAM full and was aborted, so there are no results for it.
 6. The workloads are specific quantisations (GGUF Q4_K_S, int8, fp8). Other precisions may respond differently.
 7. Times exclude model loading except where marked (cold run 1).
-8. **Start image.** The Wan, LTX and MiniMax runs and the Qwen edit all start from `assets/bench_start.png` (2048x1152). The original image is not included in this repository; `scripts/make_start_image.py` generates a stand-in of the same size, and any 2048x1152 image works. Compute cost should not depend on image content, but the published timings were taken with the original, so expect close, not identical, numbers.
+8. **Start image.** The Wan, LTX and MiniMax runs and the Qwen edit all start from `assets/bench_start.png` (2048x1152, the same file used for the published numbers). `scripts/make_start_image.py` can generate a stand-in of the same size if you want to substitute your own; compute cost should not depend on image content.
 
 ## Reproduce
 
 Requirements: ComfyUI with the node packs for each model (GGUF loader, LTX, MiniMax H3), the model files listed above, Python 3 (standard library only for the benchmark; `build_report.py` also needs matplotlib, `diff_outputs.py` needs pillow + numpy), and `nvidia-smi` on PATH for the GPU log. Run everything from the repository root.
 
 ```bash
-# create assets/bench_start.png first: any 2048x1152 image works, or run scripts/make_start_image.py for a stand-in
+# assets/bench_start.png is included (any 2048x1152 image works; scripts/make_start_image.py can generate a stand-in)
 python scripts/preflight.py                 # which workloads can run here (nodes + model files)
 
 # run the whole suite once per state, same ComfyUI start each time (one fresh start per state):
@@ -133,7 +133,7 @@ Environment variables: `BENCH_HOST` (default `http://127.0.0.1:8188`), `BENCH_DI
 README.md                  short overview
 BENCHMARKS.md              this report
 charts/speedup.png         summary chart
-assets/bench_start.png     not shipped; create with scripts/make_start_image.py (2048x1152)
+assets/bench_start.png     start image used for the published numbers (2048x1152)
 results/summary.json       medians, means and GPU stats per workload
 results/results_<workload>_<state>.json   per-run timings (workload = wan | ltx | mm_turbo | flux | qwen, state = default | unlocked)
 results/gpu_<workload>_<state>.csv        1 Hz GPU telemetry for every set

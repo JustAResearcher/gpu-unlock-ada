@@ -8,7 +8,7 @@ Compare labels with: python wan_bench.py --compare <labelA> <labelB>
 Config via env vars (all optional):
   BENCH_HOST       default http://127.0.0.1:8188
   BENCH_DIR        default ./results in the current directory (run the scripts from the repo root)
-  BENCH_START_IMG  default ./assets/bench_start.png (create it with make_start_image.py; it is uploaded to ComfyUI through /upload/image, so no input-folder path is needed)"""
+  BENCH_START_IMG  default ./assets/bench_start.png (shipped in the repo; it is uploaded to ComfyUI through /upload/image, so no input-folder path is needed)"""
 import sys, os, json, time, threading, subprocess, urllib.request, uuid
 
 HERE = os.path.dirname(os.path.abspath(__file__))

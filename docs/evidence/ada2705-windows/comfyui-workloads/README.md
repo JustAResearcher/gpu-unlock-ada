@@ -33,4 +33,4 @@ Each run records the ComfyUI / PyTorch / driver / GPU / power-limit environment,
 - [`BENCHMARKS.md`](BENCHMARKS.md): full report (setup, method, raw timings, GPU telemetry, caveats, reproduction steps)
 - `scripts/`: harness, workload scripts, preflight, runner, compare, pixel-diff, report builder
 - `results/`: per-run timings, 1 Hz GPU telemetry, summary
-- `charts/`; `assets/` (empty: create the start image, see BENCHMARKS.md)
+- `charts/`, `assets/`

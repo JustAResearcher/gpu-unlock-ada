@@ -26,8 +26,8 @@ is smaller because real jobs are not purely tensor-core bound.
 - Each state has one run, no repetition across cold boots.
 - The stock soak ran 20 loops against 25 unlocked; values are medians of the
   per-loop best.
-- The original start image used for the workload runs is not included; a
-  generator for a stand-in is provided.
+- The start image used for the workload runs is included
+  (`comfyui-workloads/assets/bench_start.png`).
 - No host identifiers, drive serials or network details are included.
 
 `SHA256SUMS` covers every file in this folder.

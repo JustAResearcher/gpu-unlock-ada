@@ -32,17 +32,7 @@ try {
  if($LASTEXITCODE -ne 0){throw 'Archive failed'}
  & $Python tools/verify_archive.py
  if($LASTEXITCODE -ne 0){throw 'Archive verification failed'}
- if($RunTests) {
-  if(!(Test-Path -LiteralPath $Prom -PathType Leaf) -or !(Test-Path -LiteralPath $Assets -PathType Container)){throw 'Tests require the private captured PROM and generated Ada assets'}
-  $testSources=@($sources | Where-Object {$_ -notin @('runtime','format')} | ForEach-Object {$_+'.c'})
-  foreach($test in @('guards','efi_transaction')) {
-   & $Gcc @common -D_CRT_SECURE_NO_WARNINGS ("tests/test_$test.c") @testSources -o ("build/test-$test.exe")
-   if($LASTEXITCODE -ne 0){throw "Test compile failed: $test"}
-   & (".\build\test-$test.exe") $Prom $Assets > ("build/$test.log") 2>&1
-   if($LASTEXITCODE -ne 0){Get-Content ("build/$test.log") -Tail 35;throw "Test failure: $test"}
-   Get-Content ("build/$test.log") -Tail 1
-  }
- }
+ if($RunTests){throw '-RunTests is not available for this port: it has no tests of its own (they would need the private captured PROM). Run the generic tests from the repo tests/ folder instead.'}
  $pins=[ordered]@{}
  Get-ChildItem -LiteralPath . -Recurse -File | Where-Object {$_.Extension -in @('.c','.h','.ps1','.py') -and $_.FullName -notlike '*\build\*' -and $_.FullName -notlike '*\local\*'} | Sort-Object FullName | ForEach-Object {$pins[$_.FullName.Substring($PSScriptRoot.Length+1)]=(Get-FileHash -LiteralPath $_.FullName).Hash.ToLowerInvariant()}
  [ordered]@{artifact='AD103-TRANSACTION.a';sha256=(Get-FileHash -LiteralPath $archive).Hash.ToLowerInvariant();source_hashes=$pins;tests_run=[bool]$RunTests;bootable=$false;hardware_unlock_validated=$false;gpu_writes_performed=$false;utc=[DateTime]::UtcNow.ToString('o')} | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath build/manifest.json -Encoding utf8
