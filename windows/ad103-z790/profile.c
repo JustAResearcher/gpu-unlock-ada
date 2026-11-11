@@ -120,9 +120,18 @@ BOOLEAN GuAd103AssetsValid(VOID) {
 /* From a live, read-only, pre-driver capture of BAR0+0x300000 by probe/ -- see
  * the IMPORTANT CORRECTION at the top of this file for why this is NOT derived
  * from the earlier nvflash dump. */
+#if defined(GU_HOST_TEST_PROM_SHA256) && __STDC_HOSTED__ != 1
+#error GU_HOST_TEST_PROM_SHA256 is forbidden in firmware builds
+#endif
+/* Host tests only (Build.ps1 -RunTests): the tests run against a PROM image that is not
+ * the live pre-driver capture, so they pin that fixture's own hash instead. */
+#ifdef GU_HOST_TEST_PROM_SHA256
+#define GU_AD103_PROM_SHA256 GU_HOST_TEST_PROM_SHA256
+#else
+#define GU_AD103_PROM_SHA256 "1a6631d6317739908aa6fb246858306dfef15901b43237b35b73d424b3880d9e"
+#endif
 BOOLEAN GuAd103PromMatches(const VOID *Data,UINTN Bytes) {
-  return Bytes==1048576 && GuHashMatches(Data,Bytes,
-    "1a6631d6317739908aa6fb246858306dfef15901b43237b35b73d424b3880d9e");
+  return Bytes==1048576 && GuHashMatches(Data,Bytes,GU_AD103_PROM_SHA256);
 }
 
 /* Confirmed twice: once against the (wrong-overall-hash) nvflash dump, once

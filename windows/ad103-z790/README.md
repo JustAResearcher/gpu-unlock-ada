@@ -43,6 +43,22 @@ watchdog, Secure Boot signing) exists as a separate project and is deliberately
 not part of this contribution.
 
 
+## Host tests
+
+`Build.ps1 -RunTests -Prom <1 MiB VBIOS image> -Assets <pinned Ada assets dir>` runs two
+simulated suites (no GPU is touched): 17 admission/guard cases and 90 full-transaction
+scenarios against the real core, compatibility layer and UEFI port with fake PCI/MMIO/DMA.
+
+- `-Assets` is the folder with the five pinned NVIDIA files this project does not
+  redistribute (the same inputs the build pins by SHA-256).
+- `-Prom` is a 1 MiB slice of your card's VBIOS starting at the legacy image (use
+  `tools/fwsec_dump.c <dump> <offset>` to find the offset whose FWSEC geometry matches
+  `GuAd103FwsecMatches`). The tests pin that file's own hash through the host-only
+  `GU_HOST_TEST_PROM_SHA256` define, which firmware builds reject. The production
+  `GuAd103PromMatches` pin is the live pre-driver BAR0 capture, which an OS-level dump
+  does not reproduce, so the suites do not exercise that exact hash.
+- The PCI config fixture is the AD104 capture with this board's pinned dwords substituted.
+
 ## Building the full transaction library
 
 ```powershell

@@ -44,7 +44,8 @@ MiniMax H3 +17%, LTX +14%.
   cleaner hardware measurement.
 - This does not establish support for other AD103 boards or any other
   motherboard.
-- The port has no host tests of its own yet; `Build.ps1 -RunTests` reports
-  this instead of running anything.
+- Host tests (`Build.ps1 -RunTests`: 17 admission cases, 90 simulated transaction
+  scenarios) pass, but they run on an OS-level VBIOS dump with a test-only hash pin, not
+  the live pre-driver capture, and all hardware-side behaviour is simulated.
 - A resident, automatic variant exists separately and is not part of this
   contribution.
