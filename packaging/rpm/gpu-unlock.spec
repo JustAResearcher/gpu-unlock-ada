@@ -9,7 +9,7 @@ License: GPL-2.0-only
 BuildArch: noarch
 Source0: gpu-unlock-%{version}.tar.xz
 Source1: https://download.nvidia.com/XFree86/NVIDIA-kernel-module-source/NVIDIA-kernel-module-source-%{nv}.tar.xz
-Source2: https://archive.cachyos.org/archive/cachyos-v3/nvidia-utils-%{nv}-1-x86_64_v3.pkg.tar.zst
+Source2: https://archive.archlinux.org/packages/n/nvidia-utils/nvidia-utils-%{nv}-1-x86_64.pkg.tar.zst
 # NVIDIA inputs stay out of the source RPM (it becomes a .nosrc.rpm).
 NoSource: 1
 NoSource: 2
@@ -43,7 +43,7 @@ Firmware assets generated locally from verified upstream inputs.
 %prep
 sha256sum -c - <<EOF
 7e118923c7a23edc36114d63273a46e3e04e9af98695a42203e7ac2dfe9fc1dc  %{SOURCE1}
-e17e7c92eeffa178b0fe1f40eb17a47095f8fc3ce4a77bf115cf5bd5a4df86e9  %{SOURCE2}
+c3367ff68632ac7daf6ca50ef7cbdd1cb5d09f7fe0b26125b312c73e52a34cf4  %{SOURCE2}
 EOF
 %autosetup
 test "$(cat VERSION)" = "%{version}"

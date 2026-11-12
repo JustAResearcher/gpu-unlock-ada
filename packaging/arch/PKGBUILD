@@ -7,7 +7,7 @@ pkgname=(gpu-unlock-dkms gpu-unlock-firmware)
 pkgver=1.1.1
 pkgrel=1
 _nv=610.43.03
-_utils=nvidia-utils-$_nv-1-x86_64_v3.pkg.tar.zst
+_utils=nvidia-utils-$_nv-1-x86_64.pkg.tar.zst
 pkgdesc='RTX 4090 and experimental Ada tensor unlock before NVIDIA loads'
 arch=('x86_64')
 url='https://github.com/JustAResearcher/gpu-unlock-ada'
@@ -16,11 +16,11 @@ makedepends=('git' 'python' 'zstd')
 options=('!strip' '!debug')
 source=("$pkgbase::git+file://${startdir%/packaging/arch}"
         "https://download.nvidia.com/XFree86/NVIDIA-kernel-module-source/NVIDIA-kernel-module-source-$_nv.tar.xz"
-        "https://archive.cachyos.org/archive/cachyos-v3/$_utils")
+        "https://archive.archlinux.org/packages/n/nvidia-utils/$_utils")
 noextract=("$_utils")
 sha256sums=('SKIP'
             '7e118923c7a23edc36114d63273a46e3e04e9af98695a42203e7ac2dfe9fc1dc'
-            'e17e7c92eeffa178b0fe1f40eb17a47095f8fc3ce4a77bf115cf5bd5a4df86e9')
+            'c3367ff68632ac7daf6ca50ef7cbdd1cb5d09f7fe0b26125b312c73e52a34cf4')
 
 prepare() {
   cd $pkgbase
