@@ -21,7 +21,7 @@ FIRMWARE_FILES := booter_load_ga102.bin gsp_ga10x.bin gsp_boot_ga102.bin \
                   v67-ad102-$(NV)-four-plm.bin
 LICENSES       := licenses/GPL-2.0.txt licenses/CMP40HX-MIT.txt licenses/NVIDIA-MIT.txt
 NV_SOURCE      := NVIDIA-kernel-module-source-$(NV)
-NV_UTILS       := nvidia-utils-$(NV)-1-x86_64_v3.pkg.tar.zst
+NV_UTILS       := nvidia-utils-$(NV)-1-x86_64.pkg.tar.zst
 
 TARBALL := $(abspath $(DISTDIR))/gpu-unlock-$(VERSION).tar.xz
 DEBDIR  := $(abspath $(DISTDIR))/deb

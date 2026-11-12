@@ -34,9 +34,9 @@
     {
       "name": "nvidia-utils binary package used for exact firmware extraction",
       "version": "610.43.03-1",
-      "architecture": "x86_64_v3",
+      "architecture": "x86_64",
       "license": "custom (package metadata)",
-      "sha256": "e17e7c92eeffa178b0fe1f40eb17a47095f8fc3ce4a77bf115cf5bd5a4df86e9",
+      "sha256": "c3367ff68632ac7daf6ca50ef7cbdd1cb5d09f7fe0b26125b312c73e52a34cf4",
       "firmware": [
         {
           "path": "usr/lib/firmware/nvidia/610.43.03/gsp_ga10x.bin",
@@ -44,8 +44,8 @@
           "sha256": "572373620a37418f24dc16b5031c39338778c3257e48e8408de9a57291b24f3a"
         }
       ],
-      "filename": "nvidia-utils-610.43.03-1-x86_64_v3.pkg.tar.zst",
-      "url": "https://archive.cachyos.org/archive/cachyos-v3/nvidia-utils-610.43.03-1-x86_64_v3.pkg.tar.zst",
+      "filename": "nvidia-utils-610.43.03-1-x86_64.pkg.tar.zst",
+      "url": "https://archive.archlinux.org/packages/n/nvidia-utils/nvidia-utils-610.43.03-1-x86_64.pkg.tar.zst",
       "notice": {
         "path": "usr/share/licenses/nvidia-utils/LICENSE",
         "sha256": "c692fb14ad4f499c6aee1b9e144e6905148c420e6225b17cb2937366c1e507ad"
