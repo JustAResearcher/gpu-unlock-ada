@@ -17,7 +17,24 @@ Two matched sets on the same card, stock vs unlocked, in the
 [combined evidence](evidence/ada2705-windows/README.md) (SHA-256 manifest
 included).
 
-5-minute sustained soak, median of per-loop best:
+**ComfyUI production workloads**, median seconds, default vs unlocked,
+**every pair bit-identical in output** (three video models, one image
+model, one image-edit model):
+
+| Workload | Default | Unlocked | Speedup |
+|---|---:|---:|---:|
+| Wan2.2 I2V A14B (GGUF Q4_K_S, 4-step LoRA), 832x480, 49 frames | 66.2 s | 46.2 s | **+43%** |
+| FLUX.1 dev fp8, 1024x1024, 20 steps | 22.1 s | 16.1 s | **+37%** |
+| Qwen-Image-Edit 2511 (fp8, 4-step LoRA), ~1 MP | 12.1 s | 10.1 s | **+20%** |
+| MiniMax H3 I2V (turbo, 6 steps), 832x480, 56 frames | 28.1 s | 24.1 s | **+17%** |
+| LTX-2.5 22B distilled int8 I2V, 832x480, 49 frames | 14.1 s | 12.4 s | **+14%** |
+
+The two heaviest matmul-bound workloads (Wan2.2, FLUX) gain the most; full
+raw timings, GPU telemetry and caveats (notably a ComfyUI core-version
+difference between the two sets) are in
+[`comfyui-workloads/BENCHMARKS.md`](evidence/ada2705-windows/comfyui-workloads/BENCHMARKS.md).
+
+5-minute sustained tensor-core/GEMM soak, median of per-loop best:
 
 | Test | Stock TF/s | Unlocked TF/s |
 |---|---:|---:|
@@ -31,15 +48,20 @@ included).
 
 f16/f32 divided by f16/f16 goes from 0.493 to 0.999. Controls move 3-7%,
 consistent with clock and power differences (peak 277-278 W, SM average
-2725 vs 2542 MHz).
-
-ComfyUI jobs, median seconds, default vs unlocked, bit-identical outputs:
-Wan 2.2 I2V 66.2 to 46.2 (+43%), FLUX +37%, Qwen-Image-Edit +20%,
-MiniMax H3 +17%, LTX +14%.
+2725 vs 2542 MHz). This same ratio, re-measured across 5 cold boots and 3
+driver releases (610.88, 621.14, 621.24; 14 sessions,
+[`driver-reproducibility.md`](evidence/ada2705-windows/driver-reproducibility.md)),
+lands in the same two non-overlapping bands every time.
 
 ## Limits
 
-- One card, one run per state, no repetition across cold boots.
+- The soak and ComfyUI tables are one run per state on one boot. A
+  lighter ratio-only check (the soak's decision metric) was repeated
+  across 5 separate cold boots and 3 driver releases and landed in the
+  same two non-overlapping bands every time — see
+  [`driver-reproducibility.md`](evidence/ada2705-windows/driver-reproducibility.md).
+  The full soak and the ComfyUI wall-clock numbers themselves were not
+  repeated across boots.
 - The ComfyUI sets used different ComfyUI core versions; the soak is the
   cleaner hardware measurement.
 - This does not establish support for other AD103 boards or any other

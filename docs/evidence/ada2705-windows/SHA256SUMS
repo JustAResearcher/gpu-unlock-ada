@@ -1,4 +1,4 @@
-ec151077bdd3f0eaf52c91b0fe774a139854adf17430e4f65f5aeef5741ed7bb *./README.md
+9febc6db707b0ea8a48e08b871102d6ce3fb13a2e8423f24f0a6fa6b014e5ca7 *./README.md
 b1182a3962b9dae36f359ad0eab2be7bd2a8bf21b4146c3848783f558616a474 *./comfyui-workloads/BENCHMARKS.md
 3bc7f2e9c5a63b3ad99df0517ecfa609d53c5d45bd07cae6a53b63bc32ce02ee *./comfyui-workloads/README.md
 690fd8bf202ae44b9b5f1a972788f40a44efcad7b25706216458ef612a3291a9 *./comfyui-workloads/assets/bench_start.png
@@ -36,6 +36,7 @@ c2a30ff5c68365d461fdca3fe26a0a2730a7f03accc73d8f1bb1c422a144ebf0 *./comfyui-work
 a1453a07b158a8f8cb6d84235cc0ca1c9573e23db4b9d8ca56092884656f8840 *./comfyui-workloads/scripts/qwen_bench.py
 65dc18b0177c4facd33e682c1b57113bc41d9d196ac94b2d223f4a4d3b0b95a9 *./comfyui-workloads/scripts/run_bench_set.py
 78ed033c72aa6abaf478c6f4dab58e44968e31cbe46d44729bc91d0e86790c45 *./comfyui-workloads/scripts/wan_bench.py
+667d832d761d468051b40142fc1229adaa8b84aac4e379d7b33b6a8116f8cc33 *./driver-reproducibility.md
 806de240a5c96a812eac11eb4879755caf6f98a9465331b1e557fd48235cc5e9 *./tensor-core-soak/README.md
 3c98b60ba92be145936b472e1fe96154d847679f8418f3cec83b7e261b671691 *./tensor-core-soak/soak.ps1
 d310bdac6a1fabce81026f47968f2ea145fdbe8d7b54ebdef0ebdb3fa3dee34a *./tensor-core-soak/stock/runs.txt
