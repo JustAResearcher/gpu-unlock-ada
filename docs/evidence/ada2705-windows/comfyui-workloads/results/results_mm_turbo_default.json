@@ -1,0 +1,30 @@
+{
+ "label": "mm_turbo_default",
+ "w": 832,
+ "h": 480,
+ "length": 56,
+ "seed": 20261109,
+ "runs": [
+  {
+   "run": 1,
+   "wall_s": 28.1,
+   "server_s": 27.1,
+   "status": "success",
+   "cached": true
+  },
+  {
+   "run": 2,
+   "wall_s": 28.1,
+   "server_s": 26.8,
+   "status": "success",
+   "cached": true
+  },
+  {
+   "run": 3,
+   "wall_s": 28.1,
+   "server_s": 26.7,
+   "status": "success",
+   "cached": true
+  }
+ ]
+}

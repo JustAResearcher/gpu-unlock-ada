@@ -1,0 +1,8 @@
+label=unlocked seconds=300 loops=25 samples=594 busy=489
+power W: max=278.14 avg(busy)=231.5
+sm MHz: min(busy)=2055 avg(busy)=2542  max=2940
+temp C: max=73
+throttle 0x0000000000000000: 148
+throttle 0x0000000000000001: 36
+throttle 0x0000000000000004: 394
+throttle 0x0000000000000024: 16

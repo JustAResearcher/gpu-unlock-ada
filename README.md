@@ -91,6 +91,16 @@ profile; it does **not** add AD104 admission to the Linux module. See the
 binaries or automatic boot installer are distributed. Contribution by **Latence.app**;
 original upstream credits and licences are retained.
 
+## Experimental Windows port: RTX 4070 Ti SUPER on MSI Z790
+
+A manual, USB-only [Windows UEFI port](windows/ad103-z790/README.md) for one
+RTX 4070 Ti SUPER (`10de:2705`, AD103) on an MSI MPG Z790 EDGE WIFI, adapted
+from the Latence.app AD104 port above. It writes no boot variables and ships
+no binaries. Matched stock/unlocked results (FP16/FP32 tensor rate about 2.2x
+in a 5-minute soak; ComfyUI jobs +14% to +43%) and limits are in the
+[report](docs/ada-2705-windows-report.md); see [NOTICES](windows/ad103-z790/NOTICES.md)
+for provenance. One card on one board only.
+
 ## Supported targets
 
 The module selects the AD102 firmware and payload automatically for RTX 4090
@@ -115,7 +125,7 @@ other boards, memory configurations and laptop models remain unverified.
 | `2689` | RTX 4070 Ti SUPER | AD102 | `rtx4070tis_ad102_experimental`, exact | one card, 30-minute soak | [#19](https://github.com/JustAResearcher/gpu-unlock-ada/pull/19) |
 | `2702` | RTX 4080 SUPER | AD103 | `ad103_experimental`, exact | one card, matched mma and cuBLAS, alongside a 2704 in one host | [matched evidence](docs/evidence/ada2702-ada2704-matched/README.md), [#53](https://github.com/JustAResearcher/gpu-unlock-ada/issues/53) |
 | `2704` | RTX 4080 | AD103 | `rtx4080_experimental`, exact | one modified 32 GiB card; a second card in [matched evidence](docs/evidence/ada2702-ada2704-matched/README.md) | [report](docs/rtx4080-hardware-report.md) |
-| `2705` | RTX 4070 Ti SUPER | AD103 | `ad103_experimental`, exact | one card, matched stock/unlocked | [report](docs/ada-2705-report.md) |
+| `2705` | RTX 4070 Ti SUPER | AD103 | `ad103_experimental`, exact | one card, matched stock/unlocked | [report](docs/ada-2705-report.md), [Windows port](docs/ada-2705-windows-report.md) |
 | `2709` | RTX 4070 | AD103 | `ad103_experimental`, exact | one card, matched | [report](docs/ada-2709-report.md) |
 | `2757` | RTX 4090 Laptop GPU | AD103M | `ad103m_experimental`, exact | Clevo: unlocked, no throughput change; Lenovo: 2× on two cold boots | [report](docs/ada-2757-report.md), [Lenovo](https://github.com/JustAResearcher/gpu-unlock-ada/issues/4#issuecomment-6397961415) |
 | `2782` | RTX 4070 Ti | AD104 | `ad104_experimental`, exact | one card in a VFIO guest, matched; one bare-metal owner report | [report](docs/ada-2782-report.md), [#15](https://github.com/JustAResearcher/gpu-unlock-ada/pull/15) |

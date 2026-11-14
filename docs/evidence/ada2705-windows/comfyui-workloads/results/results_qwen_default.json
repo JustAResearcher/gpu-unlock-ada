@@ -1,0 +1,44 @@
+{
+ "label": "qwen_default",
+ "w": 832,
+ "h": 480,
+ "length": 49,
+ "seed": 20261109,
+ "runs": [
+  {
+   "run": 1,
+   "wall_s": 12.1,
+   "server_s": 10.7,
+   "status": "success",
+   "cached": true
+  },
+  {
+   "run": 2,
+   "wall_s": 12.0,
+   "server_s": 10.9,
+   "status": "success",
+   "cached": true
+  },
+  {
+   "run": 3,
+   "wall_s": 12.1,
+   "server_s": 10.7,
+   "status": "success",
+   "cached": true
+  },
+  {
+   "run": 4,
+   "wall_s": 12.1,
+   "server_s": 11.4,
+   "status": "success",
+   "cached": true
+  },
+  {
+   "run": 5,
+   "wall_s": 12.1,
+   "server_s": 10.7,
+   "status": "success",
+   "cached": true
+  }
+ ]
+}

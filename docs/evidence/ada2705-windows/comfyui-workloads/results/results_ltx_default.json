@@ -1,0 +1,30 @@
+{
+ "label": "ltx_default",
+ "w": 832,
+ "h": 480,
+ "length": 49,
+ "seed": 20261109,
+ "runs": [
+  {
+   "run": 1,
+   "wall_s": 14.1,
+   "server_s": 12.5,
+   "status": "success",
+   "cached": true
+  },
+  {
+   "run": 2,
+   "wall_s": 14.0,
+   "server_s": 12.4,
+   "status": "success",
+   "cached": true
+  },
+  {
+   "run": 3,
+   "wall_s": 14.1,
+   "server_s": 12.4,
+   "status": "success",
+   "cached": true
+  }
+ ]
+}

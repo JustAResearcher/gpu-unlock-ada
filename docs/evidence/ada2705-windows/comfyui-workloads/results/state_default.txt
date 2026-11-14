@@ -1,0 +1,15 @@
+Driver Version                                         : 621.14 [Deprecated; will be removed in CUDA 14.0. Use KMD Version instead]
+    Product Name                                       : NVIDIA GeForce RTX 4070 Ti SUPER
+    VBIOS Version                                      : 95.03.45.80.07
+        GPU Ceiling Power Limit
+            Current Power Limit                        : 285.00 W
+            Requested Power Limit                      : 285.00 W
+            Default Power Limit                        : 285.00 W
+        Min Power Limit                                : 100.00 W
+        Max Power Limit                                : 285.00 W
+        Current Power Limit                            : N/A
+        Requested Power Limit                          : N/A
+        Default Power Limit                            : N/A
+        Min Power Limit                                : N/A
+        Max Power Limit                                : N/A
+Tue Nov 10 18:21:26 EST 2026

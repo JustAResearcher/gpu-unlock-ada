@@ -1,0 +1,44 @@
+{
+ "label": "flux_default",
+ "w": 832,
+ "h": 480,
+ "length": 49,
+ "seed": 20261109,
+ "runs": [
+  {
+   "run": 1,
+   "wall_s": 28.2,
+   "server_s": 27.7,
+   "status": "success",
+   "cached": true
+  },
+  {
+   "run": 2,
+   "wall_s": 22.1,
+   "server_s": 21.7,
+   "status": "success",
+   "cached": true
+  },
+  {
+   "run": 3,
+   "wall_s": 22.1,
+   "server_s": 20.3,
+   "status": "success",
+   "cached": true
+  },
+  {
+   "run": 4,
+   "wall_s": 22.1,
+   "server_s": 20.5,
+   "status": "success",
+   "cached": true
+  },
+  {
+   "run": 5,
+   "wall_s": 22.1,
+   "server_s": 20.4,
+   "status": "success",
+   "cached": true
+  }
+ ]
+}
